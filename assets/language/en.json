@@ -1,0 +1,11 @@
+{
+  "no_connection": "No connection",
+  "connected": "Connected",
+  "internal_server_error": "Internal server error",
+  "EMAIL_MUST_BE_REQUIRED": "Email must be required",
+  "enter_valid_email_address": "Enter valid email address",
+  "this_field_is_required": "This field is required",
+  "minimum_password_is_6_character": "Minimum password is 6 character",
+  "confirm_password_must_be_required": "Confirm password must be required",
+  "confirm_password_not_matched": "Confirm password not matched"
+}
