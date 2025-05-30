@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:tribe365_new/feature/free_version/free_dashboard/controllers/free_dashboard_controller.dart';
 import 'package:tribe365_new/feature/login/controllers/login_controller.dart';
 import 'package:tribe365_new/utill/app_constants.dart';
 import 'package:tribe365_new/utill/light_theme.dart';
@@ -24,6 +25,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => di.sl<SplashController>()),
         ChangeNotifierProvider(create: (context) => di.sl<LoginController>()),
+        ChangeNotifierProvider(create: (context) => di.sl<FreeDashboardController>()),
       ],
       child: MyApp(),
     ),

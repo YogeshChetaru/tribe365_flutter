@@ -60,4 +60,10 @@ class Dimensions {
   static const double menuIconSize = 25.0;
   static const double featuredProductCard = 370.0;
   static const double compareCardWidget = 200.0;
+
+  static const double dp40 = 40.0;
+  static const double sp14 = 14.0;
+  static const double sp16 = 16.0;
+  static const double sp18 = 18.0;
+  static const double sp12 = 12.0;
 }

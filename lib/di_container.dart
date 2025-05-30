@@ -2,14 +2,20 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tribe365_new/feature/free_version/free_dashboard/controllers/free_dashboard_controller.dart';
+import 'package:tribe365_new/feature/free_version/free_dashboard/domain/repositories/free_dashboard_repository.dart';
 import 'package:tribe365_new/utill/app_constants.dart';
 
 import 'data/datasource/remote/dio/dio_client.dart';
 import 'data/datasource/remote/dio/logging_interceptor.dart';
+import 'feature/free_version/free_dashboard/domain/repositories/free_dashboard_repository_interface.dart';
+import 'feature/free_version/free_dashboard/domain/services/free_dashboard_service.dart';
+import 'feature/free_version/free_dashboard/domain/services/free_dashboard_service_interface.dart';
 import 'feature/login/controllers/login_controller.dart';
 import 'feature/login/domain/repositories/login_repository.dart';
 import 'feature/login/domain/repositories/login_repository_interface.dart';
 import 'feature/login/domain/services/login_service.dart';
+import 'feature/login/domain/services/login_service_interface.dart';
 import 'feature/splash/controllers/splash_controller.dart';
 import 'feature/splash/domain/repositories/splash_repository.dart';
 import 'feature/splash/domain/repositories/splash_repository_interface.dart';
@@ -41,12 +47,16 @@ Future<void> init() async {
     () => SplashRepository(sharedPreferences: sl(), dioClient: sl()),
   );
   sl.registerLazySingleton(
-        () => LoginRepository(sharedPreferences: sl(), dioClient: sl()),
+    () => LoginRepository(sharedPreferences: sl(), dioClient: sl()),
+  );
+  sl.registerLazySingleton(
+        () => FreeDashboardRepository(sharedPreferences: sl(), dioClient: sl()),
   );
 
   // Provider
   sl.registerFactory(() => SplashController(splashServiceInterface: sl()));
   sl.registerFactory(() => LoginController(loginServiceInterface: sl()));
+  sl.registerFactory(() => FreeDashboardController(freeDashboardServiceInterface: sl()));
 
   //interface
   SplashRepositoryInterface splashRepositoryInterface = SplashRepository(
@@ -61,11 +71,27 @@ Future<void> init() async {
   );
   sl.registerLazySingleton(() => loginRepositoryInterface);
 
+  FreeDashboardRepositoryInterface freeDashboardRepositoryInterface = FreeDashboardRepository(
+    dioClient: sl(),
+    sharedPreferences: sl(),
+  );
+  sl.registerLazySingleton(() => freeDashboardRepositoryInterface);
 
+  //Services Interface
   SplashServiceInterface splashServiceInterface = SplashService(
     splashRepositoryInterface: sl(),
   );
   sl.registerLazySingleton(() => splashServiceInterface);
+
+  LoginServiceInterface loginServiceInterface = LoginService(
+    loginRepositoryInterface: sl(),
+  );
+  sl.registerLazySingleton(() => loginServiceInterface);
+
+  FreeDashboardServiceInterface freeDashboardServiceInterface = FreeDashboardService(
+    freeDashboardRepositoryInterface: sl(),
+  );
+  sl.registerLazySingleton(() => freeDashboardServiceInterface);
 
   //services
   sl.registerLazySingleton(
@@ -73,6 +99,11 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton(
-        () => LoginService(loginRepositoryInterface: sl()),
+    () => LoginService(loginRepositoryInterface: sl()),
   );
+
+  sl.registerLazySingleton(
+        () => FreeDashboardService(freeDashboardRepositoryInterface: sl()),
+  );
+
 }
