@@ -4,9 +4,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:tribe365_new/feature/free_version/free_dashboard/controllers/free_dashboard_controller.dart';
 import 'package:tribe365_new/feature/login/controllers/login_controller.dart';
+import 'package:tribe365_new/feature/paid_version/notification/controllers/notification_controller.dart';
+import 'package:tribe365_new/feature/paid_version/paid_dashboard/controllers/paid_dashboard_controller.dart';
 import 'package:tribe365_new/utill/app_constants.dart';
 import 'package:tribe365_new/utill/light_theme.dart';
 import 'di_container.dart' as di;
+import 'feature/free_version/hptm/controllers/hptm_controller.dart';
+import 'feature/paid_version/home/controllers/home_controller.dart';
 import 'feature/splash/controllers/splash_controller.dart';
 import 'feature/splash/screens/splash_screen.dart';
 import 'helper/custom_delegate.dart';
@@ -26,6 +30,10 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => di.sl<SplashController>()),
         ChangeNotifierProvider(create: (context) => di.sl<LoginController>()),
         ChangeNotifierProvider(create: (context) => di.sl<FreeDashboardController>()),
+        ChangeNotifierProvider(create: (context) => di.sl<HPTMController>()),
+        ChangeNotifierProvider(create: (context) => di.sl<PaidDashboardController>()),
+        ChangeNotifierProvider(create: (context) => di.sl<HomeController>()),
+        ChangeNotifierProvider(create: (context) => di.sl<NotificationController>()),
       ],
       child: MyApp(),
     ),

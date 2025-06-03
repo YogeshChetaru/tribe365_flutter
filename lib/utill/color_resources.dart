@@ -9,5 +9,7 @@ class ColorResources {
   static const Color color9a9a9a = Color(0xFF9a9a9a);
   static const Color color333333 = Color(0xFF333333);
   static const Color screenBg = Color(0xFFF8F8F8);
+  static const Color colorEb1c24 = Color(0xFFeb1c24);
+  static const Color color17ba0a = Color(0xFF17ba0a);
 
 }

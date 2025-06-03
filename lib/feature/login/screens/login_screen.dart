@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tribe365_new/feature/free_version/free_dashboard/screens/free_dashboard_screen.dart';
 import 'package:tribe365_new/feature/login/controllers/login_controller.dart';
 import 'package:tribe365_new/feature/login/screens/forgot_password_screen.dart';
 import 'package:tribe365_new/localization/language_constrants.dart';
@@ -8,6 +7,7 @@ import 'package:tribe365_new/utill/dimensions.dart';
 import 'package:tribe365_new/utill/images.dart';
 import '../../../main.dart';
 import '../../../utill/color_resources.dart';
+import '../../paid_version/paid_dashboard/screens/paid_dashboard_screen.dart';
 import '../widgets/helpdialog.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -30,6 +30,7 @@ class LoginScreenState extends State<LoginScreen> {
     usernameController.dispose();
     passwordController.dispose();
     confPasswordController.dispose();
+    usernameFocus.dispose();
     passwordFocus.dispose();
     confPasswordFocus.dispose();
     super.dispose();
@@ -372,7 +373,7 @@ class LoginScreenState extends State<LoginScreen> {
                                 transitionDuration: const Duration(milliseconds: 500),
                                 reverseTransitionDuration: const Duration(milliseconds: 500),
                                 pageBuilder: (context, animation, secondaryAnimation) =>
-                                const FreeDashboardScreen(),
+                                const PaidDashboardScreen(),
                                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                   const begin = Offset(1.0, 0.0); // Slide in from right
                                   const end = Offset.zero;

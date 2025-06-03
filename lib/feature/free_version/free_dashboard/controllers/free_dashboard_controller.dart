@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../domain/services/free_dashboard_service_interface.dart';
 
 class FreeDashboardController extends ChangeNotifier {
@@ -16,6 +17,47 @@ class FreeDashboardController extends ChangeNotifier {
   String monthSelectedValue = 'Jan';
   String departmentSelectedValue = 'Department A';
   String yearSelectedValue = '2021';
+  String selectedStartDate = DateFormat('dd-MMM-yyyy').format( DateTime.now());
+  String selectedEndDate = "";
+  final DateFormat dateDDMMMYYYYFormatter = DateFormat('dd-MMM-yyyy');
+
+  bool obscureCurrentPasswordText = true;
+  bool obscureNewPasswordText = true;
+  bool obscureConfPasswordText = true;
+
+  void toggleCurrentPasswordVisibility() {
+    obscureCurrentPasswordText = !obscureCurrentPasswordText;
+    notifyListeners();
+  }
+
+  void toggleNewPasswordVisibility() {
+    obscureNewPasswordText = !obscureNewPasswordText;
+    notifyListeners();
+  }
+
+  void toggleConfPasswordVisibility() {
+    obscureConfPasswordText = !obscureConfPasswordText;
+    notifyListeners();
+  }
+
+  void pickStartDate(BuildContext context,String type) async {
+    DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+
+    if (date != null) {
+      if(type=="start"){
+        selectedStartDate = DateFormat('dd-MMM-yyyy').format(date);
+      }
+      else if(type=="end")  {
+        selectedEndDate = DateFormat('dd-MMM-yyyy').format(date) ;
+      }
+      notifyListeners();
+    }
+  }
 
   final List<Map<String, dynamic>> calendarData = [
     // Week 1
@@ -70,7 +112,6 @@ class FreeDashboardController extends ChangeNotifier {
     }
   }
 
-
   void updateOfficeSelectedValue(String? data) {
     officeSelectedValue = data!;
     notifyListeners();
@@ -89,6 +130,12 @@ class FreeDashboardController extends ChangeNotifier {
   void updateYearSelectedValue(String? data) {
     yearSelectedValue = data!;
     notifyListeners();
+  }
+
+  void updateDate() {
+     selectedStartDate = DateFormat('dd-MMM-yyyy').format( DateTime.now());
+     selectedEndDate = "";
+   notifyListeners();
   }
 
 

@@ -3,7 +3,7 @@ import 'package:tribe365_new/utill/dimensions.dart';
 
 const robotoRegular = TextStyle(
   fontFamily: 'Roboto',
-  fontSize: 12,
+  fontSize: Dimensions.sp12,
 );
 
 const robotoRegularTextTab = TextStyle(
@@ -13,3 +13,13 @@ const robotoRegularTextTab = TextStyle(
 
 );
 
+const textBold12 = TextStyle(
+    fontFamily: 'Roboto',
+    fontSize: Dimensions.sp12,
+    fontWeight: FontWeight.w600
+);
+const textRegular12 = TextStyle(
+  fontFamily: 'Roboto',
+  fontWeight: FontWeight.w300,
+  fontSize: Dimensions.sp12,
+);
