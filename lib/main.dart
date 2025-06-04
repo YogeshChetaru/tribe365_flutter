@@ -5,12 +5,16 @@ import 'package:provider/provider.dart';
 import 'package:tribe365_new/feature/free_version/free_dashboard/controllers/free_dashboard_controller.dart';
 import 'package:tribe365_new/feature/login/controllers/login_controller.dart';
 import 'package:tribe365_new/feature/paid_version/notification/controllers/notification_controller.dart';
+import 'package:tribe365_new/feature/paid_version/offloading/controllers/offloading_controller.dart';
 import 'package:tribe365_new/feature/paid_version/paid_dashboard/controllers/paid_dashboard_controller.dart';
+import 'package:tribe365_new/feature/paid_version/profile/controllers/profile_controller.dart';
 import 'package:tribe365_new/utill/app_constants.dart';
 import 'package:tribe365_new/utill/light_theme.dart';
 import 'di_container.dart' as di;
 import 'feature/free_version/hptm/controllers/hptm_controller.dart';
 import 'feature/paid_version/home/controllers/home_controller.dart';
+import 'feature/paid_version/know/controllers/know_controller.dart';
+import 'feature/paid_version/risk/controllers/risk_controller.dart';
 import 'feature/splash/controllers/splash_controller.dart';
 import 'feature/splash/screens/splash_screen.dart';
 import 'helper/custom_delegate.dart';
@@ -34,6 +38,10 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => di.sl<PaidDashboardController>()),
         ChangeNotifierProvider(create: (context) => di.sl<HomeController>()),
         ChangeNotifierProvider(create: (context) => di.sl<NotificationController>()),
+        ChangeNotifierProvider(create: (context) => di.sl<KnowController>()),
+        ChangeNotifierProvider(create: (context) => di.sl<OffloadingController>()),
+        ChangeNotifierProvider(create: (context) => di.sl<RiskController>()),
+        ChangeNotifierProvider(create: (context) => di.sl<ProfileController>()),
       ],
       child: MyApp(),
     ),

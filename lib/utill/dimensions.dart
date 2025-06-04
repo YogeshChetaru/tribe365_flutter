@@ -63,7 +63,9 @@ class Dimensions {
 
   static const double dp40 = 40.0;
   static const double sp14 = 14.0;
+  static const double sp13 = 13.0;
   static const double sp16 = 16.0;
   static const double sp18 = 18.0;
   static const double sp12 = 12.0;
+  static const double sp10 = 10.0;
 }

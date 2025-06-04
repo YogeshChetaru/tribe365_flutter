@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tribe365_new/common/basewidget/custom_header_back_widget.dart';
 import 'package:tribe365_new/feature/paid_version/notification/controllers/notification_controller.dart';
 import 'package:tribe365_new/feature/paid_version/notification/widgets/notificationitem.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/color_resources.dart';
 import '../../../../utill/dimensions.dart';
-import '../../../../utill/images.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -30,32 +30,7 @@ class NotificationScreenState extends State<NotificationScreen> {
             color: ColorResources.screenBg,
             child: Column(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: ColorResources.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: ColorResources.colorAAADC4,
-                        blurRadius: 5.0,
-                      ),
-                    ],
-                  ),
-                  width: MediaQuery.sizeOf(context).width,
-                  padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-                  child: Row(
-                    children: [
-                      InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Image.asset(
-                            Images.imgCircleBackRed,
-                            width: 24,
-                            height: 24,
-                          )),
-                    ],
-                  ),
-                ),
+               CustomHeaderBack(title: getTranslated("notifications", context)!,),
                 Container(
                   margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
                   child: Row(

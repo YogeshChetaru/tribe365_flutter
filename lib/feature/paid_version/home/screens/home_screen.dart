@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tribe365_new/feature/paid_version/home/screens/amazing_award_your_list_screen.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
@@ -212,20 +213,25 @@ class HomeScreenState extends State<HomeScreen> {
                                     right: -30,
                                     top: 15,
                                     bottom: -10,
-                                    child: Container(
-                                      width: 100,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        '0',
-                                        style: TextStyle(
-                                          color: ColorResources.mainColor,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
+                                    child: InkWell(
+                                      onTap: (){
+                                        route(context, AmazingAwardYourListScreen());
+                                      },
+                                      child: Container(
+                                        width: 100,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          '0',
+                                          style: TextStyle(
+                                            color: ColorResources.mainColor,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
                                     ),

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tribe365_new/feature/paid_version/home/screens/home_screen.dart';
+import 'package:tribe365_new/feature/paid_version/know/screens/know_screen.dart';
+import 'package:tribe365_new/feature/paid_version/offloading/screens/offloading_screen.dart';
+import 'package:tribe365_new/feature/paid_version/profile/screens/profile_screen.dart';
+import 'package:tribe365_new/feature/paid_version/risk/screens/risk_screen.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../main.dart';
 import '../../../../utill/images.dart';
@@ -26,10 +30,10 @@ class PaidDashboardScreenState extends State<PaidDashboardScreen> {
     super.initState();
     _screens = [
       NavigationModel(name: getTranslated('home', context).toString(), icon: Images.imgNavHomeGray, screen: const HomeScreen()),
-      NavigationModel(name: getTranslated('know', context).toString(), icon: Images.imgNavKnowGray, screen: const HomeScreen()),
-      NavigationModel(name: getTranslated('offloading', context).toString(), icon: Images.imgNavOffloadingGray, screen: const HomeScreen()),
-      NavigationModel(name: getTranslated('risk', context).toString(), icon: Images.imgNavRiskRed, screen: const HomeScreen()),
-      NavigationModel(name: getTranslated('profile', context).toString(), icon: Images.imgNavProfileGray, screen: const HomeScreen()),
+      NavigationModel(name: getTranslated('know', context).toString(), icon: Images.imgNavKnowGray, screen: const KnowScreen()),
+      NavigationModel(name: getTranslated('offloading', context).toString(), icon: Images.imgNavOffloadingGray, screen: const OffLoadingScreen()),
+      NavigationModel(name: getTranslated('risk', context).toString(), icon: Images.imgNavRiskRed, screen: const RiskScreen()),
+      NavigationModel(name: getTranslated('profile', context).toString(), icon: Images.imgNavProfileGray, screen: const ProfileScreen()),
     ];
   }
 
