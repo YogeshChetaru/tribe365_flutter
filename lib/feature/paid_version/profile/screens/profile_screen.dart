@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:tribe365_new/feature/paid_version/profile/screens/profile_actions_screen.dart';
+import 'package:tribe365_new/feature/paid_version/profile/screens/profile_edit_profile_screen.dart';
+import 'package:tribe365_new/feature/paid_version/profile/screens/profile_setting_screen.dart';
+import 'package:tribe365_new/feature/paid_version/profile/screens/profile_support_screen.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
+import 'package:tribe365_new/utill/custom_route.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
+import '../../../free_version/free_dashboard/widgets/changepassworddialog.dart';
+import '../../../free_version/free_dashboard/widgets/logoutdialog.dart';
+import '../../../free_version/free_dashboard/widgets/worknotdialog.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -70,7 +78,9 @@ class ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       Spacer(),
-                      Image.asset(Images.imgSettingRed,width: 30,height: 30,)
+                      InkWell(onTap: (){
+                        routePush(context, ProfileSettingScreen());
+                      },child: Image.asset(Images.imgSettingRed,width: 30,height: 30,))
                     ],
                   ),
                 ),
@@ -290,17 +300,21 @@ class ProfileScreenState extends State<ProfileScreen> {
                           padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                           child: Column(
                             children: [
-                              Row(
-                                children: [
-                                  Image.asset(Images.imgEditProfile,width: 50,height: 50,),
-                                  SizedBox(width: 10,),
-                                  Expanded(child: Text(getTranslated("edit_profile", context)!,style: TextStyle(
-                                    fontSize: Dimensions.sp16,
-                                    color: ColorResources.black,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Roboto',
-                                  ),))
-                                ],
+                              InkWell(
+                                onTap: (){
+                                  routePush(context, ProfileEditProfileScreen());
+                                },child: Row(
+                                  children: [
+                                    Image.asset(Images.imgEditProfile,width: 50,height: 50,),
+                                    SizedBox(width: 10,),
+                                    Expanded(child: Text(getTranslated("edit_profile", context)!,style: TextStyle(
+                                      fontSize: Dimensions.sp16,
+                                      color: ColorResources.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Roboto',
+                                    ),))
+                                  ],
+                                ),
                               ),
                               Container(
                                 margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -308,17 +322,21 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 height: 0.5,
                                 color: ColorResources.color9a9a9a,
                               ),
-                              Row(
-                                children: [
-                                  Image.asset(Images.imgActionRed,width: 50,height: 50,),
-                                  SizedBox(width: 10,),
-                                  Expanded(child: Text(getTranslated("actions", context)!,style: TextStyle(
-                                    fontSize: Dimensions.sp16,
-                                    color: ColorResources.black,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Roboto',
-                                  ),))
-                                ],
+                              InkWell(
+                                onTap: (){
+                                  routePush(context, ProfileActionsScreen());
+                                },child: Row(
+                                  children: [
+                                    Image.asset(Images.imgActionRed,width: 50,height: 50,),
+                                    SizedBox(width: 10,),
+                                    Expanded(child: Text(getTranslated("actions", context)!,style: TextStyle(
+                                      fontSize: Dimensions.sp16,
+                                      color: ColorResources.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Roboto',
+                                    ),))
+                                  ],
+                                ),
                               ),
                               Container(
                                 margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -344,17 +362,21 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 height: 0.5,
                                 color: ColorResources.color9a9a9a,
                               ),
-                              Row(
-                                children: [
-                                  Image.asset(Images.imgSupportProfile,width: 50,height: 50,),
-                                  SizedBox(width: 10,),
-                                  Expanded(child: Text(getTranslated("support", context)!,style: TextStyle(
-                                    fontSize: Dimensions.sp16,
-                                    color: ColorResources.black,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Roboto',
-                                  ),))
-                                ],
+                              InkWell(
+                                onTap: (){
+                                  routePush(context, ProfileSupportScreen());
+                                },child: Row(
+                                  children: [
+                                    Image.asset(Images.imgSupportProfile,width: 50,height: 50,),
+                                    SizedBox(width: 10,),
+                                    Expanded(child: Text(getTranslated("support", context)!,style: TextStyle(
+                                      fontSize: Dimensions.sp16,
+                                      color: ColorResources.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Roboto',
+                                    ),))
+                                  ],
+                                ),
                               ),
                               Container(
                                 margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -362,17 +384,22 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 height: 0.5,
                                 color: ColorResources.color9a9a9a,
                               ),
-                              Row(
-                                children: [
-                                  Image.asset(Images.imgTakeLeaveRed,width: 50,height: 50,),
-                                  SizedBox(width: 10,),
-                                  Expanded(child: Text(getTranslated("take_a_leave", context)!,style: TextStyle(
-                                    fontSize: Dimensions.sp16,
-                                    color: ColorResources.black,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Roboto',
-                                  ),))
-                                ],
+                              InkWell(
+                                onTap: (){
+                                  customShowDialog(context,WorkNotDialog());
+                                },
+                                child: Row(
+                                  children: [
+                                    Image.asset(Images.imgTakeLeaveRed,width: 50,height: 50,),
+                                    SizedBox(width: 10,),
+                                    Expanded(child: Text(getTranslated("take_a_leave", context)!,style: TextStyle(
+                                      fontSize: Dimensions.sp16,
+                                      color: ColorResources.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Roboto',
+                                    ),))
+                                  ],
+                                ),
                               ),
                               Container(
                                 margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -398,17 +425,21 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 height: 0.5,
                                 color: ColorResources.color9a9a9a,
                               ),
-                              Row(
-                                children: [
-                                  Image.asset(Images.imgChangePasswordRedProfile,width: 50,height: 50,),
-                                  SizedBox(width: 10,),
-                                  Expanded(child: Text(getTranslated("change_password", context)!,style: TextStyle(
-                                    fontSize: Dimensions.sp16,
-                                    color: ColorResources.black,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Roboto',
-                                  ),))
-                                ],
+                              InkWell(
+                                onTap: (){
+                                  customShowDialog(context,ChangePasswordDialog());
+                                },child: Row(
+                                  children: [
+                                    Image.asset(Images.imgChangePasswordRedProfile,width: 50,height: 50,),
+                                    SizedBox(width: 10,),
+                                    Expanded(child: Text(getTranslated("change_password", context)!,style: TextStyle(
+                                      fontSize: Dimensions.sp16,
+                                      color: ColorResources.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Roboto',
+                                    ),))
+                                  ],
+                                ),
                               ),
                               Container(
                                 margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -416,17 +447,22 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 height: 0.5,
                                 color: ColorResources.color9a9a9a,
                               ),
-                              Row(
-                                children: [
-                                  Image.asset(Images.imgLogoutProfile,width: 50,height: 50,),
-                                  SizedBox(width: 10,),
-                                  Expanded(child: Text(getTranslated("logout", context)!,style: TextStyle(
-                                    fontSize: Dimensions.sp16,
-                                    color: ColorResources.black,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Roboto',
-                                  ),))
-                                ],
+                              InkWell(
+                                onTap: (){
+                                  customShowDialog(context,LogoutDialog());
+                                },
+                                child: Row(
+                                  children: [
+                                    Image.asset(Images.imgLogoutProfile,width: 50,height: 50,),
+                                    SizedBox(width: 10,),
+                                    Expanded(child: Text(getTranslated("logout", context)!,style: TextStyle(
+                                      fontSize: Dimensions.sp16,
+                                      color: ColorResources.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Roboto',
+                                    ),))
+                                  ],
+                                ),
                               ),
                             ],
                           ),

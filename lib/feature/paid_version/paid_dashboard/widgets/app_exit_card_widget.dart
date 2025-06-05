@@ -20,7 +20,7 @@ class AppExitCard extends StatelessWidget {
           Container(
             width: 40,
             height: 4,
-            decoration: BoxDecoration(color: Theme.of(context).hintColor.withOpacity(.5), borderRadius: BorderRadius.circular(20)),
+            decoration: BoxDecoration(color: Theme.of(context).hintColor.withAlpha(128), borderRadius: BorderRadius.circular(20)),
           ),
           const SizedBox(
             height: 30,

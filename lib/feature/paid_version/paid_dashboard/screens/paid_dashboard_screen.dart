@@ -62,7 +62,7 @@ class PaidDashboardScreenState extends State<PaidDashboardScreen> {
                 height: 68,
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
-                  boxShadow: [BoxShadow(offset: const Offset(1, 1), blurRadius: 2, spreadRadius: 1, color: Theme.of(context).primaryColor.withOpacity(.125))],
+                  boxShadow: [BoxShadow(offset: const Offset(1, 1), blurRadius: 2, spreadRadius: 1, color: Theme.of(context).primaryColor.withAlpha(32))],
                 ),
                 child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: _getBottomWidget())),
           )),

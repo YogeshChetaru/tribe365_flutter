@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tribe365_new/feature/free_version/free_dashboard/screens/free_dashboard_screen.dart';
 import 'package:tribe365_new/feature/login/controllers/login_controller.dart';
 import 'package:tribe365_new/feature/login/screens/forgot_password_screen.dart';
 import 'package:tribe365_new/localization/language_constrants.dart';
+import 'package:tribe365_new/utill/custom_route.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 import 'package:tribe365_new/utill/images.dart';
-import '../../../main.dart';
 import '../../../utill/color_resources.dart';
 import '../../paid_version/paid_dashboard/screens/paid_dashboard_screen.dart';
 import '../widgets/helpdialog.dart';
@@ -36,28 +37,6 @@ class LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _route() {
-    Navigator.of(Get.context!).push(
-      PageRouteBuilder(
-        transitionDuration: Duration(milliseconds: 500),
-        reverseTransitionDuration: Duration(milliseconds: 500),
-        pageBuilder: (context, animation, secondaryAnimation) =>
-        const ForgotPasswordScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0); // from right
-          const end = Offset.zero;
-          const curve = Curves.easeInOut;
-          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          final offsetAnimation = animation.drive(tween);
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
-        },
-      ),
-    );
-
-  }
 
   void showAnimatedDialog(BuildContext context) {
     Navigator.of(context).push(
@@ -368,30 +347,16 @@ class LoginScreenState extends State<LoginScreen> {
                         SizedBox(height: 20,),
                         InkWell(
                           onTap: (){
-                            Navigator.of(Get.context!).pushAndRemoveUntil(
-                              PageRouteBuilder(
-                                transitionDuration: const Duration(milliseconds: 500),
-                                reverseTransitionDuration: const Duration(milliseconds: 500),
-                                pageBuilder: (context, animation, secondaryAnimation) =>
-                                const PaidDashboardScreen(),
-                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                  const begin = Offset(1.0, 0.0); // Slide in from right
-                                  const end = Offset.zero;
-                                  const curve = Curves.easeInOut;
-
-                                  final tween =
-                                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                  final offsetAnimation = animation.drive(tween);
-
-                                  return SlideTransition(
-                                    position: offsetAnimation,
-                                    child: child,
-                                  );
-                                },
-                              ),
-                                  (route) => false,
-                            );
-
+                            String userName = usernameController.text.toString().trim();
+                            if(userName=="1"){
+                              routePushAndRemoveUntil(context, FreeDashboardScreen());
+                            }
+                            else if(userName=="2"){
+                              routePushAndRemoveUntil(context, PaidDashboardScreen());
+                            }
+                            else{
+                              routePushAndRemoveUntil(context, PaidDashboardScreen());
+                            }
 
                           },child: Container(
                             width: MediaQuery.sizeOf(context).width,
@@ -413,7 +378,7 @@ class LoginScreenState extends State<LoginScreen> {
                         SizedBox(height: 12,),
                         InkWell(
                           onTap: (){
-                            _route();
+                            routePush(context, ForgotPasswordScreen());
                           },
                           child: Text(getTranslated("forgot_password", context)!,
                             textAlign: TextAlign.center,

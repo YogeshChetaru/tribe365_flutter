@@ -46,4 +46,12 @@ class Images {
   static const String imgTakeLeaveRed = 'assets/images/img_take_leave_red.png';
   static const String imgSupportProfile = 'assets/images/img_support_profile.png';
   static const String imgDemoStudiesProfile = 'assets/images/img_demo_studies_profile.png';
+  static const String imgEditRed = 'assets/images/img_edit_red.png';
+  static const String imgActionCircleUncheckGreen = 'assets/images/img_action_circle_uncheck_green.png';
+  static const String imgActionCircleUncheckYellow = 'assets/images/img_action_circle_uncheck_yellow.png';
+  static const String imgActionCircleUncheckRed = 'assets/images/img_action_circle_uncheck_red.png';
+  static const String imgActionCircleCheckYellow = 'assets/images/img_action_circle_check_yellow.png';
+  static const String imgActionCircleCheckGreen = 'assets/images/img_action_circle_check_green.png';
+  static const String imgActionCircleCheckRed = 'assets/images/img_action_circle_check_red.png';
+  static const String imgCommentRed = 'assets/images/img_comment_red.png';
 }

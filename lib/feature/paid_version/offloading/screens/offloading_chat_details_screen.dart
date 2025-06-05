@@ -113,8 +113,8 @@ class OffLoadingChatDetailsScreenState extends State<OffLoadingChatDetailsScreen
                 Expanded(flex: 1,child: Container(
                   width: MediaQuery.sizeOf(context).width,
                   decoration: BoxDecoration(
-                    color: ColorResources.color808080.withOpacity(0.2),
-                    border: Border.all(color: ColorResources.color808080.withOpacity(0.2), width: 0.5),
+                    color: ColorResources.color808080.withAlpha(51),
+                    border: Border.all(color: ColorResources.color808080.withAlpha(51), width: 0.5),
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10),
                         bottomLeft: Radius.circular(10),

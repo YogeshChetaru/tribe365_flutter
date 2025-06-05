@@ -5,6 +5,7 @@ import 'package:tribe365_new/feature/free_version/free_dashboard/widgets/buildda
 import 'package:tribe365_new/feature/free_version/free_dashboard/widgets/calendaritemwidget.dart';
 import 'package:tribe365_new/feature/free_version/hptm/screens/hptm_screen.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
+import 'package:tribe365_new/utill/custom_route.dart';
 import 'package:tribe365_new/utill/images.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
@@ -205,7 +206,7 @@ class FreeDashboardScreenState extends State<FreeDashboardScreen> {
                               InkWell(
                                 onTap: () {
                                   dashboardProvider.updateDate();
-                                  showDialog(context,WorkNotDialog());
+                                  customShowDialog(context,WorkNotDialog());
                                 },
                                 child: Text(
                                   getTranslated("i_m_not_in_work_today", context)!,
@@ -496,31 +497,6 @@ class FreeDashboardScreenState extends State<FreeDashboardScreen> {
     );
   }
 
-  void showDialog(BuildContext context, Widget workNotDialog) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        opaque: false,
-        barrierDismissible: true,
-        barrierColor: Colors.black54,
-        pageBuilder: (context, animation, secondaryAnimation) {
-          return  Center(child: workNotDialog);
-        },
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0); // From right
-          const end = Offset(-1.0, 0.0); // To left when popping
-          final tween = Tween(begin: begin, end: Offset.zero);
-          final reverseTween = Tween(begin: Offset.zero, end: end);
-          final offsetAnimation = animation.drive(tween);
-          final reverseOffset = secondaryAnimation.drive(reverseTween);
-
-          return SlideTransition(
-            position: animation.status == AnimationStatus.reverse ? reverseOffset : offsetAnimation,
-            child: child,
-          );
-        },
-      ),
-    );
-  }
 
   void showBottomMenuSheet(BuildContext context) {
     showModalBottomSheet(
@@ -550,7 +526,7 @@ class FreeDashboardScreenState extends State<FreeDashboardScreen> {
               InkWell(
                 onTap: (){
                   Navigator.of(context).pop();
-                  showDialog(context,ChangePasswordDialog());
+                  customShowDialog(context,ChangePasswordDialog());
                 },child: Text(
                   textAlign: TextAlign.center,
                   getTranslated("change_password", context)!,
@@ -566,7 +542,7 @@ class FreeDashboardScreenState extends State<FreeDashboardScreen> {
               InkWell(
                 onTap: (){
                   Navigator.of(context).pop();
-                  showDialog(context,LogoutDialog());
+                  customShowDialog(context,LogoutDialog());
                 },
                 child: Text(
                   textAlign: TextAlign.center,

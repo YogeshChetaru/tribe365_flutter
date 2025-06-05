@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribe365_new/feature/paid_version/home/screens/amazing_award_your_list_screen.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
+import 'package:tribe365_new/utill/custom_route.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
@@ -101,7 +102,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   ),
                                   InkWell(
                                     onTap: (){
-                                      route(context, NotificationScreen());
+                                      routePush(context, NotificationScreen());
                                     },child: Container(
                                       margin: const EdgeInsets.only(top: 5),
                                       width: 40,
@@ -215,7 +216,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     bottom: -10,
                                     child: InkWell(
                                       onTap: (){
-                                        route(context, AmazingAwardYourListScreen());
+                                        routePush(context, AmazingAwardYourListScreen());
                                       },
                                       child: Container(
                                         width: 100,
@@ -435,7 +436,7 @@ class HomeScreenState extends State<HomeScreen> {
                   alignment: Alignment.centerRight,
                   child: InkWell(
                     onTap: () {
-                      route(context, HPTMScreen());
+                      routePush(context, HPTMScreen());
                     },
                     child: Container(
                       padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
@@ -467,26 +468,7 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void route(BuildContext context, Widget screen) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: Duration(milliseconds: 500),
-        reverseTransitionDuration: Duration(milliseconds: 500),
-        pageBuilder: (context, animation, secondaryAnimation) => screen,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0); // from right
-          const end = Offset.zero;
-          const curve = Curves.easeInOut;
-          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          final offsetAnimation = animation.drive(tween);
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
-        },
-      ),
-    );
-  }
+
 
   void showDialog(BuildContext context, Widget workNotDialog) {
     Navigator.of(context).push(
