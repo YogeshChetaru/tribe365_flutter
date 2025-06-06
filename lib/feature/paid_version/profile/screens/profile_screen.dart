@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:tribe365_new/feature/paid_version/profile/screens/motivation_questions_screen.dart';
+import 'package:tribe365_new/feature/paid_version/profile/screens/personality_type_screen.dart';
 import 'package:tribe365_new/feature/paid_version/profile/screens/profile_actions_screen.dart';
+import 'package:tribe365_new/feature/paid_version/profile/screens/profile_demo_studies_screen.dart';
 import 'package:tribe365_new/feature/paid_version/profile/screens/profile_edit_profile_screen.dart';
 import 'package:tribe365_new/feature/paid_version/profile/screens/profile_setting_screen.dart';
 import 'package:tribe365_new/feature/paid_version/profile/screens/profile_support_screen.dart';
+import 'package:tribe365_new/feature/paid_version/profile/screens/team_role_screen.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/custom_route.dart';
 import '../../../../localization/language_constrants.dart';
@@ -156,15 +160,19 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   fontFamily: 'Roboto',
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
-                                child: Text(
-                                  getTranslated("you_have_not_submit_your_answers_yet", context)!,
-                                  style: TextStyle(
-                                    fontSize: Dimensions.sp12,
-                                    color: ColorResources.black, // Replace with ColorResources.mainColor
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'Roboto',
+                              InkWell(
+                                onTap: (){
+                                  routePush(context, PersonalityTypeScreen());
+                                },child: Container(
+                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                  child: Text(
+                                    getTranslated("you_have_not_submit_your_answers_yet", context)!,
+                                    style: TextStyle(
+                                      fontSize: Dimensions.sp12,
+                                      color: ColorResources.black, // Replace with ColorResources.mainColor
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Roboto',
+                                    ),
                                   ),
                                 ),
                               ),
@@ -204,15 +212,19 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   fontFamily: 'Roboto',
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
-                                child: Text(
-                                  getTranslated("you_have_not_submit_your_answers_yet", context)!,
-                                  style: TextStyle(
-                                    fontSize: Dimensions.sp12,
-                                    color: ColorResources.black, // Replace with ColorResources.mainColor
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'Roboto',
+                              InkWell(
+                                onTap: (){
+                                  routePush(context,TeamRoleScreen());
+                                },child: Container(
+                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                  child: Text(
+                                    getTranslated("you_have_not_submit_your_answers_yet", context)!,
+                                    style: TextStyle(
+                                      fontSize: Dimensions.sp12,
+                                      color: ColorResources.black, // Replace with ColorResources.mainColor
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Roboto',
+                                    ),
                                   ),
                                 ),
                               ),
@@ -252,15 +264,19 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   fontFamily: 'Roboto',
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
-                                child: Text(
-                                  getTranslated("you_have_not_submit_your_answers_yet", context)!,
-                                  style: TextStyle(
-                                    fontSize: Dimensions.sp12,
-                                    color: ColorResources.black, // Replace with ColorResources.mainColor
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'Roboto',
+                              InkWell(
+                                onTap: (){
+                                  routePush(context, MotivationQuestionsScreen());
+                                },child: Container(
+                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                  child: Text(
+                                    getTranslated("you_have_not_submit_your_answers_yet", context)!,
+                                    style: TextStyle(
+                                      fontSize: Dimensions.sp12,
+                                      color: ColorResources.black, // Replace with ColorResources.mainColor
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Roboto',
+                                    ),
                                   ),
                                 ),
                               ),
@@ -344,17 +360,21 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 height: 0.5,
                                 color: ColorResources.color9a9a9a,
                               ),
-                              Row(
-                                children: [
-                                  Image.asset(Images.imgDemoStudiesProfile,width: 50,height: 50,),
-                                  SizedBox(width: 10,),
-                                  Expanded(child: Text(getTranslated("demo_studies", context)!,style: TextStyle(
-                                    fontSize: Dimensions.sp16,
-                                    color: ColorResources.black,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Roboto',
-                                  ),))
-                                ],
+                              InkWell(
+                                onTap: (){
+                                  routePush(context, ProfileDemoStudiesScreen());
+                                },child: Row(
+                                  children: [
+                                    Image.asset(Images.imgDemoStudiesProfile,width: 50,height: 50,),
+                                    SizedBox(width: 10,),
+                                    Expanded(child: Text(getTranslated("demo_studies", context)!,style: TextStyle(
+                                      fontSize: Dimensions.sp16,
+                                      color: ColorResources.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Roboto',
+                                    ),))
+                                  ],
+                                ),
                               ),
                               Container(
                                 margin: EdgeInsets.fromLTRB(0, 10, 0, 10),

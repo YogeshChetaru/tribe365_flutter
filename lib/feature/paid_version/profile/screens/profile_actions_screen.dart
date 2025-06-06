@@ -361,7 +361,7 @@ class ProfileActionsScreenState extends State<ProfileActionsScreen> {
           );
         }),
       ),
-      floatingActionButton: RawMaterialButton(
+      floatingActionButton: RawMaterialButton (
         onPressed: () {
           routePush(context, ProfileAddActionsScreen());
         },

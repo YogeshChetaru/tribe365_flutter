@@ -129,7 +129,22 @@
   "ok": "Ok",
   "edit": "Edit",
   "responsible": "Responsible",
-  "type_your_comment": "Type your comment"
+  "type_your_comment": "Type your comment",
+  "personality_type_questions": "Personality Type Questions",
+  "next_question": "Next Question",
+  "what_i_enjoy_contributing_to_my_team_10_points_across_8_statements": "What I enjoy contributing to my team (10 points across 8 statements)",
+  "total": "Total",
+  "motivation_question": "Motivation Question",
+  "in_each_section_select_the_most_applicable_sentence_to_your_organisation": "In each section, select the most applicable sentence to your organisation",
+  "month": "Month",
+  "values_and_belief": "Values and Belief",
+  "percentage": "Percentage",
+  "organisation_culture_structure": "Organisation Culture Structure",
+  "summary_of_organisation_culture_structure": "Summary of Organisation Culture Structure",
+  "REDO_REVIEW_QUESTIONNAIRE": "REDO/REVIEW QUESTIONNAIRE",
+  "culture_structure": "Culture Structure",
+  "diagnostics": "Diagnostics",
+  "tribeometer": "Tribeometer"
 
 
 

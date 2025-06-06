@@ -475,21 +475,23 @@ class FreeDashboardScreenState extends State<FreeDashboardScreen> {
           );
         }),
       ),
-      bottomNavigationBar: InkWell(
-        onTap: (){
-          route(context);
-        },child: Container(
-          height: 50,
-          alignment: Alignment.center,
-          width: MediaQuery.sizeOf(context).width,
-          color: ColorResources.mainColor,
-          child: Text(
-            getTranslated("hptm", context)!,
-            style: const TextStyle(
-              fontSize: Dimensions.sp18,
-              color: ColorResources.white,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Roboto',
+      bottomNavigationBar: SafeArea(
+        child: InkWell(
+          onTap: (){
+            route(context);
+          },child: Container(
+            height: 50,
+            alignment: Alignment.center,
+            width: MediaQuery.sizeOf(context).width,
+            color: ColorResources.mainColor,
+            child: Text(
+              getTranslated("hptm", context)!,
+              style: const TextStyle(
+                fontSize: Dimensions.sp18,
+                color: ColorResources.white,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Roboto',
+              ),
             ),
           ),
         ),
@@ -506,78 +508,80 @@ class FreeDashboardScreenState extends State<FreeDashboardScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[400],
-                    borderRadius: BorderRadius.circular(10),
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              InkWell(
-                onTap: (){
-                  Navigator.of(context).pop();
-                  customShowDialog(context,ChangePasswordDialog());
-                },child: Text(
-                  textAlign: TextAlign.center,
-                  getTranslated("change_password", context)!,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                    fontFamily: "Roboto",
+                const SizedBox(height: 20),
+                InkWell(
+                  onTap: (){
+                    Navigator.of(context).pop();
+                    customShowDialog(context,ChangePasswordDialog());
+                  },child: Text(
+                    textAlign: TextAlign.center,
+                    getTranslated("change_password", context)!,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontFamily: "Roboto",
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              InkWell(
-                onTap: (){
-                  Navigator.of(context).pop();
-                  customShowDialog(context,LogoutDialog());
-                },
-                child: Text(
-                  textAlign: TextAlign.center,
-                  getTranslated("logout", context)!,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                    fontFamily: "Roboto",
+                const SizedBox(height: 20),
+                InkWell(
+                  onTap: (){
+                    Navigator.of(context).pop();
+                    customShowDialog(context,LogoutDialog());
+                  },
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    getTranslated("logout", context)!,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontFamily: "Roboto",
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: MediaQuery.sizeOf(context).width,
-                height: 0.5,
-                color: ColorResources.color9a9a9a,
-              ),
-              const SizedBox(height: 20),
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  textAlign: TextAlign.center,
-                  getTranslated("cancel", context)!,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: ColorResources.mainColor,
-                    fontFamily: "Roboto",
+                const SizedBox(height: 20),
+                Container(
+                  width: MediaQuery.sizeOf(context).width,
+                  height: 0.5,
+                  color: ColorResources.color9a9a9a,
+                ),
+                const SizedBox(height: 20),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    getTranslated("cancel", context)!,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: ColorResources.mainColor,
+                      fontFamily: "Roboto",
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

@@ -37,7 +37,6 @@ class LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-
   void showAnimatedDialog(BuildContext context) {
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -49,16 +48,14 @@ class LoginScreenState extends State<LoginScreen> {
         },
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0); // From right
-          const end = Offset(-1.0, 0.0);  // To left when popping
+          const end = Offset(-1.0, 0.0); // To left when popping
           final tween = Tween(begin: begin, end: Offset.zero);
           final reverseTween = Tween(begin: Offset.zero, end: end);
           final offsetAnimation = animation.drive(tween);
           final reverseOffset = secondaryAnimation.drive(reverseTween);
 
           return SlideTransition(
-            position: animation.status == AnimationStatus.reverse
-                ? reverseOffset
-                : offsetAnimation,
+            position: animation.status == AnimationStatus.reverse ? reverseOffset : offsetAnimation,
             child: child,
           );
         },
@@ -144,7 +141,7 @@ class LoginScreenState extends State<LoginScreen> {
                               child: InkWell(
                                 onTap: () {
                                   loginProvider.updateIsLogin("newUser");
-                                  confPasswordController.text="";
+                                  confPasswordController.text = "";
                                 },
                                 child: Container(
                                   alignment: Alignment.center,
@@ -282,126 +279,134 @@ class LoginScreenState extends State<LoginScreen> {
                             ],
                           ),
                         ),
-                       if(loginProvider.isLoginUser!=true) SizedBox(
-                          height: 15,
-                        ),
-                        if(loginProvider.isLoginUser!=true)
-                        Container(
-                          width: MediaQuery.sizeOf(context).width,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: ColorResources.color9a9a9a, width: 0.5),
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                        if (loginProvider.isLoginUser != true)
+                          SizedBox(
+                            height: 15,
                           ),
-                          padding: EdgeInsets.fromLTRB(15, 0, 5, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                Images.imgPasswordBlack,
-                                width: 18,
-                                height: 18,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: TextField(
-                                  textAlign: TextAlign.start,
-                                  controller: confPasswordController,
-                                  focusNode: confPasswordFocus,
-                                  obscureText: loginProvider.obscureConfPasswordText,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  textInputAction:TextInputAction.done,
-                                  style: const TextStyle(
-                                    fontSize: Dimensions.sp14,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'Roboto',
-                                  ),
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.zero,
-                                    border: InputBorder.none,
-                                    hintText: getTranslated("confirm_password", context),
-                                    hintStyle: const TextStyle(
-                                      color: ColorResources.color9a9a9a,
+                        if (loginProvider.isLoginUser != true)
+                          Container(
+                            width: MediaQuery.sizeOf(context).width,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: ColorResources.color9a9a9a, width: 0.5),
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                            ),
+                            padding: EdgeInsets.fromLTRB(15, 0, 5, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  Images.imgPasswordBlack,
+                                  width: 18,
+                                  height: 18,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: TextField(
+                                    textAlign: TextAlign.start,
+                                    controller: confPasswordController,
+                                    focusNode: confPasswordFocus,
+                                    obscureText: loginProvider.obscureConfPasswordText,
+                                    keyboardType: TextInputType.visiblePassword,
+                                    textInputAction: TextInputAction.done,
+                                    style: const TextStyle(
                                       fontSize: Dimensions.sp14,
+                                      color: Colors.black,
                                       fontWeight: FontWeight.w400,
                                       fontFamily: 'Roboto',
                                     ),
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.zero,
+                                      border: InputBorder.none,
+                                      hintText: getTranslated("confirm_password", context),
+                                      hintStyle: const TextStyle(
+                                        color: ColorResources.color9a9a9a,
+                                        fontSize: Dimensions.sp14,
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: 'Roboto',
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  loginProvider.obscureConfPasswordText ? Icons.visibility_off : Icons.visibility,
-                                  color: Colors.grey,
-                                ),
-                                onPressed: loginProvider.toggleConfPasswordVisibility,
-                              )
-                            ],
+                                IconButton(
+                                  icon: Icon(
+                                    loginProvider.obscureConfPasswordText ? Icons.visibility_off : Icons.visibility,
+                                    color: Colors.grey,
+                                  ),
+                                  onPressed: loginProvider.toggleConfPasswordVisibility,
+                                )
+                              ],
+                            ),
                           ),
+                        SizedBox(
+                          height: 20,
                         ),
-
-                        SizedBox(height: 20,),
                         InkWell(
-                          onTap: (){
+                          onTap: () {
                             String userName = usernameController.text.toString().trim();
-                            if(userName=="1"){
+                            if (userName == "1") {
                               routePushAndRemoveUntil(context, FreeDashboardScreen());
-                            }
-                            else if(userName=="2"){
+                            } else if (userName == "2") {
                               routePushAndRemoveUntil(context, PaidDashboardScreen());
                             }
-                            else{
-                              routePushAndRemoveUntil(context, PaidDashboardScreen());
-                            }
-
-                          },child: Container(
+                          },
+                          child: Container(
                             width: MediaQuery.sizeOf(context).width,
                             padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
                             decoration: BoxDecoration(
                               color: ColorResources.mainColor,
                               borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
                             ),
-                            child: Text(getTranslated("sign_in", context)!,
-                            textAlign: TextAlign.center,
+                            child: Text(
+                              getTranslated("sign_in", context)!,
+                              textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: Dimensions.sp16,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
                                 fontFamily: 'Roboto',
-                              ),),
+                              ),
+                            ),
                           ),
                         ),
-                        SizedBox(height: 12,),
+                        SizedBox(
+                          height: 12,
+                        ),
                         InkWell(
-                          onTap: (){
+                          onTap: () {
                             routePush(context, ForgotPasswordScreen());
                           },
-                          child: Text(getTranslated("forgot_password", context)!,
+                          child: Text(
+                            getTranslated("forgot_password", context)!,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: Dimensions.sp12,
                               color: Colors.black,
                               fontWeight: FontWeight.w500,
                               fontFamily: 'Roboto',
-                            ),),
+                            ),
+                          ),
                         ),
-                        SizedBox(height: 12,),
+                        SizedBox(
+                          height: 12,
+                        ),
                         InkWell(
-                          onTap: (){
+                          onTap: () {
                             showAnimatedDialog(context);
                           },
-                          child: Text(getTranslated("help", context)!,
+                          child: Text(
+                            getTranslated("help", context)!,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: Dimensions.sp12,
                               color: Colors.black,
                               fontWeight: FontWeight.w500,
                               fontFamily: 'Roboto',
-                            ),),
+                            ),
+                          ),
                         )
                       ],
                     );
