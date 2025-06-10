@@ -24,11 +24,21 @@ dependencies:
   http: ^1.4.0
   shared_preferences: ^2.5.3
   intl: ^0.20.2
-  fluttertoast: ^8.2.12
+  fluttertoast: ^8.2.3
   url_launcher: ^6.3.1
   package_info_plus: ^8.3.0
   flutter_slidable: ^4.0.0
   fl_chart: ^1.0.0
+  firebase_core: ^3.1.1
+  firebase_messaging: ^15.0.2
+  flutter_local_notifications: ^19.2.1
+  path_provider: ^2.1.2
+  firebase_crashlytics: ^4.0.2
+  firebase_analytics: ^11.1.0
+  firebase_auth: ^5.1.1
+  permission_handler: ^11.1.0
+  device_info_plus: ^11.4.0
+  image_picker: ^1.0.7
 
 dev_dependencies:
   flutter_test:

@@ -1,11 +1,15 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tribe365_new/main.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 import '../../../../common/basewidget/custom_header_back_widget.dart';
+import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/images.dart';
 import '../controllers/profile_controller.dart';
+import '../widgets/popupinfo.dart';
 
 class ProfileEditProfileScreen extends StatefulWidget {
   const ProfileEditProfileScreen({super.key});
@@ -16,6 +20,27 @@ class ProfileEditProfileScreen extends StatefulWidget {
 
 class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
+  ProfileController profileController = Provider.of<ProfileController>(Get.context!, listen: false);
+  File? file;
+
+  getImageData(File? data) {
+    setState(() {
+      file = data;
+    });
+  }
+
+  @override
+  void initState() {
+    profileController.controllerInit(false);
+    profileController.setUserDataController(false);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    profileController.disposeControllers();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,30 +66,41 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const SizedBox(height: 20),
-                        Stack(
-                          alignment: Alignment.bottomRight,
-                          children: [
-                            Container(
-                              width: 80,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: ColorResources.mainColor, width: 1),
-                                image: DecorationImage(
-                                  image: AssetImage(Images.imgUserCircleGray),
+                        InkWell(
+                          onTap: () {
+                            showImgPickerCustomDialog(context, getImageData);
+                          },
+                          child: Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: ColorResources.mainColor, width: 1),
+                                  image: DecorationImage(
+                                    image: file != null
+                                        ? FileImage(
+                                            file!,
+                                          )
+                                        : profileProvider.userProfileData!.profileImage == ""
+                                            ? AssetImage(Images.imgUserCircleGray) as ImageProvider
+                                            : NetworkImage(profileProvider.userProfileData!.profileImage!) as ImageProvider,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Positioned(
-                              bottom: 1,
-                              right: 2,
-                              child: Image.asset(
-                                Images.imgEditRed,
-                                width: 24,
-                                height: 24,
+                              Positioned(
+                                bottom: 1,
+                                right: 2,
+                                child: Image.asset(
+                                  Images.imgEditRed,
+                                  width: 24,
+                                  height: 24,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         Container(
                           margin: EdgeInsets.fromLTRB(15, 30, 15, 0),
@@ -101,6 +137,8 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
                                       style: TextStyle(fontSize: Dimensions.sp14, color: ColorResources.color9a9a9a, fontWeight: FontWeight.w500, fontFamily: 'roboto'),
                                     ),
                                     TextField(
+                                      controller: profileProvider.fNameController,
+                                      focusNode: profileProvider.fNameFocus,
                                       textAlign: TextAlign.start,
                                       keyboardType: TextInputType.text,
                                       textInputAction: TextInputAction.next,
@@ -135,6 +173,8 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
                                       style: TextStyle(fontSize: Dimensions.sp14, color: ColorResources.color9a9a9a, fontWeight: FontWeight.w500, fontFamily: 'roboto'),
                                     ),
                                     TextField(
+                                      controller: profileProvider.lNameController,
+                                      focusNode: profileProvider.lNameFocus,
                                       textAlign: TextAlign.start,
                                       keyboardType: TextInputType.text,
                                       textInputAction: TextInputAction.next,
@@ -169,6 +209,8 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
                                       style: TextStyle(fontSize: Dimensions.sp14, color: ColorResources.color9a9a9a, fontWeight: FontWeight.w500, fontFamily: 'roboto'),
                                     ),
                                     TextField(
+                                      controller: profileProvider.officeNameController,
+                                      focusNode: profileProvider.officeNameFocus,
                                       enabled: false,
                                       textAlign: TextAlign.start,
                                       keyboardType: TextInputType.text,
@@ -204,6 +246,8 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
                                       style: TextStyle(fontSize: Dimensions.sp14, color: ColorResources.color9a9a9a, fontWeight: FontWeight.w500, fontFamily: 'roboto'),
                                     ),
                                     TextField(
+                                      controller: profileProvider.deptNameController,
+                                      focusNode: profileProvider.deptNameFocus,
                                       enabled: false,
                                       textAlign: TextAlign.start,
                                       keyboardType: TextInputType.text,
@@ -239,6 +283,8 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
                                       style: TextStyle(fontSize: Dimensions.sp14, color: ColorResources.color9a9a9a, fontWeight: FontWeight.w500, fontFamily: 'roboto'),
                                     ),
                                     TextField(
+                                      controller: profileProvider.contactController,
+                                      focusNode: profileProvider.contactFocus,
                                       textAlign: TextAlign.start,
                                       keyboardType: TextInputType.number,
                                       textInputAction: TextInputAction.done,
@@ -277,9 +323,9 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
                                     child: Transform.scale(
                                       scale: 0.8,
                                       child: Switch(
-                                        value:profileProvider.isPushNotification,
+                                        value: profileProvider.userDataPrivateStatus,
                                         onChanged: (value) {
-                                          profileProvider.updateIsPushNotification(value);
+                                          profileProvider.updateUserDataPrivateStatus(value);
                                         },
                                         activeColor: Colors.white,
                                         activeTrackColor: ColorResources.mainColor,
@@ -296,25 +342,66 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        InkWell(
-                          onTap: (){
-
-                          },child: Container(
-                          padding: EdgeInsets.fromLTRB(40, 8, 40, 7),
-                          decoration: BoxDecoration(
-                            color: ColorResources.mainColor,
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                          ),
-                          child: Text(getTranslated("save", context)!,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: Dimensions.sp16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Roboto',
-                            ),),
-                        ),
-                        ),
+                        profileProvider.isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              )
+                            : InkWell(
+                                onTap: () async {
+                                  String fName = profileProvider.fNameController.text;
+                                  String lName = profileProvider.lNameController.text;
+                                  String contact = profileProvider.contactController.text;
+                                  if (fName.isEmpty) {
+                                    showCustomSnackBar(getTranslated('please_enter_first_name', context), context, isError: true);
+                                  } else if (lName.isEmpty) {
+                                    showCustomSnackBar(getTranslated('please_enter_last_name', context), context, isError: true);
+                                  } else if (contact.isEmpty) {
+                                    showCustomSnackBar(getTranslated('please_enter_contact', context), context, isError: true);
+                                  } else {
+                                    String personalData = "0";
+                                    if(profileProvider.userDataPrivateStatus==true){
+                                      personalData = "1";
+                                    }
+                                    else{
+                                      personalData = "0";
+                                    }
+                                    String? base64Image = "";
+                                    if(file!=null){
+                                      base64Image = await profileProvider.imageToBase64(file!.path);
+                                    }
+                                    await profileProvider.updateUserInfo(
+                                        profileProvider.userProfileData!.departmentId!.toString(),
+                                        personalData,
+                                        profileProvider.userProfileData!.officeId!.toString(),
+                                        base64Image!,
+                                        profileProvider.contactController.text.trim().toString(),
+                                        profileProvider.userProfileData!.email!.toString(),
+                                        profileProvider.lNameController.text.trim().toString(),
+                                        profileProvider.fNameController.text.trim().toString());
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.fromLTRB(40, 8, 40, 7),
+                                  decoration: BoxDecoration(
+                                    color: ColorResources.mainColor,
+                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                  ),
+                                  child: Text(
+                                    getTranslated("save", context)!,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: Dimensions.sp16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Roboto',
+                                    ),
+                                  ),
+                                ),
+                              ),
                       ],
                     ),
                   ),
@@ -324,6 +411,48 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
           );
         }),
       ),
+    );
+  }
+
+  void showImgPickerCustomDialog(BuildContext context, Function getImageData) {
+    showGeneralDialog(
+      context: context,
+      barrierLabel: "Barrier",
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (_, __, ___) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Center(
+            child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: ColorResources.white.withOpacity(0.01),
+                ),
+                height: 180,
+                child: PopupInfo(
+                  getImageDatasub: getImageData,
+                )),
+          ),
+        );
+      },
+      transitionBuilder: (_, anim, __, child) {
+        Tween<Offset> tween;
+        if (anim.status == AnimationStatus.reverse) {
+          tween = Tween(begin: const Offset(-1, 0), end: Offset.zero);
+        } else {
+          tween = Tween(begin: const Offset(1, 0), end: Offset.zero);
+        }
+        return SlideTransition(
+          position: tween.animate(anim),
+          child: FadeTransition(
+            opacity: anim,
+            child: child,
+          ),
+        );
+      },
     );
   }
 }

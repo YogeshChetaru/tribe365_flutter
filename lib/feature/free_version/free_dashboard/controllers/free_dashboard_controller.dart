@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
+import '../../../../data/model/api_response.dart';
+import '../../../../helper/api_checker.dart';
+import '../../../../main.dart';
+import '../../../login/domain/models/login_response_model.dart';
 import '../domain/services/free_dashboard_service_interface.dart';
 
 class FreeDashboardController extends ChangeNotifier {
@@ -7,8 +12,12 @@ class FreeDashboardController extends ChangeNotifier {
 
   FreeDashboardController({required this.freeDashboardServiceInterface});
 
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
   List<String> officeList = ['Office A', 'Office B', 'Office C'];
-  List<String> monthList = ['Jan', 'Feb', 'Mar','Apr'];
+  List<String> monthList = ['Jan', 'Feb', 'Mar', 'Apr'];
   List<String> departmentList = ['Department A', 'Department B', 'Department C'];
   List<String> yearList = ['2021', '2022', '2023', '2024', '2025'];
   final List<String> calendarItems = List.generate(10, (index) => 'Day ${index + 1}');
@@ -17,7 +26,7 @@ class FreeDashboardController extends ChangeNotifier {
   String monthSelectedValue = 'Jan';
   String departmentSelectedValue = 'Department A';
   String yearSelectedValue = '2021';
-  String selectedStartDate = DateFormat('dd-MMM-yyyy').format( DateTime.now());
+  String selectedStartDate = DateFormat('dd-MMM-yyyy').format(DateTime.now());
   String selectedEndDate = "";
   final DateFormat dateDDMMMYYYYFormatter = DateFormat('dd-MMM-yyyy');
 
@@ -40,7 +49,7 @@ class FreeDashboardController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void pickStartDate(BuildContext context,String type) async {
+  void pickStartDate(BuildContext context, String type) async {
     DateTime? date = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -49,11 +58,10 @@ class FreeDashboardController extends ChangeNotifier {
     );
 
     if (date != null) {
-      if(type=="start"){
+      if (type == "start") {
         selectedStartDate = DateFormat('dd-MMM-yyyy').format(date);
-      }
-      else if(type=="end")  {
-        selectedEndDate = DateFormat('dd-MMM-yyyy').format(date) ;
+      } else if (type == "end") {
+        selectedEndDate = DateFormat('dd-MMM-yyyy').format(date);
       }
       notifyListeners();
     }
@@ -133,10 +141,32 @@ class FreeDashboardController extends ChangeNotifier {
   }
 
   void updateDate() {
-     selectedStartDate = DateFormat('dd-MMM-yyyy').format( DateTime.now());
-     selectedEndDate = "";
-   notifyListeners();
+    selectedStartDate = DateFormat('dd-MMM-yyyy').format(DateTime.now());
+    selectedEndDate = "";
+    notifyListeners();
   }
 
+  //API calling
 
+  Future<void> changePassword(String currentPassword, String newPassword) async {
+    _isLoading = true;
+    notifyListeners();
+    Map<String, dynamic> requestData = {
+      "currentPassword": currentPassword,
+      "newPassword": newPassword,
+    };
+
+    ApiResponse apiResponse = await freeDashboardServiceInterface!.changePassword(requestData);
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+
+      showCustomSnackBar(map["message"], Get.context!, isError: false);
+      Navigator.of(Get.context!).pop();
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
 }

@@ -1,5 +1,13 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../data/datasource/remote/dio/dio_client.dart';
+import '../../../../../data/datasource/remote/exception/api_error_handler.dart';
+import '../../../../../data/model/api_response.dart';
+import '../../../../../utill/app_constants.dart';
 import 'profile_repository_interface.dart';
 
 class ProfileRepository implements ProfileRepositoryInterface {
@@ -7,6 +15,38 @@ class ProfileRepository implements ProfileRepositoryInterface {
   final SharedPreferences? sharedPreferences;
 
   ProfileRepository({required this.dioClient, required this.sharedPreferences});
+
+
+  @override
+  Future<ApiResponse> updateProfile(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.updateUserProfileUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewUserProfileData() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.userProfileUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+  @override
+  String getUserToken() {
+    return sharedPreferences!.getString(AppConstants.userLoginToken) ?? "";
+  }
+
+
 
   @override
   Future add(value) {

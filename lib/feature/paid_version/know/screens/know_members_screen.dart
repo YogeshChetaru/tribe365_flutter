@@ -162,7 +162,7 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                   fontFamily: 'Roboto',
                                 ),
                               ),
-                              /*Container(
+                              Container(
                                 margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                 child: Text(
                                   getTranslated("you_have_not_submit_your_answers_yet", context)!,
@@ -173,8 +173,8 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                     fontFamily: 'Roboto',
                                   ),
                                 ),
-                              ),*/
-                              Container(
+                              ),
+                             /* Container(
                                 margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                                 child: GridView.builder(
                                   itemCount: 4,
@@ -190,7 +190,7 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                     return PersonalityTypeItem();
                                   },
                                 ),
-                              ),
+                              ),*/
                             ],
                           ),
                         ),

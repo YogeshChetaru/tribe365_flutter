@@ -4,6 +4,7 @@ import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 
+import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
 import '../../../../utill/images.dart';
 import '../controllers/free_dashboard_controller.dart';
 
@@ -32,6 +33,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
     confPasswordFocus.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<FreeDashboardController>(builder: (context, dashboardProvider, _) {
@@ -81,7 +83,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                         focusNode: currentPasswordFocus,
                         obscureText: dashboardProvider.obscureCurrentPasswordText,
                         keyboardType: TextInputType.visiblePassword,
-                        textInputAction:TextInputAction.next,
+                        textInputAction: TextInputAction.next,
                         style: const TextStyle(
                           fontSize: Dimensions.sp14,
                           color: Colors.black,
@@ -141,7 +143,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                         focusNode: newPasswordFocus,
                         obscureText: dashboardProvider.obscureNewPasswordText,
                         keyboardType: TextInputType.visiblePassword,
-                        textInputAction:TextInputAction.next,
+                        textInputAction: TextInputAction.next,
                         style: const TextStyle(
                           fontSize: Dimensions.sp14,
                           color: Colors.black,
@@ -201,7 +203,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                         focusNode: confPasswordFocus,
                         obscureText: dashboardProvider.obscureConfPasswordText,
                         keyboardType: TextInputType.visiblePassword,
-                        textInputAction:TextInputAction.done,
+                        textInputAction: TextInputAction.done,
                         style: const TextStyle(
                           fontSize: Dimensions.sp14,
                           color: Colors.black,
@@ -234,29 +236,63 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
               SizedBox(
                 height: 25,
               ),
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  width: 120,
-                  padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
-                  decoration: BoxDecoration(
-                    color: ColorResources.mainColor,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                  ),
-                  child: Text(
-                    getTranslated("save", context)!,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: Dimensions.sp16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Roboto',
+              dashboardProvider.isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    )
+                  : InkWell(
+                      onTap: () {
+                        String currentPassword = currentPasswordController.text.toString().trim();
+                        String newPassword = newPasswordController.text.toString().trim();
+                        String confPassword = confPasswordController.text.toString().trim();
+                        if(currentPassword.isEmpty){
+                          showCustomSnackBar(getTranslated('please_enter_password', context), context,isError: true);
+                        }
+                        else if(currentPassword.length < 6){
+                          showCustomSnackBar(getTranslated('password_must_be_at_least_6_characters_long', context), context,isError: true);
+                        }
+                        else if(newPassword.isEmpty){
+                          showCustomSnackBar(getTranslated('please_enter_new_password', context), context,isError: true);
+                        }
+                        else if(newPassword.length < 6){
+                          showCustomSnackBar(getTranslated('new_password_must_be_at_least_6_characters_long', context), context,isError: true);
+                        }
+                       else if(confPassword.isEmpty){
+                          showCustomSnackBar(getTranslated('please_enter_confirm_password', context), context,isError: true);
+                        }
+                        else if(confPassword.length < 6){
+                          showCustomSnackBar(getTranslated('confirm_password_must_be_at_least_6_characters_long', context), context,isError: true);
+                        }
+                        else if(newPassword!= confPassword){
+                          showCustomSnackBar(getTranslated('new_password_and_confirm_password_do_not_match', context), context, isError: true);
+                        }
+                        else{
+                          dashboardProvider.changePassword(currentPassword,newPassword);
+                        }
+                      },
+                      child: Container(
+                        width: 120,
+                        padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+                        decoration: BoxDecoration(
+                          color: ColorResources.mainColor,
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                        ),
+                        child: Text(
+                          getTranslated("save", context)!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: Dimensions.sp16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Roboto',
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
               SizedBox(
                 height: 20,
               ),

@@ -35,6 +35,7 @@ class PaidDashboardScreenState extends State<PaidDashboardScreen> {
       NavigationModel(name: getTranslated('risk', context).toString(), icon: Images.imgNavRiskRed, screen: const RiskScreen()),
       NavigationModel(name: getTranslated('profile', context).toString(), icon: Images.imgNavProfileGray, screen: const ProfileScreen()),
     ];
+
   }
 
   @override
@@ -82,4 +83,6 @@ class PaidDashboardScreenState extends State<PaidDashboardScreen> {
     }
     return list;
   }
+
+
 }

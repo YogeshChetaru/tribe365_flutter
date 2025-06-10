@@ -1,5 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../data/datasource/remote/dio/dio_client.dart';
+import '../../../../../data/datasource/remote/exception/api_error_handler.dart';
+import '../../../../../data/model/api_response.dart';
+import '../../../../../utill/app_constants.dart';
 import 'home_repository_interface.dart';
 
 class HomeRepository implements HomeRepositoryInterface {
@@ -8,6 +12,18 @@ class HomeRepository implements HomeRepositoryInterface {
 
   HomeRepository({required this.dioClient, required this.sharedPreferences});
 
+  @override
+  Future<ApiResponse> getHomeData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getHomePageDetailsUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
   @override
   Future add(value) {
     // TODO: implement add

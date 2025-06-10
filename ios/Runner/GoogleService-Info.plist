@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>314211936403-28v7iofg7in1v18ao9a89et25r80lk51.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAq7GL7V3RuHF_XH9ypdzjOVASh23936hs</string>
+	<key>GCM_SENDER_ID</key>
+	<string>314211936403</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.chetaru.tribe365New</string>
+	<key>PROJECT_ID</key>
+	<string>tribe365-55f2c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>tribe365-55f2c.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:314211936403:ios:bb496c7a0acb6257b00566</string>
+	<key>DATABASE_URL</key>
+	<string>https://tribe365-55f2c.firebaseio.com</string>
+</dict>
+</plist>

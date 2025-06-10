@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tribe365_new/feature/free_version/free_dashboard/screens/free_dashboard_screen.dart';
 import 'package:tribe365_new/feature/login/controllers/login_controller.dart';
 import 'package:tribe365_new/feature/login/screens/forgot_password_screen.dart';
 import 'package:tribe365_new/localization/language_constrants.dart';
+import 'package:tribe365_new/utill/app_constants.dart';
 import 'package:tribe365_new/utill/custom_route.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 import 'package:tribe365_new/utill/images.dart';
+import '../../../common/basewidget/show_custom_snakbar_widget.dart';
 import '../../../utill/color_resources.dart';
-import '../../paid_version/paid_dashboard/screens/paid_dashboard_screen.dart';
 import '../widgets/helpdialog.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -35,6 +35,11 @@ class LoginScreenState extends State<LoginScreen> {
     passwordFocus.dispose();
     confPasswordFocus.dispose();
     super.dispose();
+  }
+  @override
+  void initState() {
+   Provider.of<LoginController>(context,listen: false).getDeviceToken();
+    super.initState();
   }
 
   void showAnimatedDialog(BuildContext context) {
@@ -344,13 +349,54 @@ class LoginScreenState extends State<LoginScreen> {
                         SizedBox(
                           height: 20,
                         ),
-                        InkWell(
+                        loginProvider.isLoading
+                            ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        )
+                            :  InkWell(
                           onTap: () {
                             String userName = usernameController.text.toString().trim();
-                            if (userName == "1") {
-                              routePushAndRemoveUntil(context, FreeDashboardScreen());
-                            } else if (userName == "2") {
-                              routePushAndRemoveUntil(context, PaidDashboardScreen());
+                            String password = passwordController.text.toString().trim();
+                            String confPassword = confPasswordController.text.toString().trim();
+                            if(userName.isEmpty){
+                              showCustomSnackBar(getTranslated('please_enter_user_name', context), context,isError: true);
+                            }
+                            else if(!AppConstants.emailRegex.hasMatch(userName)){
+                              showCustomSnackBar(getTranslated('please_enter_valid_user_name', context), context,isError: true);
+                            }
+                            else if(password.isEmpty){
+                              showCustomSnackBar(getTranslated('please_enter_password', context), context,isError: true);
+                            }
+                            else if(password.length < 6){
+                              showCustomSnackBar(getTranslated('password_must_be_at_least_6_characters_long', context), context,isError: true);
+                            }
+                            else{
+
+                              if (loginProvider.isLoginUser == true) {
+                                //login api calling here
+                                loginProvider.getDeviceToken();
+                                loginProvider.login(userName, password);
+                              }
+                              else {
+                                if(confPassword.isEmpty){
+                                  showCustomSnackBar(getTranslated('please_enter_confirm_password', context), context,isError: true);
+                                }
+                                else if(confPassword.length<6){
+                                  showCustomSnackBar(getTranslated('confirm_password_must_be_at_least_6_characters_long', context), context,isError: true);
+                                }
+                                else if(password!= confPassword){
+                                  showCustomSnackBar(getTranslated('password_and_confirm_password_do_not_match', context), context, isError: true);
+                                }
+                                else{
+                                  // signup api calling here
+                                  loginProvider.getDeviceToken();
+                                  loginProvider.signup(userName, password);
+                                }
+                              }
                             }
                           },
                           child: Container(

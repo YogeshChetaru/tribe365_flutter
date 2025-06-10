@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tribe365_new/feature/login/controllers/login_controller.dart';
 import 'package:tribe365_new/feature/login/screens/login_screen.dart';
 import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
@@ -17,7 +18,7 @@ class _LogoutDialogState extends State<LogoutDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FreeDashboardController>(builder: (context, dashboardProvider, _) {
+    return Consumer<LoginController>(builder: (context, loginProvider, _) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
@@ -82,31 +83,22 @@ class _LogoutDialogState extends State<LogoutDialog> {
                      ),
                    ),
                    SizedBox(width: 20,),
-                   InkWell(
-                     onTap: (){
-                       Navigator.of(context).pushAndRemoveUntil(
-                         PageRouteBuilder(
-                           transitionDuration: const Duration(milliseconds: 500),
-                           reverseTransitionDuration: const Duration(milliseconds: 500),
-                           pageBuilder: (context, animation, secondaryAnimation) =>
-                           const LoginScreen(),
-                           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                             const begin = Offset(1.0, 0.0); // Slide in from right
-                             const end = Offset.zero;
-                             const curve = Curves.easeInOut;
-
-                             final tween =
-                             Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                             final offsetAnimation = animation.drive(tween);
-
-                             return SlideTransition(
-                               position: offsetAnimation,
-                               child: child,
-                             );
-                           },
+                   loginProvider.isLoading
+                       ? Center(
+                     child: SizedBox(
+                       height: 20,
+                       width: 20,
+                       child: CircularProgressIndicator(
+                         strokeWidth: 2,
+                         valueColor: AlwaysStoppedAnimation<Color>(
+                           Theme.of(context).primaryColor,
                          ),
-                             (route) => false,
-                       );
+                       ),
+                     ),
+                   )
+                       :  InkWell(
+                     onTap: (){
+                       loginProvider.logout();
                      },child: Text(
                        textAlign: TextAlign.end,
                        getTranslated("logout", context)!,

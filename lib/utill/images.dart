@@ -54,4 +54,10 @@ class Images {
   static const String imgActionCircleCheckGreen = 'assets/images/img_action_circle_check_green.png';
   static const String imgActionCircleCheckRed = 'assets/images/img_action_circle_check_red.png';
   static const String imgCommentRed = 'assets/images/img_comment_red.png';
+  static const String cancelled = 'assets/images/cancelled.png';
+  static const String photoGreen = 'assets/images/photo_green.png';
+  static const String cameraGreen = 'assets/images/camera_green.png';
+  static const String imgLowRed = 'assets/images/img_low_red.png';
+  static const String imgMediumYellow = 'assets/images/img_medium_yellow.png';
+  static const String imgSmileGreenBig = 'assets/images/img_smile_green_big.png';
 }

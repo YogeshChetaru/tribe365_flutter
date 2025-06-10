@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 
+import '../../profile/domain/models/viewuserprofileresponse.dart';
+
 class PersonalityTypeItem extends StatelessWidget {
 
-
-  const PersonalityTypeItem({super.key});
+  final PersonalityTypeDetailsArr? personalityTypeDetails;
+  const PersonalityTypeItem({super.key,required this.personalityTypeDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class PersonalityTypeItem extends StatelessWidget {
           Container(
             margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
             child: Text(
-              "Ext",
+              personalityTypeDetails!.cateName!,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: Dimensions.sp14,
@@ -39,7 +41,7 @@ class PersonalityTypeItem extends StatelessWidget {
           Container(
             margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
             child: Text(
-              "4",
+              personalityTypeDetails!.score!.toString(),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: Dimensions.sp14,

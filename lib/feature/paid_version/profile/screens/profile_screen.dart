@@ -17,6 +17,7 @@ import '../../../../utill/images.dart';
 import '../../../free_version/free_dashboard/widgets/changepassworddialog.dart';
 import '../../../free_version/free_dashboard/widgets/logoutdialog.dart';
 import '../../../free_version/free_dashboard/widgets/worknotdialog.dart';
+import '../../know/widgets/personalitytypeitem.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -34,6 +35,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _loadVersion();
+
   }
 
   void _loadVersion() async {
@@ -77,7 +79,9 @@ class ProfileScreenState extends State<ProfileScreen> {
                           shape: BoxShape.circle,
                           border: Border.all(color: ColorResources.mainColor, width: 1),
                           image: DecorationImage(
-                            image: AssetImage(Images.imgTribe365),
+                            image: profileProvider.userProfileData!.organisationLogo == null
+                                ? AssetImage(Images.imgTribe365) as ImageProvider
+                                : NetworkImage(profileProvider.userProfileData!.organisationLogo!) as ImageProvider,
                           ),
                         ),
                       ),
@@ -109,13 +113,15 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   shape: BoxShape.circle,
                                   border: Border.all(color: ColorResources.mainColor, width: 1),
                                   image: DecorationImage(
-                                    image: AssetImage(Images.imgUserCircleGray),
+                                    image: profileProvider.userProfileData!.profileImage == ""
+                                        ? AssetImage(Images.imgUserCircleGray) as ImageProvider
+                                        : NetworkImage(profileProvider.userProfileData!.profileImage!) as ImageProvider,
                                   ),
                                 ),
                               ),
                               SizedBox(height: 5,),
                               Text(
-                                "Yogesh ",
+                                "${ profileProvider.userProfileData!.name} ${ profileProvider.userProfileData!.lastName}",
                                 style: const TextStyle(
                                   fontSize: Dimensions.sp14,
                                   color: ColorResources.mainColor,
@@ -124,7 +130,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               Text(
-                                "Yogesh@text.com",
+                                profileProvider.userProfileData!.email!,
                                 style: const TextStyle(
                                   fontSize: Dimensions.sp12,
                                   color: ColorResources.color9a9a9a,
@@ -133,7 +139,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               Text(
-                                "Apps, Demo Office",
+                                "${profileProvider.userProfileData!.departmentName!}, ${profileProvider.userProfileData!.officeName!}",
                                 style: const TextStyle(
                                   fontSize: Dimensions.sp12,
                                   color: ColorResources.black,
@@ -155,18 +161,18 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 getTranslated("personality_type", context)!,
                                 style: TextStyle(
                                   fontSize: Dimensions.sp14,
-                                  color: ColorResources.black, // Replace with ColorResources.mainColor
+                                  color: ColorResources.black,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'Roboto',
                                 ),
                               ),
-                              InkWell(
+                              profileProvider.userProfileData!.personalityTypeDetailsArr==null? InkWell(
                                 onTap: (){
                                   routePush(context, PersonalityTypeScreen());
                                 },child: Container(
                                   margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                   child: Text(
-                                    getTranslated("you_have_not_submit_your_answers_yet", context)!,
+                                    profileProvider.userProfileData!.personalityTypeDetails!,
                                     style: TextStyle(
                                       fontSize: Dimensions.sp12,
                                       color: ColorResources.black, // Replace with ColorResources.mainColor
@@ -175,11 +181,11 @@ class ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ),
                                 ),
-                              ),
-                              /*Container(
+                              ):
+                              Container(
                                 margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                                 child: GridView.builder(
-                                  itemCount: 4,
+                                  itemCount: profileProvider.userProfileData!.personalityTypeDetailsArr!.length,
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
                                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -189,10 +195,10 @@ class ProfileScreenState extends State<ProfileScreen> {
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return PersonalityTypeItem();
+                                    return PersonalityTypeItem(personalityTypeDetails: profileProvider.userProfileData!.personalityTypeDetailsArr![index]);
                                   },
                                 ),
-                              ),*/
+                              ),
                             ],
                           ),
                         ),
@@ -218,7 +224,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 },child: Container(
                                   margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                   child: Text(
-                                    getTranslated("you_have_not_submit_your_answers_yet", context)!,
+                                    profileProvider.userProfileData!.cotTeamRoleMap!,
                                     style: TextStyle(
                                       fontSize: Dimensions.sp12,
                                       color: ColorResources.black, // Replace with ColorResources.mainColor
@@ -270,7 +276,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 },child: Container(
                                   margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                   child: Text(
-                                    getTranslated("you_have_not_submit_your_answers_yet", context)!,
+                                    profileProvider.userProfileData!.sotMotivationDetail!,
                                     style: TextStyle(
                                       fontSize: Dimensions.sp12,
                                       color: ColorResources.black, // Replace with ColorResources.mainColor
@@ -512,5 +518,6 @@ class ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
 
 }

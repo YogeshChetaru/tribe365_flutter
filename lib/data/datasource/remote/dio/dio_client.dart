@@ -49,8 +49,6 @@ class DioClient {
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': token != null ? 'Bearer $token' : '',
       'Accept': 'application/json',
-      "Accept-Encoding": 'gzip, deflate, br',
-      AppConstants.langKey: countryCode == 'US' ? 'en' : countryCode!.toLowerCase(),
     };
   }
 
