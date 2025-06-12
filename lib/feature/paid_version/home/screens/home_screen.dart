@@ -314,6 +314,7 @@ class HomeScreenState extends State<HomeScreen> {
                                                     context,
                                                     ShowSentimentDialog(
                                                       mood: "sad",
+                                                      date: "",
                                                     ));
                                               },
                                               child: Padding(

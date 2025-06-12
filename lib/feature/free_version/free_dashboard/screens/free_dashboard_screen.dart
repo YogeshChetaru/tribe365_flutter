@@ -10,6 +10,8 @@ import 'package:tribe365_new/utill/images.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../paid_version/profile/controllers/profile_controller.dart';
+import '../domain/models/get_office_list_response.dart';
+import '../domain/models/view_department_list_response.dart';
 import '../widgets/changepassworddialog.dart';
 import '../widgets/logoutdialog.dart';
 import '../widgets/worknotdialog.dart';
@@ -22,15 +24,32 @@ class FreeDashboardScreen extends StatefulWidget {
 }
 
 class FreeDashboardScreenState extends State<FreeDashboardScreen> {
+  void updateNotificationStatus() {}
+
+  void dialogAbsent() {}
+
+  void dialogEnableAbsent() {}
+
   @override
   void initState() {
     super.initState();
+    //---------setup---------
+    updateNotificationStatus();
+    //----------
     loadAPI();
   }
 
   void loadAPI() {
     final ProfileController profileController = Provider.of<ProfileController>(context, listen: false);
-    profileController.viewUserProfile();
+    final FreeDashboardController freeController = Provider.of<FreeDashboardController>(context, listen: false);
+    profileController.viewUserProfile().then((onValue) {
+      freeController.updateOrgID(profileController.userProfileData!.orgId);
+      freeController.updateUserID(profileController.userProfileData!.id);
+      freeController.viewDepartmentList();
+      freeController.viewOfficeList();
+      freeController.initYears(DateTime.now().year);
+      freeController.getHomePageDetails();
+    });
   }
 
   @override
@@ -146,101 +165,124 @@ class FreeDashboardScreenState extends State<FreeDashboardScreen> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Container(
-                            margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
-                            width: MediaQuery.sizeOf(context).width,
-                            padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: ColorResources.mainColor,
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  getTranslated("how_s_things_at_work_today", context)!,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: Dimensions.sp16,
-                                    color: ColorResources.white,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Roboto',
+                          dashboardProvider.isAbsentVisible == true
+                              ? Container(
+                                  margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                                  width: MediaQuery.sizeOf(context).width,
+                                  padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: ColorResources.mainColor,
+                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: SizedBox(
-                                        width: 55,
-                                        height: 55,
-                                        child: Image.asset(
-                                          Images.imgHappyEmoji, // Ensure this path matches your asset setup
-                                          fit: BoxFit.contain,
-                                        ),
+                                  child: Center(
+                                    child: Text(
+                                      getTranslated("out_of_office_mode_enabled", context)!,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18.0,
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: SizedBox(
-                                        width: 55,
-                                        height: 55,
-                                        child: Image.asset(
-                                          Images.imgNeutralEmoji, // Ensure this path matches your asset setup
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: SizedBox(
-                                        width: 55,
-                                        height: 55,
-                                        child: Image.asset(
-                                          Images.imgSadEmoji, // Ensure this path matches your asset setup
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    dashboardProvider.updateDate();
-                                    customShowDialog(context, WorkNotDialog());
-                                  },
-                                  child: Text(
-                                    getTranslated("i_m_not_in_work_today", context)!,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: Dimensions.sp16,
-                                      color: ColorResources.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'Roboto',
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: ColorResources.white,
                                     ),
                                   ),
+                                )
+                              : Container(
+                                  margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                                  width: MediaQuery.sizeOf(context).width,
+                                  padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: ColorResources.mainColor,
+                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        getTranslated("how_s_things_at_work_today", context)!,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          fontSize: Dimensions.sp16,
+                                          color: ColorResources.white,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'Roboto',
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: SizedBox(
+                                              width: 55,
+                                              height: 55,
+                                              child: Image.asset(
+                                                Images.imgHappyEmoji, // Ensure this path matches your asset setup
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: SizedBox(
+                                              width: 55,
+                                              height: 55,
+                                              child: Image.asset(
+                                                Images.imgNeutralEmoji, // Ensure this path matches your asset setup
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: SizedBox(
+                                              width: 55,
+                                              height: 55,
+                                              child: Image.asset(
+                                                Images.imgSadEmoji, // Ensure this path matches your asset setup
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          dashboardProvider.updateDate();
+                                          customShowDialog(context, WorkNotDialog());
+                                        },
+                                        child: Text(
+                                          getTranslated("i_m_not_in_work_today", context)!,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: Dimensions.sp16,
+                                            color: ColorResources.white,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'Roboto',
+                                            decoration: TextDecoration.underline,
+                                            decorationColor: ColorResources.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ],
-                            ),
-                          ),
                           Container(
                             margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
                             width: MediaQuery.sizeOf(context).width,
@@ -248,238 +290,257 @@ class FreeDashboardScreenState extends State<FreeDashboardScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  getTranslated("sentiment_index", context)!,
-                                  style: const TextStyle(
-                                    fontSize: Dimensions.sp18,
-                                    color: ColorResources.black,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Roboto',
-                                  ),
-                                ),
+                                dashboardProvider.officesList == null
+                                    ? SizedBox.fromSize()
+                                    : Text(
+                                        getTranslated("sentiment_index", context)!,
+                                        style: const TextStyle(
+                                          fontSize: Dimensions.sp18,
+                                          color: ColorResources.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'Roboto',
+                                        ),
+                                      ),
                                 SizedBox(
                                   height: 10,
                                 ),
                                 Row(
                                   children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                        color: Colors.white,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.end,
-                                          children: [
-                                            DropdownButtonHideUnderline(
-                                              child: DropdownButton<String>(
-                                                isExpanded: true,
-                                                value: dashboardProvider.officeSelectedValue,
-                                                items: dashboardProvider.officeList.map((String value) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: value,
-                                                    child: Text(
-                                                      value,
-                                                      style: const TextStyle(
-                                                        fontSize: Dimensions.sp14,
-                                                        color: ColorResources.black,
-                                                        fontWeight: FontWeight.w500,
-                                                        fontFamily: 'Roboto',
-                                                      ),
+                                    dashboardProvider.officesList == null
+                                        ? SizedBox.fromSize()
+                                        : Expanded(
+                                            flex: 1,
+                                            child: Container(
+                                              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                              color: Colors.white,
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: [
+                                                  DropdownButtonHideUnderline(
+                                                    child: DropdownButton<Offices>(
+                                                      isExpanded: true,
+                                                      value: dashboardProvider.officeSelectedValue,
+                                                      items: dashboardProvider.officesList!.map((Offices value) {
+                                                        return DropdownMenuItem<Offices>(
+                                                          value: value,
+                                                          child: Text(
+                                                            value.office.toString(),
+                                                            style: const TextStyle(
+                                                              fontSize: Dimensions.sp14,
+                                                              color: ColorResources.black,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontFamily: 'Roboto',
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (Offices? newValue) {
+                                                        dashboardProvider.updateOfficeSelectedValue(newValue);
+                                                      },
                                                     ),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (String? newValue) {
-                                                  dashboardProvider.updateOfficeSelectedValue(newValue);
-                                                },
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                          ),
                                     SizedBox(
                                       width: 15,
                                     ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Container(
-                                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                        color: Colors.white,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                    dashboardProvider.departmentList == null
+                                        ? SizedBox.fromSize()
+                                        : Expanded(
+                                            flex: 1,
+                                            child: Container(
+                                              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                              color: Colors.white,
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: [
+                                                  DropdownButtonHideUnderline(
+                                                    child: DropdownButton<ViewDepartmentListData>(
+                                                      isExpanded: true,
+                                                      value: dashboardProvider.departmentSelectedValue,
+                                                      items: dashboardProvider.departmentList!.map((ViewDepartmentListData value) {
+                                                        return DropdownMenuItem<ViewDepartmentListData>(
+                                                          value: value,
+                                                          child: Text(
+                                                            value.department!,
+                                                            style: const TextStyle(
+                                                              fontSize: Dimensions.sp14,
+                                                              color: ColorResources.black,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontFamily: 'Roboto',
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (ViewDepartmentListData? newValue) {
+                                                        dashboardProvider.updateDepartmentSelectedValue(newValue);
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                dashboardProvider.yearList.isEmpty
+                                    ? SizedBox.shrink()
+                                    : Container(
+                                        width: MediaQuery.sizeOf(context).width,
+                                        color: ColorResources.white,
+                                        child: Row(
                                           children: [
-                                            DropdownButtonHideUnderline(
-                                              child: DropdownButton<String>(
-                                                isExpanded: true,
-                                                value: dashboardProvider.departmentSelectedValue,
-                                                items: dashboardProvider.departmentList.map((String value) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: value,
-                                                    child: Text(
-                                                      value,
-                                                      style: const TextStyle(
-                                                        fontSize: Dimensions.sp14,
-                                                        color: ColorResources.black,
-                                                        fontWeight: FontWeight.w500,
-                                                        fontFamily: 'Roboto',
+                                            Expanded(
+                                              flex: 1,
+                                              child: Container(
+                                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                                color: Colors.white,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    DropdownButtonHideUnderline(
+                                                      child: DropdownButton<String>(
+                                                        isExpanded: true,
+                                                        value: dashboardProvider.monthSelectedValue,
+                                                        items: dashboardProvider.monthList.map((String value) {
+                                                          return DropdownMenuItem<String>(
+                                                            value: value,
+                                                            child: Text(
+                                                              value,
+                                                              style: const TextStyle(
+                                                                fontSize: Dimensions.sp14,
+                                                                color: ColorResources.black,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontFamily: 'Roboto',
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                        onChanged: (String? newValue) {
+                                                          dashboardProvider.updateMonthSelectedValue(newValue);
+                                                        },
                                                       ),
                                                     ),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (String? newValue) {
-                                                  dashboardProvider.updateDepartmentSelectedValue(newValue);
-                                                },
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 30,
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: Container(
+                                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                                color: Colors.white,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    DropdownButtonHideUnderline(
+                                                      child: DropdownButton<int>(
+                                                        isExpanded: true,
+                                                        value: dashboardProvider.yearSelectedValue,
+                                                        items: dashboardProvider.yearList.map((int value) {
+                                                          return DropdownMenuItem<int>(
+                                                            value: value,
+                                                            child: Text(
+                                                              value.toString(),
+                                                              style: const TextStyle(
+                                                                fontSize: Dimensions.sp14,
+                                                                color: ColorResources.black,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontFamily: 'Roboto',
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                        onChanged: (int? newValue) {
+                                                          dashboardProvider.updateYearSelectedValue(newValue);
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
                                 SizedBox(
                                   height: 15,
                                 ),
-                                Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  color: ColorResources.white,
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                          color: Colors.white,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.end,
-                                            children: [
-                                              DropdownButtonHideUnderline(
-                                                child: DropdownButton<String>(
-                                                  isExpanded: true,
-                                                  value: dashboardProvider.monthSelectedValue,
-                                                  items: dashboardProvider.monthList.map((String value) {
-                                                    return DropdownMenuItem<String>(
-                                                      value: value,
-                                                      child: Text(
-                                                        value,
-                                                        style: const TextStyle(
-                                                          fontSize: Dimensions.sp14,
-                                                          color: ColorResources.black,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontFamily: 'Roboto',
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (String? newValue) {
-                                                    dashboardProvider.updateMonthSelectedValue(newValue);
-                                                  },
-                                                ),
-                                              ),
-                                            ],
+                                dashboardProvider.isLoading
+                                    ? Center(
+                                        child: CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                            Theme.of(context).primaryColor,
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 30,
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                          color: Colors.white,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                      )
+                                    : Column(
+                                        children: [
+                                          Row(
                                             children: [
-                                              DropdownButtonHideUnderline(
-                                                child: DropdownButton<String>(
-                                                  isExpanded: true,
-                                                  value: dashboardProvider.yearSelectedValue,
-                                                  items: dashboardProvider.yearList.map((String value) {
-                                                    return DropdownMenuItem<String>(
-                                                      value: value,
-                                                      child: Text(
-                                                        value,
-                                                        style: const TextStyle(
-                                                          fontSize: Dimensions.sp14,
-                                                          color: ColorResources.black,
-                                                          fontWeight: FontWeight.w500,
-                                                          fontFamily: 'Roboto',
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (String? newValue) {
-                                                    dashboardProvider.updateYearSelectedValue(newValue);
-                                                  },
-                                                ),
+                                              BuildDayText(day: getTranslated("sun", context)!, color: ColorResources.mainColor), // colorPrimary
+                                              BuildDayText(
+                                                day: getTranslated("mon", context)!,
+                                                color: Colors.black,
                                               ),
+                                              BuildDayText(
+                                                day: getTranslated("tue", context)!,
+                                                color: Colors.black,
+                                              ),
+                                              BuildDayText(
+                                                day: getTranslated("wed", context)!,
+                                                color: Colors.black,
+                                              ),
+                                              BuildDayText(
+                                                day: getTranslated("thu", context)!,
+                                                color: Colors.black,
+                                              ),
+                                              BuildDayText(
+                                                day: getTranslated("fri", context)!,
+                                                color: Colors.black,
+                                              ),
+                                              BuildDayText(day: getTranslated("sat", context)!, color: ColorResources.mainColor),
                                             ],
                                           ),
-                                        ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          GridView.builder(
+                                            physics: NeverScrollableScrollPhysics(),
+                                            shrinkWrap: true,
+                                            itemCount: dashboardProvider.calendarData.length,
+                                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 7,
+                                              mainAxisSpacing: 2,
+                                              crossAxisSpacing: 2,
+                                              childAspectRatio: 0.8,
+                                            ),
+                                            itemBuilder: (context, index) {
+                                              final data = dashboardProvider.calendarData[index];
+                                              final day = data['day'];
+                                              final mood = data['mood'];
+                                              final isWeekend = index % 7 == 0 || index % 7 == 6;
+                                              final isNotWorkingDay = data['isNotWorkingDay'] ?? false;
+                                              final date = data['date'];
+                                              return CalendarItemWidget(
+                                                day: day,
+                                                isWeekend: isWeekend,
+                                                mood: mood,
+                                                isNotWorkingDay: isNotWorkingDay,
+                                                date: date,
+                                              );
+                                            },
+                                          )
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        BuildDayText(day: getTranslated("sun", context)!, color: ColorResources.mainColor), // colorPrimary
-                                        BuildDayText(
-                                          day: getTranslated("mon", context)!,
-                                          color: Colors.black,
-                                        ),
-                                        BuildDayText(
-                                          day: getTranslated("tue", context)!,
-                                          color: Colors.black,
-                                        ),
-                                        BuildDayText(
-                                          day: getTranslated("wed", context)!,
-                                          color: Colors.black,
-                                        ),
-                                        BuildDayText(
-                                          day: getTranslated("thu", context)!,
-                                          color: Colors.black,
-                                        ),
-                                        BuildDayText(
-                                          day: getTranslated("fri", context)!,
-                                          color: Colors.black,
-                                        ),
-                                        BuildDayText(day: getTranslated("sat", context)!, color: ColorResources.mainColor),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    GridView.builder(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      // disables scrolling
-                                      shrinkWrap: true,
-                                      itemCount: dashboardProvider.calendarData.length,
-                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 7,
-                                        mainAxisSpacing: 2,
-                                        crossAxisSpacing: 2,
-                                        childAspectRatio: 0.8,
-                                      ),
-                                      itemBuilder: (context, index) {
-                                        final data = dashboardProvider.calendarData[index];
-                                        final day = data['day'];
-                                        final mood = data['mood'];
-                                        final isWeekend = index % 7 == 0 || index % 7 == 6;
-                                        return CalendarItemWidget(
-                                          day: day,
-                                          isWeekend: isWeekend,
-                                          mood: mood,
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
                               ],
                             ),
                           ),
@@ -607,4 +668,3 @@ class FreeDashboardScreenState extends State<FreeDashboardScreen> {
     );
   }
 }
-

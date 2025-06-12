@@ -6,8 +6,9 @@ import 'package:tribe365_new/utill/dimensions.dart';
 import '../controllers/free_dashboard_controller.dart';
 
 class ShowSentimentDialog extends StatelessWidget {
-  final String mood;
-  const ShowSentimentDialog({super.key,required this.mood});
+  final dynamic mood;
+  final dynamic date;
+  const ShowSentimentDialog({super.key,required this.mood,required this.date});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class ShowSentimentDialog extends StatelessWidget {
                 ),
               ),
               Text(
-                "Thu, 01 May 2025",
+                date.toString(),
                 style: TextStyle(
                   fontSize: Dimensions.sp14,
                   color: ColorResources.color9a9a9a, // Replace with ColorResources.mainColor
@@ -37,20 +38,22 @@ class ShowSentimentDialog extends StatelessWidget {
                   fontFamily: 'Roboto',
                 ),
               ),
+              SizedBox(height: 5,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    dashboardProvider.getEmoji(mood),
-                    style: const TextStyle(fontSize: 24),
+                  Image.asset(
+                    dashboardProvider.getMoodImage(mood),
+                    width: 30,
+                    height: 30,
                   ),
                   SizedBox(width: 3,),
                   Text(
-                    "33.33%",
+                    mood.toString(),
                     style: TextStyle(
                       fontSize: Dimensions.sp16,
-                      color: ColorResources.mainColor, // Replace with ColorResources.mainColor
+                      color: dashboardProvider.getMoodColor(mood), // Replace with ColorResources.mainColor
                       fontWeight: FontWeight.w600,
                       fontFamily: 'Roboto',
                     ),

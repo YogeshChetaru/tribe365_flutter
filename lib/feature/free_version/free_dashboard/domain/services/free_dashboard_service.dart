@@ -10,4 +10,24 @@ class FreeDashboardService implements FreeDashboardServiceInterface {
   Future<ApiResponse> changePassword(Map<String, dynamic> body) {
     return freeDashboardRepositoryInterface.changePassword(body);
   }
+
+  @override
+  Future<ApiResponse> getHomePageDetails(Map<String, dynamic> body) {
+    return freeDashboardRepositoryInterface.getHomePageDetails(body);
+  }
+  @override
+  Future<ApiResponse> viewOfficeList(Map<String, dynamic> body) {
+    return freeDashboardRepositoryInterface.viewOfficeList(body);
+  }
+
+  @override
+  Future<ApiResponse> userApplyLeave(Map<String, dynamic> body) {
+    return freeDashboardRepositoryInterface.userApplyLeave(body);
+  }
+
+
+  @override
+  Future<ApiResponse> viewDepartmentList() {
+    return freeDashboardRepositoryInterface.viewDepartmentList();
+  }
 }

@@ -42,6 +42,10 @@ class AppConstants {
   static const String getHPTMPrinciplesListUri = 'getPrinciplesList';
   static const String getLearningCheckListUri = 'getLearningCheckList';
   static const String changeReadStatusOfUserChecklistUri = 'changeReadStatusOfUserChecklist';
+  static const String getDepartmentListUri = 'getDepartmentList';
+  static const String getFreeVersionHomeDetailsUri = 'getFreeVersionHomeDetails';
+  static const String getAllOfficeDepartmentsUri = 'getAllOfficenDepartments';
+  static const String userApplyLeaveUri = 'userApplyLeave';
 
 
   static final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
