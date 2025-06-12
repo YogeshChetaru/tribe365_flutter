@@ -60,4 +60,7 @@ class Images {
   static const String imgLowRed = 'assets/images/img_low_red.png';
   static const String imgMediumYellow = 'assets/images/img_medium_yellow.png';
   static const String imgSmileGreenBig = 'assets/images/img_smile_green_big.png';
+  static const String imgDocumentRed = 'assets/images/img_document_red.png';
+  static const String imgUpArrowRed = 'assets/images/img_up_arrow_red.png';
+  static const String imgLeftArrowCircleRed = 'assets/images/img_left_arrow_circle_red.png';
 }

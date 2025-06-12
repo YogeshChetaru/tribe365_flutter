@@ -1,10 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:tribe365_new/feature/free_version/free_dashboard/screens/free_dashboard_screen.dart';
 import 'package:tribe365_new/feature/login/domain/models/login_model.dart';
 import 'package:tribe365_new/feature/login/screens/login_screen.dart';
@@ -127,9 +127,14 @@ class LoginController extends ChangeNotifier {
       Map<String, dynamic> map = apiResponse.response!.data;
       LoginResponse loginResponse = LoginResponse.fromJson(map);
 
+      String userDataString = jsonEncode(map["data"]);
       showCustomSnackBar(loginResponse.message, Get.context!, isError: false);
       if(loginResponse.data!.token != null && loginResponse.data!.token!.isNotEmpty){
-        loginServiceInterface!.saveUserToken(loginResponse.data!.token!,loginResponse.data!.appPaymentVersion!);
+        loginServiceInterface!.saveUserToken(
+            loginResponse.data!.token!,
+            loginResponse.data!.appPaymentVersion!,
+            userDataString
+        );
       }
 
       if (loginResponse.data!.role=="3") {

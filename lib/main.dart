@@ -23,7 +23,6 @@ import 'feature/paid_version/know/controllers/know_controller.dart';
 import 'feature/paid_version/risk/controllers/risk_controller.dart';
 import 'feature/splash/controllers/splash_controller.dart';
 import 'feature/splash/screens/splash_screen.dart';
-import 'firebase_options.dart';
 import 'helper/custom_delegate.dart';
 import 'localization/app_localization.dart';
 

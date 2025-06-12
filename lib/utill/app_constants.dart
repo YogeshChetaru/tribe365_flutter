@@ -16,6 +16,7 @@ class AppConstants {
 
 
   // sharePreference
+  static const String userLoginData = 'user_login_data';
   static const String userLoginToken = 'user_login_token';
   static const String userLoginStatus = 'user_login_status';
   static const String userLoginType = 'user_login_type';
@@ -38,6 +39,9 @@ class AppConstants {
   static const String userProfileUri = 'userProfile';
   static const String updateUserProfileUri = 'updateUserProfile';
   static const String getHomePageDetailsUri = 'getHomePageDetails';
+  static const String getHPTMPrinciplesListUri = 'getPrinciplesList';
+  static const String getLearningCheckListUri = 'getLearningCheckList';
+  static const String changeReadStatusOfUserChecklistUri = 'changeReadStatusOfUserChecklist';
 
 
   static final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');

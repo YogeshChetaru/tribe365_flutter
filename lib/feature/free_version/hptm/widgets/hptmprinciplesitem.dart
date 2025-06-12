@@ -3,10 +3,13 @@ import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 
+import '../domain/models/viewhptmprinciplesList.dart';
+
 class HptmPrinciplesItem extends StatelessWidget {
   final int indexMain;
+  final PrincipleData principleData;
 
-  const HptmPrinciplesItem({super.key, required this.indexMain});
+  const HptmPrinciplesItem({super.key, required this.indexMain,required this.principleData});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,7 @@ class HptmPrinciplesItem extends StatelessWidget {
           Container(
             margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
             child: Text(
-              "Inclusive",
+              principleData.title!,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: Dimensions.sp16,
@@ -40,7 +43,7 @@ class HptmPrinciplesItem extends StatelessWidget {
           Container(
             margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
             child: Text(
-              "Value everyone and everything to build forwards",
+              principleData.description!,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: Dimensions.sp14,
@@ -59,7 +62,7 @@ class HptmPrinciplesItem extends StatelessWidget {
           Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
             child: Text(
-              "${getTranslated("completion", context)} - 100%",
+              "${getTranslated("completion", context)} - ${principleData.completionPercent}%",
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: Dimensions.sp16,

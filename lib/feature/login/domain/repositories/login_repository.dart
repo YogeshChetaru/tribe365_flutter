@@ -80,10 +80,11 @@ class LoginRepository implements LoginRepositoryInterface {
 
 
   @override
-  Future<void> saveUserToken(String token,int userType) async {
+  Future<void> saveUserToken(String token,int userType,String userData) async {
     dioClient!.updateHeader(token, null);
     try {
       debugPrint("UserToken >>>>>>$token");
+      await sharedPreferences!.setString(AppConstants.userLoginData, userData);
       await sharedPreferences!.setString(AppConstants.userLoginToken, token);
       await sharedPreferences!.setBool(AppConstants.userLoginStatus, true);
       await sharedPreferences!.setString(AppConstants.userLoginType, userType.toString());

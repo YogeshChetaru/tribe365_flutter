@@ -28,8 +28,8 @@ class LoginService implements LoginServiceInterface {
   }
 
   @override
-  Future<void> saveUserToken(String token,int userType) {
-    return loginRepositoryInterface.saveUserToken(token,userType);
+  Future<void> saveUserToken(String token,int userType,String userData) {
+    return loginRepositoryInterface.saveUserToken(token,userType,userData);
   }
 
   @override

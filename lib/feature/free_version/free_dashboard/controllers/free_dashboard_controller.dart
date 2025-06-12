@@ -4,7 +4,6 @@ import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
 import '../../../../data/model/api_response.dart';
 import '../../../../helper/api_checker.dart';
 import '../../../../main.dart';
-import '../../../login/domain/models/login_response_model.dart';
 import '../domain/services/free_dashboard_service_interface.dart';
 
 class FreeDashboardController extends ChangeNotifier {
@@ -160,7 +159,6 @@ class FreeDashboardController extends ChangeNotifier {
     _isLoading = false;
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
-
       showCustomSnackBar(map["message"], Get.context!, isError: false);
       Navigator.of(Get.context!).pop();
     } else {

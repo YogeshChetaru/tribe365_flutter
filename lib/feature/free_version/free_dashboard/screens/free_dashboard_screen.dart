@@ -607,3 +607,4 @@ class FreeDashboardScreenState extends State<FreeDashboardScreen> {
     );
   }
 }
+

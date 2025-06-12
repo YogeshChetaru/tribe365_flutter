@@ -6,7 +6,6 @@ import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
 import '../controllers/know_controller.dart';
 import '../widgets/motivationitem.dart';
-import '../widgets/personalitytypeitem.dart';
 import '../widgets/teamroleitem.dart';
 import 'knowuserlistdialog.dart';
 

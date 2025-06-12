@@ -10,7 +10,7 @@ abstract class LoginRepositoryInterface implements RepositoryInterface {
 
   Future<ApiResponse> userSetPassword(Map<String, dynamic> body);
 
-  Future<void> saveUserToken(String token,int userType);
+  Future<void> saveUserToken(String token,int userType,String userData);
   Future<void> clearUserData();
   bool isLoggedIn();
   String userLoginType();

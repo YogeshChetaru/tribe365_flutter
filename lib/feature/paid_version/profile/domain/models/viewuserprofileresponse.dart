@@ -103,7 +103,7 @@ class ViewUserProfileData {
       personalityTypeDetailsArr = <PersonalityTypeDetailsArr>[];
       json['personalityTypeDetailsArr'].forEach((v) {
         personalityTypeDetailsArr!
-            .add(new PersonalityTypeDetailsArr.fromJson(v));
+            .add( PersonalityTypeDetailsArr.fromJson(v));
       });
     }
   }
