@@ -14,6 +14,7 @@ import '../domain/models/get_office_list_response.dart';
 import '../domain/models/view_department_list_response.dart';
 import '../widgets/changepassworddialog.dart';
 import '../widgets/logoutdialog.dart';
+import '../widgets/out_office_mode_dialog.dart';
 import '../widgets/worknotdialog.dart';
 
 class FreeDashboardScreen extends StatefulWidget {
@@ -165,124 +166,144 @@ class FreeDashboardScreenState extends State<FreeDashboardScreen> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          dashboardProvider.isAbsentVisible == true
-                              ? Container(
-                                  margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
-                                  width: MediaQuery.sizeOf(context).width,
-                                  padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: ColorResources.mainColor,
-                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      getTranslated("out_of_office_mode_enabled", context)!,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18.0,
-                                        fontFamily: 'Roboto',
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Container(
-                                  margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
-                                  width: MediaQuery.sizeOf(context).width,
-                                  padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: ColorResources.mainColor,
-                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        getTranslated("how_s_things_at_work_today", context)!,
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontSize: Dimensions.sp16,
-                                          color: ColorResources.white,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: 'Roboto',
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: SizedBox(
-                                              width: 55,
-                                              height: 55,
-                                              child: Image.asset(
-                                                Images.imgHappyEmoji, // Ensure this path matches your asset setup
-                                                fit: BoxFit.contain,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: SizedBox(
-                                              width: 55,
-                                              height: 55,
-                                              child: Image.asset(
-                                                Images.imgNeutralEmoji, // Ensure this path matches your asset setup
-                                                fit: BoxFit.contain,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: SizedBox(
-                                              width: 55,
-                                              height: 55,
-                                              child: Image.asset(
-                                                Images.imgSadEmoji, // Ensure this path matches your asset setup
-                                                fit: BoxFit.contain,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          dashboardProvider.updateDate();
-                                          customShowDialog(context, WorkNotDialog());
-                                        },
-                                        child: Text(
-                                          getTranslated("i_m_not_in_work_today", context)!,
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            fontSize: Dimensions.sp16,
-                                            color: ColorResources.white,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'Roboto',
-                                            decoration: TextDecoration.underline,
-                                            decorationColor: ColorResources.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                          dashboardProvider.isHappyIndexStatus==false ?
+                          SizedBox.shrink():
+                          Container(
+                            margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                            width: MediaQuery.sizeOf(context).width,
+                            padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: ColorResources.mainColor,
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  getTranslated("how_s_things_at_work_today", context)!,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: Dimensions.sp16,
+                                    color: ColorResources.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Roboto',
                                   ),
                                 ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: InkWell(
+                                        onTap: (){
+                                          dashboardProvider.addHappyIndex("3");
+                                        },child: SizedBox(
+                                          width: 55,
+                                          height: 55,
+                                          child: Image.asset(
+                                            Images.imgHappyEmoji,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: InkWell(
+                                        onTap: (){
+                                          dashboardProvider.addHappyIndex("2");
+                                        },child: SizedBox(
+                                          width: 55,
+                                          height: 55,
+                                          child: Image.asset(
+                                            Images.imgNeutralEmoji,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: InkWell(
+                                        onTap: (){
+                                          dashboardProvider.addHappyIndex("1");
+                                        },child: SizedBox(
+                                          width: 55,
+                                          height: 55,
+                                          child: Image.asset(
+                                            Images.imgSadEmoji,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    dashboardProvider.updateDate();
+                                    customShowDialog(context, WorkNotDialog());
+                                  },
+                                  child: Text(
+                                    getTranslated("i_m_not_in_work_today", context)!,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: Dimensions.sp16,
+                                      color: ColorResources.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Roboto',
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: ColorResources.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                         if (dashboardProvider.isAbsentVisible)
+                              InkWell(
+                                onTap: (){
+                                  customShowDialog(context, OutOfficeModeDialog());
+                                },
+                            child: Container(
+                                    margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                                    width: MediaQuery.sizeOf(context).width,
+                                    padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: ColorResources.mainColor,
+                                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        getTranslated("out_of_office_mode_enabled", context)!,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18.0,
+                                          fontFamily: 'Roboto',
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),),
+
                           Container(
                             margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
                             width: MediaQuery.sizeOf(context).width,

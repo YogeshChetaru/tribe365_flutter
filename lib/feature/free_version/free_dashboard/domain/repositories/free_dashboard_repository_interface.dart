@@ -7,4 +7,7 @@ abstract class FreeDashboardRepositoryInterface implements RepositoryInterface {
   Future<ApiResponse> getHomePageDetails(Map<String, dynamic> body);
   Future<ApiResponse> viewOfficeList(Map<String, dynamic> body);
   Future<ApiResponse> userApplyLeave(Map<String, dynamic> body);
+  Future<ApiResponse> userChangeLeaveStatus(Map<String, dynamic> body);
+  Future<ApiResponse> addHappyIndex(Map<String, dynamic> body);
+  Future<ApiResponse> updatePushNotificationStatus(Map<String, dynamic> body);
 }

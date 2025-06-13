@@ -20,9 +20,12 @@ class FreeDashboardController extends ChangeNotifier {
   FreeDashboardController({required this.freeDashboardServiceInterface});
 
   bool _isLoading = true;
+  bool _isPopupLoading = false;
 
   bool get isLoading => _isLoading;
+  bool get isPopupLoading => _isPopupLoading;
   bool isAbsentVisible = false;
+  bool isHappyIndexStatus = false;
 
   List<ViewDepartmentListData>? departmentList;
   List<Offices>? officesList;
@@ -295,6 +298,42 @@ class FreeDashboardController extends ChangeNotifier {
     userId = id.toString();
     notifyListeners();
   }
+  bool checkTime() {
+    try {
+      final now = DateTime.now();
+      final currentHour = now.hour;
+      final currentMinute = now.minute;
+      final currentTime = double.parse('$currentHour.$currentMinute');
+
+      return currentTime >= 16 && currentTime < 23.59;
+    } catch (e) {
+      debugPrint('Error parsing time: $e');
+      return false;
+    }
+  }
+
+
+  void showHappyIndex(bool feedbackStatus, int leaveStatus) {
+    if (leaveStatus != 1) {
+      if (!feedbackStatus && leaveStatus != 1) {
+        if (checkTime()) {
+          isHappyIndexStatus = true;
+
+
+          // happyImageOnTap = () => apiAddHappyIndex("3");
+          // neutralImageOnTap = () => apiAddHappyIndex("2");
+          // sadImageOnTap = () => apiAddHappyIndex("1");
+        } else {
+          isHappyIndexStatus = false;
+        }
+      } else {
+        isHappyIndexStatus = false;
+      }
+    } else {
+      isHappyIndexStatus = false;
+    }
+  }
+
 
   //API calling
 
@@ -322,14 +361,14 @@ class FreeDashboardController extends ChangeNotifier {
         GetFreeVersionHomeData homeDetail = response.data!;
 
         if (homeDetail.appPaymentVersion == 2) {
-
+          routePushAndRemoveUntil(Get.context!, PaidDashboardScreen());
           return;
         } else if (homeDetail.appPaymentVersion == 3) {
           routePushAndRemoveUntil(Get.context!, PaidDashboardScreen());
           return;
         }
 
-        // showHappyIndex(homeDetail.userGivenFeedback, homeDetail.leaveStatus);
+        showHappyIndex(homeDetail.userGivenFeedback!, homeDetail.leaveStatus!);
 
         setCalendarList(monthlyList:
         homeDetail.happyIndexMonthly!,monthStart:
@@ -341,7 +380,6 @@ class FreeDashboardController extends ChangeNotifier {
         yearSelectedValue = selectedYear;
         firstFlag = true;
 
-        debugPrint("leaveStatus >>>>>${homeDetail.leaveStatus}");
         int status= homeDetail.leaveStatus!;
         if (status ==1) {
           isAbsentVisible = true;
@@ -435,6 +473,45 @@ class FreeDashboardController extends ChangeNotifier {
       Map<String, dynamic> map = apiResponse.response!.data;
       showCustomSnackBar(map["message"], Get.context!, isError: false);
       isAbsentVisible = true;
+      isHappyIndexStatus = false;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> addHappyIndex(String status) async {
+    Map<String, dynamic> requestData = {
+      "userId": userId,
+      "moodStatus": status,
+    };
+    ApiResponse apiResponse = await freeDashboardServiceInterface!.addHappyIndex(requestData);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      showCustomSnackBar(map["message"], Get.context!, isError: false);
+      isHappyIndexStatus = false;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> userChangeLeaveStatus() async {
+    _isPopupLoading = true;
+    notifyListeners();
+    Map<String, dynamic> requestData = {
+      "userId": userId,
+    };
+
+    ApiResponse apiResponse = await freeDashboardServiceInterface!.userChangeLeaveStatus(requestData);
+    _isPopupLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      showCustomSnackBar(map["message"], Get.context!, isError: false);
+      Navigator.of(Get.context!).pop();
+      getHomePageDetails();
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);

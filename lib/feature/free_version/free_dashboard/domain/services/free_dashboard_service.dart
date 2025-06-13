@@ -25,6 +25,21 @@ class FreeDashboardService implements FreeDashboardServiceInterface {
     return freeDashboardRepositoryInterface.userApplyLeave(body);
   }
 
+  @override
+  Future<ApiResponse> userChangeLeaveStatus(Map<String, dynamic> body) {
+    return freeDashboardRepositoryInterface.userChangeLeaveStatus(body);
+  }
+
+  @override
+  Future<ApiResponse> addHappyIndex(Map<String, dynamic> body) {
+    return freeDashboardRepositoryInterface.addHappyIndex(body);
+  }
+
+  @override
+  Future<ApiResponse> updatePushNotificationStatus(Map<String, dynamic> body) {
+    return freeDashboardRepositoryInterface.updatePushNotificationStatus(body);
+  }
+
 
   @override
   Future<ApiResponse> viewDepartmentList() {
