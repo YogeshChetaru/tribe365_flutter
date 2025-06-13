@@ -12,9 +12,8 @@ import 'package:tribe365_new/feature/paid_version/notification/controllers/notif
 import 'package:tribe365_new/feature/paid_version/offloading/controllers/offloading_controller.dart';
 import 'package:tribe365_new/feature/paid_version/paid_dashboard/controllers/paid_dashboard_controller.dart';
 import 'package:tribe365_new/feature/paid_version/profile/controllers/profile_controller.dart';
-import 'package:tribe365_new/push_notification/models/notification_body.dart';
-import 'package:tribe365_new/push_notification/notification_helper.dart';
 import 'package:tribe365_new/utill/app_constants.dart';
+import 'package:tribe365_new/utill/fcm_broadcast_receiver.dart';
 import 'package:tribe365_new/utill/light_theme.dart';
 import 'di_container.dart' as di;
 import 'feature/free_version/hptm/controllers/hptm_controller.dart';
@@ -29,29 +28,25 @@ import 'localization/app_localization.dart';
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  FcmBroadcastReceiver.handleIncomingMessage(message);
+}
+
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
 
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   await Firebase.initializeApp();
   await di.init();
-
   await Permission.notification.isDenied.then((value) {
     if (value) {
       Permission.notification.request();
     }
   });
-
-  NotificationBody? body;
-  try {
-    final RemoteMessage? remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
-    if (remoteMessage != null) {
-      body = NotificationHelper.convertNotification(remoteMessage.data);
-    }
-    await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
-    FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
-  } catch (_) {}
-
   runApp(
     MultiProvider(
       providers: [
@@ -67,15 +62,14 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => di.sl<RiskController>()),
         ChangeNotifierProvider(create: (context) => di.sl<ProfileController>()),
       ],
-      child: MyApp(body: body),
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final NotificationBody? body;
 
-  const MyApp({super.key, required this.body});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -7,6 +7,7 @@ import 'package:tribe365_new/feature/login/controllers/login_controller.dart';
 import 'package:tribe365_new/feature/login/screens/login_screen.dart';
 import '../../../main.dart';
 import '../../../utill/color_resources.dart';
+import '../../../utill/fcm_broadcast_receiver.dart';
 import '../../../utill/images.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -14,6 +15,7 @@ import '../../free_version/free_dashboard/screens/free_dashboard_screen.dart';
 import '../../paid_version/paid_dashboard/screens/paid_dashboard_screen.dart';
 
 class SplashScreen extends StatefulWidget {
+
   const SplashScreen({super.key});
 
   @override
@@ -41,7 +43,22 @@ class SplashScreenState extends State<SplashScreen> {
       getDeviceToken();
     });
 
+
+    Future.delayed(Duration.zero, () {
+      FcmBroadcastReceiver.initialize(Get.context!);
+
+      FirebaseMessaging.onMessage.listen((message) {
+        FcmBroadcastReceiver.handleIncomingMessage(message);
+      });
+
+      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        FcmBroadcastReceiver.handleIncomingMessage(message);
+      });
+    });
+
   }
+
+
   void _route(Widget screen) {
     Navigator.of(Get.context!).pushReplacement(
       PageRouteBuilder(
