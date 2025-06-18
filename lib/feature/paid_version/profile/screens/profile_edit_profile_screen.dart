@@ -8,6 +8,7 @@ import '../../../../common/basewidget/custom_header_back_widget.dart';
 import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/images.dart';
+import '../../../../utill/utility.dart';
 import '../controllers/profile_controller.dart';
 import '../widgets/popupinfo.dart';
 
@@ -371,7 +372,7 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
                                     }
                                     String? base64Image = "";
                                     if(file!=null){
-                                      base64Image = await profileProvider.imageToBase64(file!.path);
+                                      base64Image = await Utility.imageToBase64(file!.path);
                                     }
                                     await profileProvider.updateUserInfo(
                                         profileProvider.userProfileData!.departmentId!.toString(),

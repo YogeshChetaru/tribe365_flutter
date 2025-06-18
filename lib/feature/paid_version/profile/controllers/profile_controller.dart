@@ -1,7 +1,3 @@
-
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
 import '../../../../data/model/api_response.dart';
@@ -255,17 +251,7 @@ class ProfileController extends ChangeNotifier {
   String getUserToken() {
     return profileServiceInterface!.getUserToken();
   }
-  Future<String?> imageToBase64(String filePath) async {
-    try {
-      File imageFile = File(filePath);
-      List<int> imageBytes = await imageFile.readAsBytes();
-      String base64String = base64Encode(imageBytes);
-      return base64String;
-    } catch (e) {
-      debugPrint("Error converting image to Base64: $e");
-      return null;
-    }
-  }
+
 
   //API calling
   Future<void> viewUserProfile() async {

@@ -5,6 +5,7 @@ import 'package:tribe365_new/feature/paid_version/offloading/screens/offloading_
 import 'package:tribe365_new/feature/paid_version/offloading/screens/reflection_screen.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import '../../../../localization/language_constrants.dart';
+import '../../../../main.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../free_version/hptm/screens/hptm_screen.dart';
 import '../controllers/offloading_controller.dart';
@@ -18,7 +19,14 @@ class OffLoadingScreen extends StatefulWidget {
 
 class OffLoadingScreenState extends State<OffLoadingScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
+  OffloadingController offloadingController = Provider.of<OffloadingController>(Get.context!,listen: false);
 
+  @override
+  void dispose() {
+    offloadingController.tellUsController.dispose();
+    offloadingController.tellUsFocus.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,119 +35,117 @@ class OffLoadingScreenState extends State<OffLoadingScreen> {
       backgroundColor: Theme.of(context).primaryColor,
       body: SafeArea(
         child: Consumer<OffloadingController>(builder: (context, offloadingProvider, _) {
-          return SingleChildScrollView(
-            child: Container(
-              width: MediaQuery.sizeOf(context).width,
-              height: MediaQuery.sizeOf(context).height,
-              color: ColorResources.screenBg,
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      CustomHeader(),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: InkWell(
-                                onTap: () {
-                                  offloadingProvider.updateIsType("offloading");
-                                },
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.fromLTRB(0, 13, 0, 15),
-                                  width: MediaQuery.sizeOf(context).width,
-                                  decoration: BoxDecoration(
-                                    color: offloadingProvider.isType == true ? ColorResources.mainColor : ColorResources.white,
-                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: ColorResources.colorAAADC4,
-                                        blurRadius: 3.0,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Text(
-                                    getTranslated("offloading", context)!,
-                                    style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        fontSize: Dimensions.sp14,
-                                        fontWeight: FontWeight.w600,
-                                        color: offloadingProvider.isType == true ? ColorResources.white : ColorResources.black),
-                                    textAlign: TextAlign.center,
-                                  ),
+          return Container(
+            width: MediaQuery.sizeOf(context).width,
+            height: MediaQuery.sizeOf(context).height,
+            color: ColorResources.screenBg,
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    CustomHeader(),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: InkWell(
+                              onTap: () {
+                                offloadingProvider.updateIsType("offloading");
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.fromLTRB(0, 13, 0, 15),
+                                width: MediaQuery.sizeOf(context).width,
+                                decoration: BoxDecoration(
+                                  color: offloadingProvider.isType == true ? ColorResources.mainColor : ColorResources.white,
+                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: ColorResources.colorAAADC4,
+                                      blurRadius: 3.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  getTranslated("offloading", context)!,
+                                  style: TextStyle(
+                                      fontFamily: 'Roboto',
+                                      fontSize: Dimensions.sp14,
+                                      fontWeight: FontWeight.w600,
+                                      color: offloadingProvider.isType == true ? ColorResources.white : ColorResources.black),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
-                            Expanded(
-                              flex: 1,
-                              child: InkWell(
-                                onTap: () {
-                                  offloadingProvider.updateIsType("reflection");
-                                },
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.fromLTRB(0, 13, 0, 15),
-                                  width: MediaQuery.sizeOf(context).width,
-                                  decoration: BoxDecoration(
-                                    color: offloadingProvider.isType != true ? ColorResources.mainColor : ColorResources.white,
-                                    borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: ColorResources.colorAAADC4,
-                                        blurRadius: 3.0,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Text(
-                                    getTranslated("reflection", context)!,
-                                    style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        fontSize: Dimensions.sp14,
-                                        fontWeight: FontWeight.w600,
-                                        color: offloadingProvider.isType != true ? ColorResources.white : ColorResources.black),
-                                  ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: InkWell(
+                              onTap: () {
+                                offloadingProvider.updateIsType("reflection");
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.fromLTRB(0, 13, 0, 15),
+                                width: MediaQuery.sizeOf(context).width,
+                                decoration: BoxDecoration(
+                                  color: offloadingProvider.isType != true ? ColorResources.mainColor : ColorResources.white,
+                                  borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: ColorResources.colorAAADC4,
+                                      blurRadius: 3.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  getTranslated("reflection", context)!,
+                                  style: TextStyle(
+                                      fontFamily: 'Roboto',
+                                      fontSize: Dimensions.sp14,
+                                      fontWeight: FontWeight.w600,
+                                      color: offloadingProvider.isType != true ? ColorResources.white : ColorResources.black),
                                 ),
                               ),
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    offloadingProvider.isType == true ? Expanded(flex: 1,child: OffLoadingSubScreen()) : Expanded(flex: 1,child: ReflectionScreen()),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: InkWell(
+                    onTap: () {
+                      route(context, HPTMScreen());
+                    },
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                      width: 20,
+                      decoration: BoxDecoration(
+                        color: ColorResources.mainColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(5),
+                          bottomLeft: Radius.circular(5),
                         ),
                       ),
-                      offloadingProvider.isType == true ? OffLoadingSubScreen() : ReflectionScreen(),
-                    ],
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      onTap: () {
-                        route(context, HPTMScreen());
-                      },
-                      child: Container(
-                        padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-                        width: 20,
-                        decoration: BoxDecoration(
-                          color: ColorResources.mainColor,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(5),
-                            bottomLeft: Radius.circular(5),
-                          ),
-                        ),
-                        child: Text(
-                          getTranslated("hptm", context)!,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'roboto',
-                          ),
+                      child: Text(
+                        getTranslated("hptm", context)!,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'roboto',
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         }),

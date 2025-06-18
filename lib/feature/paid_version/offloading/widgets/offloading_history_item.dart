@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
+import 'package:tribe365_new/utill/custom_route.dart';
 
 import '../../../../utill/dimensions.dart';
+import '../../../../utill/utility.dart';
+import '../domain/models/view_offloading_list_response.dart';
 import '../screens/offloading_chat_details_screen.dart';
 
 class OffloadingHistoryItem extends StatelessWidget {
-
-  const OffloadingHistoryItem({super.key});
+  final ViewOffLoadingListData data;
+  const OffloadingHistoryItem({super.key,required this.data});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        route(context, OffLoadingChatDetailsScreen());
+        routePush(context, OffLoadingChatDetailsScreen(offLoadingData: data,));
       },
       child: Container(
+        margin: EdgeInsets.only(bottom: 10),
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
         decoration: BoxDecoration(
@@ -34,7 +38,7 @@ class OffloadingHistoryItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Test",
+             data.message!,
               style: TextStyle(
                 fontFamily: 'roboto',
                 fontSize: Dimensions.sp14,
@@ -43,7 +47,7 @@ class OffloadingHistoryItem extends StatelessWidget {
               ),
             ),
             Text(
-              "04 Jun 2025, 09:00 am",
+              Utility.convertDataIntoddMMMyyyyhhmma(data.createdAt!),
               style: TextStyle(
                 fontFamily: 'roboto',
                 fontSize: Dimensions.sp14,
@@ -51,42 +55,36 @@ class OffloadingHistoryItem extends StatelessWidget {
                 color: ColorResources.color9a9a9a,
               ),
             ),
+            if (data.image != "")
+              Container(
+                  alignment: Alignment.centerLeft,
+                  margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                  child: Image.network(
+                    data.image!,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.fill,
+                  )
+              ),
+            if (data.image != "")
+              SizedBox(height: 5,),
             Container(
               padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
               decoration: BoxDecoration(
-                color: ColorResources.colorF1d621,
+                color: data.status=="Active"?ColorResources.colorFFF2BC: ColorResources.colorDFF5E4,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(getTranslated("active", context)!,style: TextStyle(
-                color:ColorResources.colorE1BE0D,
+              child:
+              Text(data.status=="Active"?getTranslated("active", context)!:getTranslated("complete", context)!,
+                style: TextStyle(
+                color:data.status=="Active"?ColorResources.colorE1BE0D:ColorResources.color54B569,
                 fontFamily: 'roboto',
                 fontSize: Dimensions.sp14,
                 fontWeight: FontWeight.w500,
               ),),
-            )
-
+            ),
           ],
         ),
-      ),
-    );
-  }
-  void route(BuildContext context, Widget screen) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: Duration(milliseconds: 500),
-        reverseTransitionDuration: Duration(milliseconds: 500),
-        pageBuilder: (context, animation, secondaryAnimation) => screen,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0); // from right
-          const end = Offset.zero;
-          const curve = Curves.easeInOut;
-          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          final offsetAnimation = animation.drive(tween);
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
-        },
       ),
     );
   }

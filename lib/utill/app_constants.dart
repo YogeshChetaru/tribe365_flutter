@@ -49,6 +49,13 @@ class AppConstants {
   static const String userChangeLeaveStatusUri = 'userChangeLeaveStatus';
   static const String addHappyIndexUri = 'addHappyIndex';
   static const String updatePushNotificationStatusUri = 'updatePushNotificationStatus';
+  static const String postFeedbackUri = 'postFeedback';
+  static const String getFeedbackDetailUri = 'getFeedbackDetail';
+  static const String postHPTMReflectionUri = 'postHPTMReflection';
+  static const String getHptmReflectionDetailUri = 'getHptmReflectionDetail';
+  static const String getChatMessagesUri = 'getChatMessages';
+  static const String iotSendMsgUri = 'iotSendMsg';
+  static const String viewKnowOrganisationDetailsUri = 'getKnowOrganisationDetails';
 
 
   static final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');

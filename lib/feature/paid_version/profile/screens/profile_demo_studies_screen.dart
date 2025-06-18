@@ -60,7 +60,7 @@ class ProfileDemoStudiesScreenState extends State<ProfileDemoStudiesScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                DropdownButtonHideUnderline(
+                                /*DropdownButtonHideUnderline(
                                   child: DropdownButton<String>(
                                     isExpanded: true,
                                     value: knowProvider.officeSelectedValue,
@@ -79,10 +79,10 @@ class ProfileDemoStudiesScreenState extends State<ProfileDemoStudiesScreen> {
                                       );
                                     }).toList(),
                                     onChanged: (String? newValue) {
-                                      knowProvider.updateOfficeSelectedValue(newValue);
+                                      // knowProvider.updateOfficeSelectedValue(newValue);
                                     },
                                   ),
-                                ),
+                                ),*/
                               ],
                             ),
                           ),
@@ -107,7 +107,7 @@ class ProfileDemoStudiesScreenState extends State<ProfileDemoStudiesScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                DropdownButtonHideUnderline(
+                                /*DropdownButtonHideUnderline(
                                   child: DropdownButton<String>(
                                     isExpanded: true,
                                     value: knowProvider.departmentSelectedValue,
@@ -129,7 +129,7 @@ class ProfileDemoStudiesScreenState extends State<ProfileDemoStudiesScreen> {
                                       knowProvider.updateDepartmentSelectedValue(newValue);
                                     },
                                   ),
-                                ),
+                                ),*/
                               ],
                             ),
                           ),

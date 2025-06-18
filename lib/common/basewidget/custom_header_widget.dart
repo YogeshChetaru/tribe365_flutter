@@ -33,7 +33,7 @@ class CustomHeader extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: ColorResources.mainColor, width: 1),
                 image: DecorationImage(
-                  image: profileProvider.userProfileData!.organisationLogo == null
+                  image: profileProvider.userProfileData == null
                       ? AssetImage(Images.imgTribe365) as ImageProvider
                       : NetworkImage(profileProvider.userProfileData!.organisationLogo!) as ImageProvider,
                 ),

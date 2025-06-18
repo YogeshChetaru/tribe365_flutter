@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:tribe365_new/feature/paid_version/offloading/screens/offloading_chat_details_screen.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
+import 'package:tribe365_new/utill/utility.dart';
 
 import '../../../../utill/dimensions.dart';
+import '../domain/models/view_reflection_list_response.dart';
 
 class RecentReflectionItem extends StatelessWidget {
-
-  const RecentReflectionItem({super.key});
+  final ViewReflectionListData data;
+  const RecentReflectionItem({super.key,required this.data});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        route(context, OffLoadingChatDetailsScreen());
+        route(context, OffLoadingChatDetailsScreen(reflectionData: data,));
       },
       child: Container(
+        margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
         decoration: BoxDecoration(
@@ -33,7 +36,7 @@ class RecentReflectionItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Test",
+              data.message!,
               style: TextStyle(
                 fontFamily: 'roboto',
                 fontSize: Dimensions.sp14,
@@ -42,7 +45,7 @@ class RecentReflectionItem extends StatelessWidget {
               ),
             ),
             Text(
-              "04 Jun 2025, 09:00 am",
+              Utility.convertDataIntoddMMMyyyyhhmma(data.createdAt!),
               style: TextStyle(
                 fontFamily: 'roboto',
                 fontSize: Dimensions.sp14,

@@ -1,5 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../data/datasource/remote/dio/dio_client.dart';
+import '../../../../../data/datasource/remote/exception/api_error_handler.dart';
+import '../../../../../data/model/api_response.dart';
+import '../../../../../utill/app_constants.dart';
 import 'offloading_repository_interface.dart';
 
 class OffloadingRepository implements OffloadingRepositoryInterface {
@@ -7,6 +11,85 @@ class OffloadingRepository implements OffloadingRepositoryInterface {
   final SharedPreferences? sharedPreferences;
 
   OffloadingRepository({required this.dioClient, required this.sharedPreferences});
+
+  @override
+  Future<ApiResponse> sendOffloadingData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.postFeedbackUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> sendHPTMReflection(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.postHPTMReflectionUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> viewOffloadingFirstData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getFeedbackDetailUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewHptmReflectionData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getHptmReflectionDetailUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewChatMessages(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getChatMessagesUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> sendChatMessages(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.iotSendMsgUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
 
   @override
   Future add(value) {

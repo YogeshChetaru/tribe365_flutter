@@ -168,5 +168,10 @@
   "please_select_end_date": "Please select end date.",
   "out_of_office_mode_enabled": "Out of Office Mode Enabled",
   "ready_to_resume_work": "Ready to resume work?",
-  "DISABLE": "DISABLE"
+  "DISABLE": "DISABLE",
+  "please_enter_description": "Please enter description.",
+  "please_enter_offloading": "Please enter description of offloading",
+  "active": "Active",
+  "please_enter_massage": "Please enter massage.",
+  "no_chat_available": "No chat available"
 }

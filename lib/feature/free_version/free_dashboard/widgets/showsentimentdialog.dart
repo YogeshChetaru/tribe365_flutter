@@ -43,11 +43,11 @@ class ShowSentimentDialog extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset(
+                  /*Image.asset(
                     dashboardProvider.getMoodImage(mood),
                     width: 30,
                     height: 30,
-                  ),
+                  ),*/
                   SizedBox(width: 3,),
                   Text(
                     mood.toString(),
