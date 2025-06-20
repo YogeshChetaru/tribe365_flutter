@@ -6,9 +6,12 @@ import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 
+import '../../know/domain/models/view_know_organisation_response.dart';
+
 
 class AmazingAwardUserDialog extends StatefulWidget {
-  const AmazingAwardUserDialog({super.key});
+  final LatestKudosAward data;
+  const AmazingAwardUserDialog({super.key,required this.data});
 
   @override
   State<AmazingAwardUserDialog> createState() => _AmazingAwardUserDialogState();
@@ -26,10 +29,10 @@ class _AmazingAwardUserDialogState extends State<AmazingAwardUserDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                getTranslated("amazing2", context)!,
+                widget.data.awardValue!,
                 style: TextStyle(
                   fontSize: Dimensions.sp16,
-                  color: ColorResources.mainColor, // Replace with ColorResources.mainColor
+                  color: ColorResources.mainColor,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Roboto',
                 ),
@@ -38,10 +41,10 @@ class _AmazingAwardUserDialogState extends State<AmazingAwardUserDialog> {
                 height: 5,
               ),
               Text(
-                "Tarun",
+                widget.data.userName!,
                 style: TextStyle(
                   fontSize: Dimensions.sp14,
-                  color: ColorResources.color333333, // Replace with ColorResources.mainColor
+                  color: ColorResources.color333333,
                   fontWeight: FontWeight.w500,
                   fontFamily: 'Roboto',
                 ),
@@ -49,9 +52,9 @@ class _AmazingAwardUserDialogState extends State<AmazingAwardUserDialog> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: 4,
+                itemCount: widget.data.viewMoreUsers!.length,
                 itemBuilder: (context, parentIndex) {
-                  return AmazingUserItem();
+                  return AmazingUserItem(data: widget.data.viewMoreUsers![parentIndex],);
                 },
               )
             ],

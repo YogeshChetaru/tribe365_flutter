@@ -10,4 +10,9 @@ class HomeService implements HomeServiceInterface {
   Future<ApiResponse> getHomeData(Map<String, dynamic> body) {
     return homeRepositoryInterface.getHomeData(body);
   }
+
+  @override
+  Future<ApiResponse> viewNotificationsCount(Map<String, dynamic> body) {
+    return homeRepositoryInterface.viewNotificationsCount(body);
+  }
 }

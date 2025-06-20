@@ -173,5 +173,10 @@
   "please_enter_offloading": "Please enter description of offloading",
   "active": "Active",
   "please_enter_massage": "Please enter massage.",
-  "no_chat_available": "No chat available"
+  "no_chat_available": "No chat available",
+  "last_month_s_kudos_champs": "Last month's kudos champs",
+  "no_kudos_champ_yet": "No kudos Champ Yet",
+  "no_kudos_awards_yet": "No Kudos Awards Yet",
+  "view_more": "View More",
+  "more": "more"
 }

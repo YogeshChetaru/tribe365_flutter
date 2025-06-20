@@ -6,11 +6,13 @@ import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 import 'package:tribe365_new/utill/images.dart';
 
+import '../controllers/know_controller.dart';
 import '../widgets/selectactionuseritem.dart';
 
 
 class KnowUserListDialog extends StatefulWidget {
-  const KnowUserListDialog({super.key});
+  final String wayFrom;
+  const KnowUserListDialog({super.key,required this.wayFrom});
 
   @override
   State<KnowUserListDialog> createState() => _KnowUserListDialogState();
@@ -19,7 +21,7 @@ class KnowUserListDialog extends StatefulWidget {
 class _KnowUserListDialogState extends State<KnowUserListDialog> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeController>(builder: (context, homeProvider, _) {
+    return Consumer<KnowController>(builder: (context, knowProvider, _) {
       return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
@@ -50,7 +52,6 @@ class _KnowUserListDialogState extends State<KnowUserListDialog> {
                     Navigator.pop(context);
                   },child: Image.asset(Images.imgCrossGray,width: 20,height: 20,)),
                   SizedBox(width:15),
-
                 ],
               ),
               SizedBox(
@@ -59,9 +60,9 @@ class _KnowUserListDialogState extends State<KnowUserListDialog> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: AlwaysScrollableScrollPhysics(),
-                itemCount: 4,
-                itemBuilder: (context, parentIndex) {
-                  return SelectActionUserItem();
+                itemCount: knowProvider.users.length,
+                itemBuilder: (context, index) {
+                  return SelectActionUserItem(userData: knowProvider.users[index],wayFrom: widget.wayFrom,);
                 },
               ),
               SizedBox(

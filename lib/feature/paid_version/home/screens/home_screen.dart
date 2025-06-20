@@ -8,12 +8,12 @@ import 'package:tribe365_new/utill/custom_route.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
+import '../../../free_version/free_dashboard/controllers/free_dashboard_controller.dart';
 import '../../../free_version/free_dashboard/widgets/showsentimentdialog.dart';
 import '../../../free_version/hptm/screens/hptm_screen.dart';
 import '../../notification/screens/notification_screen.dart';
 import '../controllers/home_controller.dart';
 import '../widgets/amazingawardsetdialog.dart';
-import '../widgets/amazingawarduserdialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,20 +24,24 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
-  ProfileController profileController = Provider.of<ProfileController>(Get.context!,listen: false);
-  HomeController homeController = Provider.of<HomeController>(Get.context!,listen: false);
+  ProfileController profileController = Provider.of<ProfileController>(Get.context!, listen: false);
+  HomeController homeController = Provider.of<HomeController>(Get.context!, listen: false);
+  FreeDashboardController freeDashController = Provider.of<FreeDashboardController>(Get.context!, listen: false);
 
   void apiLoad() {
-    profileController.viewUserProfile().then((onValue){
+    profileController.viewUserProfile().then((onValue) {
       homeController.getHomeData(profileController.userProfileData!.orgId.toString());
+      homeController.viewNotificationCount(profileController.userProfileData!.id.toString());
+
     });
   }
+
   @override
   void initState() {
     super.initState();
     apiLoad();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,139 +58,141 @@ class HomeScreenState extends State<HomeScreen> {
                 children: [
                   Column(
                     children: [
-                      profileProvider.userProfileData==null?
-                      SizedBox.fromSize():
-                      Container(
-                        decoration: BoxDecoration(
-                          color: ColorResources.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: ColorResources.colorAAADC4,
-                              blurRadius: 5.0,
-                            ),
-                          ],
-                        ),
-                        width: MediaQuery.sizeOf(context).width,
-                        padding: EdgeInsets.fromLTRB(15, 15, 0, 15),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 45,
-                              height: 45,
+                      profileProvider.userProfileData == null
+                          ? SizedBox.fromSize()
+                          : Container(
                               decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: ColorResources.mainColor, width: 1),
-                                image: DecorationImage(
-                                  image: profileProvider.userProfileData!.organisationLogo == null
-                                      ? AssetImage(Images.imgTribe365) as ImageProvider
-                                      : NetworkImage(profileProvider.userProfileData!.organisationLogo!) as ImageProvider,
-                                ),
+                                color: ColorResources.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: ColorResources.colorAAADC4,
+                                    blurRadius: 5.0,
+                                  ),
+                                ],
                               ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: SizedBox(
-                                width: MediaQuery.sizeOf(context).width,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.fromLTRB(10, 6, 10, 6),
-                                      decoration: BoxDecoration(
-                                        color: ColorResources.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: ColorResources.colorAAADC4,
-                                            blurRadius: 3.0,
-                                          ),
-                                        ],
-                                        borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5), topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+                              width: MediaQuery.sizeOf(context).width,
+                              padding: EdgeInsets.fromLTRB(15, 15, 0, 15),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 45,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: ColorResources.mainColor, width: 1),
+                                      image: DecorationImage(
+                                        image: profileProvider.userProfileData!.organisationLogo == null
+                                            ? AssetImage(Images.imgTribe365) as ImageProvider
+                                            : NetworkImage(profileProvider.userProfileData!.organisationLogo!) as ImageProvider,
                                       ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: SizedBox(
+                                      width: MediaQuery.sizeOf(context).width,
                                       child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        crossAxisAlignment: CrossAxisAlignment.end,
                                         children: [
-                                          Image.asset(
-                                            homeProvider.imagePath,
-                                            width: 20,
-                                            height: 20,
+                                          Container(
+                                            padding: EdgeInsets.fromLTRB(10, 6, 10, 6),
+                                            decoration: BoxDecoration(
+                                              color: ColorResources.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: ColorResources.colorAAADC4,
+                                                  blurRadius: 3.0,
+                                                ),
+                                              ],
+                                              borderRadius:
+                                                  BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5), topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Image.asset(
+                                                  homeProvider.imagePath,
+                                                  width: 20,
+                                                  height: 20,
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                TweenAnimationBuilder<double>(
+                                                  tween: Tween(begin: 150, end: homeProvider.animatedValue),
+                                                  duration: Duration(seconds: 5),
+                                                  builder: (context, value, child) {
+                                                    return Text(
+                                                      homeProvider.showEngValue, // You can also animate this number if you want
+                                                      style: TextStyle(fontSize: Dimensions.sp16, color: homeProvider.textColor, fontWeight: FontWeight.w500, fontFamily: 'roboto'),
+                                                    );
+                                                  },
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                           SizedBox(
-                                            width: 5,
+                                            width: 20,
                                           ),
-                                          TweenAnimationBuilder<double>(
-                                            tween: Tween(begin: 150, end: homeProvider.animatedValue),
-                                            duration: Duration(seconds: 5),
-                                            builder: (context, value, child) {
-                                              return Text(
-                                                homeProvider.showEngValue, // You can also animate this number if you want
-                                                style:TextStyle(fontSize: Dimensions.sp16, color: homeProvider.textColor, fontWeight: FontWeight.w500, fontFamily: 'roboto'),
-                                              );
+                                          InkWell(
+                                            onTap: () {
+                                              routePush(context, NotificationScreen());
                                             },
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    InkWell(
-                                      onTap: (){
-                                        routePush(context, NotificationScreen());
-                                      },child: Container(
-                                      margin: const EdgeInsets.only(top: 5),
-                                      width: 40,
-                                      height: 36,
-                                      child: Stack(
-                                        clipBehavior: Clip.none,
-                                        alignment: Alignment.center,
-                                        children: [
-                                          Positioned(
-                                            top: 10,
-                                            left: -10,
-                                            child: Image.asset(
-                                              Images.imgBellRed,
-                                              width: 24,
-                                              height: 24,
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 0,
-                                            left: 3,
                                             child: Container(
-                                              width: 20,
-                                              height: 20,
-                                              alignment: Alignment.center,
-                                              padding: const EdgeInsets.all(2),
-                                              decoration: const BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Colors.transparent, // background like bg_circle_hollow_red
-                                                border: Border.fromBorderSide(
-                                                  BorderSide(color: ColorResources.color17ba0a, width: 1.5),
-                                                ),
-                                              ),
-                                              child: Text(
-                                                '3', // Replace with dynamic count
-                                                style: TextStyle(
-                                                  color: ColorResources.mainColor,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w400,
-                                                  fontFamily: 'Roboto',
-                                                ),
+                                              margin: const EdgeInsets.only(top: 5),
+                                              width: 40,
+                                              height: 36,
+                                              child: Stack(
+                                                clipBehavior: Clip.none,
+                                                alignment: Alignment.center,
+                                                children: [
+                                                  Positioned(
+                                                    top: 10,
+                                                    left: -10,
+                                                    child: Image.asset(
+                                                      Images.imgBellRed,
+                                                      width: 24,
+                                                      height: 24,
+                                                    ),
+                                                  ),
+                                                  if (homeController.notificationCount != null)
+                                                    Positioned(
+                                                      top: 0,
+                                                      left: 3,
+                                                      child: Container(
+                                                        width: 20,
+                                                        height: 20,
+                                                        alignment: Alignment.center,
+                                                        padding: const EdgeInsets.all(2),
+                                                        decoration: const BoxDecoration(
+                                                          shape: BoxShape.circle,
+                                                          color: Colors.transparent,
+                                                          border: Border.fromBorderSide(
+                                                            BorderSide(color: ColorResources.color17ba0a, width: 1.5),
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          homeController.notificationCount!,
+                                                          style: TextStyle(
+                                                            color: ColorResources.mainColor,
+                                                            fontSize: 10,
+                                                            fontWeight: FontWeight.w400,
+                                                            fontFamily: 'Roboto',
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                ],
                                               ),
                                             ),
-                                          ),
+                                          )
                                         ],
                                       ),
                                     ),
-                                    )
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
                       Expanded(
                         flex: 1,
                         child: SingleChildScrollView(
@@ -245,7 +251,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       top: 15,
                                       bottom: -10,
                                       child: InkWell(
-                                        onTap: (){
+                                        onTap: () {
                                           routePush(context, AmazingAwardYourListScreen());
                                         },
                                         child: Container(
@@ -344,8 +350,8 @@ class HomeScreenState extends State<HomeScreen> {
                                                     day.mood != null
                                                         ? Icon(day.mood, color: Colors.red)
                                                         : day.date.isNotEmpty
-                                                        ? Text("-", style: TextStyle(fontSize: 20))
-                                                        : SizedBox.shrink(),
+                                                            ? Text("-", style: TextStyle(fontSize: 20))
+                                                            : SizedBox.shrink(),
                                                   ],
                                                 ),
                                               ),
@@ -376,7 +382,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        showDialog(context, AmazingAwardUserDialog());
+                                        // showDialog(context, AmazingAwardUserDialog());
                                       },
                                       child: Container(
                                         width: MediaQuery.of(context).size.width,
@@ -499,8 +505,6 @@ class HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-
 
   void showDialog(BuildContext context, Widget workNotDialog) {
     Navigator.of(context).push(

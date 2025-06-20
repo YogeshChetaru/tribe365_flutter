@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tribe365_new/feature/free_version/free_dashboard/controllers/free_dashboard_controller.dart';
+import 'package:tribe365_new/feature/paid_version/home/controllers/home_controller.dart';
 import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/main.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
@@ -12,7 +12,10 @@ import '../../../../helper/api_checker.dart';
 import '../../../free_version/free_dashboard/domain/models/get_office_list_response.dart';
 import '../../../free_version/free_dashboard/domain/models/view_department_list_response.dart';
 import '../../profile/domain/models/viewuserprofileresponse.dart';
+import '../domain/models/model_add_action_user_response.dart';
+import '../domain/models/view_know_member_details_response.dart';
 import '../domain/models/view_know_organisation_response.dart';
+import '../domain/models/view_kudos_award_response.dart';
 import '../domain/services/know_service_interface.dart';
 
 
@@ -20,10 +23,12 @@ class KnowController extends ChangeNotifier {
   final KnowServiceInterface? knowServiceInterface;
 
   KnowController({required this.knowServiceInterface});
-
-  // List<String> officeList = ['Office A', 'Office B', 'Office C'];
-  List<String> dayWiseList = [getTranslated("day_wise",Get.context!)!, getTranslated("week_wise",Get.context!)!, getTranslated("month_wise",Get.context!)!];
-  // List<String> departmentList = ['Department A', 'Department B', 'Department C'];
+  bool _isLoading = true;
+  bool _isLoadingMember = true;
+  bool viewMoreStatus = false;
+  bool get isLoading => _isLoading;
+  bool get isLoadingMember => _isLoadingMember;
+   List<String> dayWiseList = [getTranslated("day_wise",Get.context!)!, getTranslated("week_wise",Get.context!)!, getTranslated("month_wise",Get.context!)!];
   List<ViewDepartmentListData>? departmentList;
   List<Offices>? officesList;
   String orgId = "";
@@ -59,6 +64,39 @@ class KnowController extends ChangeNotifier {
   Color todayColor = Colors.grey;
   Color yesterdayColor = Colors.grey;
   Color dayAfterColor = Colors.grey;
+  List<LastMonthKudosChamp>? lastMonthKudosChamp;
+  List<LatestKudosAward>? latestKudosAwardMainList;
+  String userNameAward = "";
+  bool kudosCountCardStatus = false ;
+  List<KudosCount>? kudosCountList;
+  List<ModelAddActionUserData> users = [];
+  List<ViewKudosAwardData> awards = [];
+  Map<String, List<ViewKudosAwardData>> groupedAwards = {};
+  String selectedUserId = '';
+  String selectedMemberId = '';
+  String selectedMemberOrgId = '';
+  String selectedUserName = 'All User';
+  String selectedMemberName = '';
+  List<GroupKudosList> groupKudosList = [];
+
+  double _engagementKMScore = 0;
+  String _engagementKMStatus = '';
+  String _engagementKMDisplayValue = '';
+  String _engagementKMImagePath = Images.imgLowRed;
+  Color _engagementKMScoreColor = Colors.grey;
+
+  double get engagementKMScore => _engagementKMScore;
+  String get engagementKMStatus => _engagementKMStatus;
+  String get engagementKMDisplayValue => _engagementKMDisplayValue;
+  String get engagementKMImagePath => _engagementKMImagePath;
+  Color get engagementKMScoreColor => _engagementKMScoreColor;
+
+  List<PersonalityTypeDetailsArr>? personalityTypeList;
+  String? personalityTypeDetailsMsg;
+  List<String>? teamRoleList;
+  String? teamRoleDetailsMsg;
+  List<String>? motivationList;
+  String? motivationDetails;
 
 
   void updateOfficeSelectedValue(Offices? data) {
@@ -79,7 +117,7 @@ class KnowController extends ChangeNotifier {
       }
     }
     departmentSelectedValue = departmentList!.first;
-    viewKnowOrganisation();
+    viewKnowOrganisation(false);
     notifyListeners();
   }
   void updateOrgID(ViewUserProfileData? data) {
@@ -90,7 +128,7 @@ class KnowController extends ChangeNotifier {
   void updateDepartmentSelectedValue(ViewDepartmentListData? data) {
     if (departmentSelectedValue?.id != data!.id) {
       departmentSelectedValue = data;
-      viewKnowOrganisation();
+      viewKnowOrganisation(false);
     }
     notifyListeners();
   }
@@ -324,7 +362,6 @@ class KnowController extends ChangeNotifier {
     return value;
   }
 
-
   void processHomeData(Map<String, dynamic> object) {
     try {
 
@@ -357,63 +394,190 @@ class KnowController extends ChangeNotifier {
           );
         }
 
-        /*if (sessionParam.loginVersion == 3) {
-          setEngagementDataBasicVersion(
-            homeDetail.engagementIndex,
-            homeDetail.engagementIndexRank,
-          );
-        }
-        else {
-          setEngagementData(
-            homeDetail.engagementIndex,
-            homeDetail.engagementIndexRank,
-          );
-        }*/
-
         // Kudos Champ List
-        /*final kudosList = homeDetail.lastMonthKudosChamp ?? [];
-        if (kudosList.isNotEmpty) {
-          final firstUser = kudosList.first;
-          if ((firstUser.userName ?? '').isEmpty) {
-            showNoKudosChampRecord();
-          } else {
-            showKudosChampList(kudosList);
-          }
-        }
-        else {
-          showNoKudosChampRecord();
-        }*/
+        lastMonthKudosChamp = [];
+        lastMonthKudosChamp = homeData!.lastMonthKudosChamp ?? [];
 
         // Kudos Award List
-       /* final kudosAwardList = homeDetail.latestKudosAward ?? [];
-        if (kudosAwardList.isNotEmpty) {
-          showKudosAwardList(kudosAwardList);
-
-          if (kudosAwardList.length >= 3) {
-            showViewMoreAwardButton();
-          } else {
-            hideViewMoreAwardButton();
+        List<LatestKudosAward>? latestKudosAwardList = [];
+        latestKudosAwardMainList = [];
+        latestKudosAwardList = homeData!.latestKudosAward ?? [];
+        if(latestKudosAwardList.length<3){
+          viewMoreStatus = false;
+          for(int i=0;i<latestKudosAwardList.length;i++){
+            latestKudosAwardMainList!.add(latestKudosAwardList[i]);
           }
         }
-        else {
-          hideKudosAwardSection();
+        else{
+          viewMoreStatus = true;
+          for(int i=0;i<3;i++){
+            latestKudosAwardMainList!.add(latestKudosAwardList[i]);
+          }
         }
-
-        */
       }
     } catch (e) {
       debugPrint("Main block error: $e");
     }
+    notifyListeners();
+  }
+
+  void setUserList(List<ModelAddActionUserData> userList) {
+    users = userList;
+    users.insert(0, ModelAddActionUserData(id: 0, name: 'All User'));
+    notifyListeners();
+  }
+
+  void setAwardList(List<ViewKudosAwardData> awardList) {
+    awards = awardList;
+    groupAndSortAwards();
+    notifyListeners();
+  }
+
+  void groupAndSortAwards() {
+    final Map<String, List<ViewKudosAwardData>> map = {};
+    for (var award in awards) {
+      final key = "#${award.awardDate} # ${award.awardDescription}";
+      map.putIfAbsent(key, () => []).add(award);
+    }
+    groupedAwards = Map.fromEntries(map.entries.toList()
+      ..sort((a, b) => b.key.compareTo(a.key)));
+  }
+
+  void selectUser(String id, String name) {
+    selectedUserId = id;
+    selectedUserName = name;
+
+    notifyListeners();
+  }
+  void selectMember(String id, String name,String orgId) {
+    selectedMemberId = id;
+    selectedMemberName = name;
+    selectedMemberOrgId = orgId;
+    viewKnowMemberDetails(selectedMemberId, selectedMemberOrgId,false);
+    notifyListeners();
+  }
+  void updateUserData(ModelAddActionUserData userData) {
+    if (userData.name == 'All User') {
+      selectUser('', userData.name!);
+      viewKudosAward('');
+    } else {
+      selectUser(userData.id.toString(), "${userData.name!}  ${userData.lastName??""}");
+      viewKudosAward(userId);
+    }
+    notifyListeners();
+  }
+  void updateMemberData(ModelAddActionUserData userData) {
+    selectMember(userData.id.toString(), "${userData.name!}  ${userData.lastName??""}",userData.orgId.toString());
+    notifyListeners();
+  }
+
+  void loadGroupedAwards(List<ViewKudosAwardData> allAwards, String userId) {
+    groupKudosList.clear();
+
+    if (userId.isEmpty) {
+      final map = <String, List<ViewKudosAwardData>>{};
+
+      for (var award in allAwards) {
+        final key = '#${getDate(award.awardDate!)} # ${award.awardDescription}';
+        map.putIfAbsent(key, () => []);
+        map[key]!.add(award);
+      }
+
+      final sortedMap = Map.fromEntries(map.entries.toList()
+        ..sort((a, b) => b.key.compareTo(a.key)));
+
+      for (var entry in sortedMap.entries) {
+        groupKudosList.add(GroupKudosList(
+          keyDescription: entry.key,
+          kudosAwardLists: entry.value,
+        ));
+      }
+
+      notifyListeners();
+    }
+  }
+
+  String getDate(String rawDate) {
+    try {
+      final date = DateTime.parse(rawDate);
+      return '${date.day}-${date.month}-${date.year}';
+    } catch (_) {
+      return rawDate;
+    }
+  }
+
+  void intiUserMemberData(ViewUserProfileData? userData) {
+    selectedMemberId = userData!.id.toString();
+    selectedMemberName ="${ userData.name}" "${userData.lastName??""}";
+    selectedMemberOrgId = userData.orgId.toString();
+    viewKnowMemberDetails(selectedMemberId, selectedMemberOrgId,true);
+    notifyListeners();
+  }
+
+  void setEngagementScore(String? scoreStr) {
+    final score = double.tryParse(scoreStr!) ?? 0;
+    _engagementKMScore = score;
+    _engagementKMDisplayValue = _trimTrailingZeros(scoreStr);
+
+    if (score <= 499) {
+      _engagementKMImagePath = Images.imgLowRed;
+      _engagementKMStatus = 'Low';
+      _engagementKMScoreColor = ColorResources.colorEb1c24;
+    } else if (score >= 500 && score <= 1099) {
+      _engagementKMImagePath = Images.imgMediumYellow;
+      _engagementKMStatus = 'Medium';
+      _engagementKMScoreColor = ColorResources.colorffde00;
+    } else {
+      _engagementKMImagePath = Images.imgSmileGreenBig;
+      _engagementKMStatus = 'High';
+      _engagementKMScoreColor = ColorResources.color17ba0a;
+    }
+    notifyListeners();
+  }
+
+  void setEngagementScoreBasicVersion(String? scoreStr) {
+    final score = double.tryParse(scoreStr!) ?? 0;
+    _engagementKMScore = score;
+    _engagementKMDisplayValue = _trimTrailingZeros(scoreStr);
+
+    if (score <= 299) {
+      _engagementKMImagePath = Images.imgLowRed;
+      _engagementKMStatus = 'Low';
+      _engagementKMScoreColor = ColorResources.colorEb1c24;
+    } else if (score >= 300 && score <= 800) {
+      _engagementKMImagePath = Images.imgMediumYellow;
+      _engagementKMStatus = 'Medium';
+      _engagementKMScoreColor = ColorResources.colorffde00;
+    } else {
+      _engagementKMImagePath = Images.imgSmileGreenBig;
+      _engagementKMStatus = 'High';
+      _engagementKMScoreColor = ColorResources.color17ba0a;
+    }
+    notifyListeners();
+  }
+
+  String _trimTrailingZeros(String value) {
+    final number = double.tryParse(value);
+    if (number == null) return value;
+    return number.toStringAsFixed(number.truncateToDouble() == number ? 0 : 2);
   }
 
   //API calling --------------
-  Future<void> viewKnowOrganisation() async {
+  Future<void> viewKnowOrganisation(bool loadStatus) async {
+    if(loadStatus){
+      _isLoading = true;
+      notifyListeners();
+    }
+
     Map<String, dynamic> requestData = {
       "orgId": orgId,
       "officeId":officeSelectedValue!.officeId,
       "departmentId":departmentSelectedValue!.id
     };
     ApiResponse apiResponse = await knowServiceInterface!.viewKnowOrganisationData(requestData);
+
+    _isLoading = false;
+
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
       ViewKnowOrganisationResponse response = ViewKnowOrganisationResponse.fromJson(map);
@@ -468,4 +632,117 @@ class KnowController extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<void> viewUserByTypeList() async {
+    Map<String, dynamic> requestData = {
+      "typeId": orgId,
+      "type":"organisation"
+    };
+    ApiResponse apiResponse = await knowServiceInterface!.viewUserByType(requestData);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ModelAddActionUserResponse response = ModelAddActionUserResponse.fromJson(map);
+      users = [];
+      users.add(ModelAddActionUserData(id: 0, name: 'All User'));
+      for(int i=0;i<response.data!.length;i++){
+        users.add(response.data![i]);
+      }
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewKnowMemberList() async {
+    Map<String, dynamic> requestData = {
+      "typeId": orgId,
+      "type":"organisation"
+    };
+    ApiResponse apiResponse = await knowServiceInterface!.viewUserByType(requestData);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ModelAddActionUserResponse response = ModelAddActionUserResponse.fromJson(map);
+      users = [];
+      for(int i=0;i<response.data!.length;i++){
+        users.add(response.data![i]);
+      }
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewKudosAward(String userId) async {
+    Map<String, dynamic> requestData = {
+      "userId": userId
+    };
+    ApiResponse apiResponse = await knowServiceInterface!.viewKudosAward(requestData);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewKudosAwardResponse response = ViewKudosAwardResponse.fromJson(map);
+
+      loadGroupedAwards(response.data!, userId);
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewKnowMemberDetails(String userId,String orgId,bool loadStatus) async {
+    if(loadStatus){
+      _isLoadingMember = true;
+      notifyListeners();
+    }
+    Map<String, dynamic> requestData = {
+      "userId": userId,
+      "orgId":orgId
+    };
+    ApiResponse apiResponse = await knowServiceInterface!.viewKnowMemberDetails(requestData);
+    _isLoadingMember = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewKnowMemberDetailsResponse response = ViewKnowMemberDetailsResponse.fromJson(map);
+      ViewKnowMemberDetailsData? data = response.data;
+      if (Provider.of<HomeController>(Get.context!,listen: false).homeData!.appPaymentVersion==3){
+        setEngagementScore(data!.engagementIndexScore);
+      }else {
+        setEngagementScoreBasicVersion(data!.engagementIndexScore);
+      }
+
+      kudosCountList = [];
+      kudosCountList=data.kudosCount;
+
+      if (data.appPaymentVersion==3){
+        kudosCountCardStatus = false;
+      }else {
+        kudosCountCardStatus = true;
+      }
+      personalityTypeList = [];
+      personalityTypeList =  data.personalityType;
+      personalityTypeDetailsMsg = data.perTypeDetails;
+
+      teamRoleList = [];
+      teamRoleList = data.teamRole;
+      teamRoleDetailsMsg = data.teamRoleDetails!;
+
+      motivationList = [];
+      motivationList = data.motivation;
+      motivationDetails = data.motivationDetails;
+
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+
+
+
+
+
+
 }

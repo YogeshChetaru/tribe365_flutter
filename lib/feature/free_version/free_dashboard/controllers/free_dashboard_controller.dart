@@ -519,6 +519,24 @@ class FreeDashboardController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updatePushNotificationStatus(String appStatus,String deviceStatus) async {
+    Map<String, dynamic> requestData = {
+      "userId": userId,
+      "appStatus":appStatus,
+      "deviceStatus":deviceStatus
+    };
+
+    ApiResponse apiResponse = await freeDashboardServiceInterface!.updatePushNotificationStatus(requestData);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      debugPrint("updatePushNotificationStatus >>>>$map");
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
 
 
 

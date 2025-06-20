@@ -4,8 +4,8 @@ import 'package:tribe365_new/utill/dimensions.dart';
 
 class MotivationItem extends StatelessWidget {
 
-
-  const MotivationItem({super.key});
+  final String name;
+  const MotivationItem({super.key,required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class MotivationItem extends StatelessWidget {
           Container(
             margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
             child: Text(
-              "Auditor",
+              name,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: Dimensions.sp14,

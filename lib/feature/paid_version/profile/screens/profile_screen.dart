@@ -12,12 +12,15 @@ import 'package:tribe365_new/feature/paid_version/profile/screens/team_role_scre
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/custom_route.dart';
 import '../../../../localization/language_constrants.dart';
+import '../../../../main.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
 import '../../../free_version/free_dashboard/widgets/changepassworddialog.dart';
 import '../../../free_version/free_dashboard/widgets/logoutdialog.dart';
 import '../../../free_version/free_dashboard/widgets/worknotdialog.dart';
+import '../../know/widgets/motivationitem.dart';
 import '../../know/widgets/personalitytypeitem.dart';
+import '../../know/widgets/teamroleitem.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -30,12 +33,17 @@ class ProfileScreen extends StatefulWidget {
 class ProfileScreenState extends State<ProfileScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
   String _appVersion = '';
+  ProfileController profileController = Provider.of<ProfileController>(Get.context!, listen: false);
 
   @override
   void initState() {
     super.initState();
     _loadVersion();
+    loadAPI();
+  }
 
+  void loadAPI() {
+    profileController.viewUserProfile();
   }
 
   void _loadVersion() async {
@@ -166,7 +174,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   fontFamily: 'Roboto',
                                 ),
                               ),
-                              profileProvider.userProfileData!.personalityTypeDetailsArr==null? InkWell(
+                              profileProvider.userProfileData!.personalityTypeDetailsArr==null?
+                              InkWell(
                                 onTap: (){
                                   routePush(context, PersonalityTypeScreen());
                                 },child: Container(
@@ -218,6 +227,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                   fontFamily: 'Roboto',
                                 ),
                               ),
+                              profileProvider.userProfileData!.cotTeamRoleMapArr!.isEmpty?
                               InkWell(
                                 onTap: (){
                                   routePush(context,TeamRoleScreen());
@@ -233,11 +243,11 @@ class ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ),
                                 ),
-                              ),
-                              /*Container(
+                              ):
+                              Container(
                                 margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                                 child: GridView.builder(
-                                  itemCount: 3,
+                                  itemCount: profileProvider.userProfileData!.cotTeamRoleMapArr!.length,
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
                                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -247,10 +257,10 @@ class ProfileScreenState extends State<ProfileScreen> {
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return TeamRoleItem();
+                                    return TeamRoleItem(name: profileProvider.userProfileData!.cotTeamRoleMapArr![index],);
                                   },
                                 ),
-                              ),*/
+                              ),
                             ],
                           ),
                         ),
@@ -265,11 +275,12 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 getTranslated("motivation", context)!,
                                 style: TextStyle(
                                   fontSize: Dimensions.sp14,
-                                  color: ColorResources.black, // Replace with ColorResources.mainColor
+                                  color: ColorResources.black,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'Roboto',
                                 ),
                               ),
+                              profileProvider.userProfileData!.sotMotivationDetailArr!.isEmpty?
                               InkWell(
                                 onTap: (){
                                   routePush(context, MotivationQuestionsScreen());
@@ -285,11 +296,11 @@ class ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ),
                                 ),
-                              ),
-                              /*Container(
+                              ):
+                              Container(
                                 margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                                 child: GridView.builder(
-                                  itemCount: 3,
+                                  itemCount: profileProvider.userProfileData!.sotMotivationDetailArr!.length,
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
                                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -299,10 +310,10 @@ class ProfileScreenState extends State<ProfileScreen> {
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return MotivationItem();
+                                    return MotivationItem(name: profileProvider.userProfileData!.sotMotivationDetailArr![index],);
                                   },
                                 ),
-                              ),*/
+                              ),
                             ],
                           ),
                         ),
@@ -518,6 +529,8 @@ class ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
+
 
 
 }

@@ -5,4 +5,5 @@ import '../../../../../interface/repo_interface.dart';
 
 abstract class HomeRepositoryInterface implements RepositoryInterface {
   Future<ApiResponse> getHomeData(Map<String, dynamic> body);
+  Future<ApiResponse> viewNotificationsCount(Map<String, dynamic> body);
 }

@@ -56,6 +56,14 @@ class AppConstants {
   static const String getChatMessagesUri = 'getChatMessages';
   static const String iotSendMsgUri = 'iotSendMsg';
   static const String viewKnowOrganisationDetailsUri = 'getKnowOrganisationDetails';
+  static const String getUserByTypeUri = 'getUserByType';
+  static const String getKudosAwardUri = 'getKudosAward';
+  static const String getKnowMemberDetailsUri = 'getKnowMemberDetails';
+  static const String getBubbleUnReadNotificationsUri = 'getBubbleUnReadNotifications';
+  static const String getBubbleRatingUnReadNotificationListUri = 'getBubbleRatingUnReadNotificationList';
+  static const String getBubbleRatingNotificationListUri = 'getBubbleRatingNotificationList';
+  static const String readAllNotificationUri = 'readAllNotification';
+  static const String changeNotificationStatusUri = 'changeNotificationStatus';
 
 
   static final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');

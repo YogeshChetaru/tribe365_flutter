@@ -7,6 +7,7 @@ import '../../../../data/model/api_response.dart';
 import '../../../../helper/api_checker.dart';
 import '../../../../main.dart';
 import '../domain/models/daydata.dart';
+import '../domain/models/view_notification_count_response.dart';
 import '../domain/models/viewhomeresponse.dart';
 import '../domain/services/home_service_interface.dart';
 
@@ -18,6 +19,7 @@ class HomeController extends ChangeNotifier {
   TextEditingController searchController = TextEditingController();
   FocusNode searchFocus = FocusNode();
   ViewHomeData? homeData;
+ String? notificationCount;
 
   final List<DayData> weekData = [
     DayData(day: 'Sun', date: '01'),
@@ -134,6 +136,23 @@ class HomeController extends ChangeNotifier {
       ViewHomeResponse homeResponse = ViewHomeResponse.fromJson(map);
       homeData = homeResponse.data;
       indexEngScoreData(homeData!.todayEIScore!);
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewNotificationCount(String userId) async {
+    Map<String, dynamic> request = {
+      "userId": userId,
+    };
+    ApiResponse apiResponse = await homeServiceInterface!.viewNotificationsCount(request);
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewNotificationCountResponse response = ViewNotificationCountResponse.fromJson(map);
+      notificationCount =  response.data!.notificationCount.toString();
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);

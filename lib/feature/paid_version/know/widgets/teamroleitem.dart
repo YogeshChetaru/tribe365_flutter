@@ -3,9 +3,9 @@ import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 
 class TeamRoleItem extends StatelessWidget {
+ final String name;
 
-
-  const TeamRoleItem({super.key});
+  const TeamRoleItem({super.key,required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class TeamRoleItem extends StatelessWidget {
           Container(
             margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
             child: Text(
-              "Auditor",
+             name,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: Dimensions.sp14,

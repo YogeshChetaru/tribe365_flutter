@@ -18,4 +18,17 @@ class KnowService implements KnowServiceInterface {
   Future<ApiResponse> viewDepartmentList() {
     return knowRepositoryInterface.viewDepartmentList();
   }
+  @override
+  Future<ApiResponse> viewUserByType(Map<String, dynamic> body) {
+    return knowRepositoryInterface.viewUserByType(body);
+  }
+
+  @override
+  Future<ApiResponse> viewKudosAward(Map<String, dynamic> body) {
+    return knowRepositoryInterface.viewKudosAward(body);
+  }
+  @override
+  Future<ApiResponse> viewKnowMemberDetails(Map<String, dynamic> body) {
+    return knowRepositoryInterface.viewKnowMemberDetails(body);
+  }
 }

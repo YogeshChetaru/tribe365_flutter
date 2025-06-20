@@ -3,8 +3,11 @@ import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 import 'package:tribe365_new/utill/images.dart';
 
+import '../../know/domain/models/view_know_organisation_response.dart';
+
 class AmazingUserItem extends StatelessWidget {
-  const AmazingUserItem({super.key});
+  final ViewMoreUsers data;
+   const AmazingUserItem({super.key,required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +36,7 @@ class AmazingUserItem extends StatelessWidget {
                   shape: BoxShape.circle,
                   border: Border.all(color: ColorResources.mainColor, width: 1),
                   image: DecorationImage(
-                    image: AssetImage(Images.imgUserCircleGray),
+                    image: data.userImage==""?AssetImage(Images.imgUserCircleGray):NetworkImage(data.userImage!) as ImageProvider,
                   ),
                 ),
               ),
@@ -43,7 +46,7 @@ class AmazingUserItem extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Text(
-                  "user name",
+                  data.userName!,
                   style: const TextStyle(fontSize: Dimensions.sp14, fontWeight: FontWeight.w600, fontFamily: 'roboto', color: ColorResources.color333333),
                 ),
               ),

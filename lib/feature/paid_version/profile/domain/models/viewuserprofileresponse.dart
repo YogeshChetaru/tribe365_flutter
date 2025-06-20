@@ -51,6 +51,9 @@ class ViewUserProfileData {
   bool? perTypeStatus;
   String? personalityTypeDetails;
   List<PersonalityTypeDetailsArr>? personalityTypeDetailsArr;
+  List<String>? cotTeamRoleMapArr;
+  List<String>? sotMotivationDetailArr;
+
 
   ViewUserProfileData({
     this.id,
@@ -74,7 +77,10 @@ class ViewUserProfileData {
     this.sotMotivationDetail,
     this.perTypeStatus,
     this.personalityTypeDetails,
-    this.personalityTypeDetailsArr
+    this.personalityTypeDetailsArr,
+    this.cotTeamRoleMapArr,
+    this.sotMotivationDetailArr
+
   });
 
   ViewUserProfileData.fromJson(Map<String, dynamic> json) {
@@ -103,9 +109,11 @@ class ViewUserProfileData {
       personalityTypeDetailsArr = <PersonalityTypeDetailsArr>[];
       json['personalityTypeDetailsArr'].forEach((v) {
         personalityTypeDetailsArr!
-            .add( PersonalityTypeDetailsArr.fromJson(v));
+            .add(PersonalityTypeDetailsArr.fromJson(v));
       });
     }
+    cotTeamRoleMapArr = (json['cotTeamRoleMapArr'] as List<dynamic>?)?.cast<String>();
+    sotMotivationDetailArr = (json['sotMotivationDetailArr'] as List<dynamic>?)?.cast<String>();
   }
 
   Map<String, dynamic> toJson() {
@@ -135,6 +143,9 @@ class ViewUserProfileData {
       data['personalityTypeDetailsArr'] =
           personalityTypeDetailsArr!.map((v) => v.toJson()).toList();
     }
+    data['sotMotivationDetailArr'] =sotMotivationDetailArr;
+    data["cotTeamRoleMapArr"]=cotTeamRoleMapArr;
+
 
     return data;
   }

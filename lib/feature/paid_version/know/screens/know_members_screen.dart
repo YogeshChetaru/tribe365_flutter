@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
+import 'package:tribe365_new/utill/custom_route.dart';
 import '../../../../common/basewidget/custom_header_back_widget.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
+import '../../profile/controllers/profile_controller.dart';
 import '../controllers/know_controller.dart';
+import '../domain/models/view_know_member_details_response.dart';
 import '../widgets/motivationitem.dart';
+import '../widgets/personalitytypeitem.dart';
 import '../widgets/teamroleitem.dart';
 import 'knowuserlistdialog.dart';
 
@@ -18,7 +22,19 @@ class KnowMembersScreen extends StatefulWidget {
 
 class KnowMembersScreenState extends State<KnowMembersScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
-
+  @override
+  void initState() {
+    super.initState();
+    loadAPI();
+  }
+  void loadAPI() {
+    KnowController knowController = Provider.of<KnowController>(context,listen: false);
+    final ProfileController profileController = Provider.of<ProfileController>(context, listen: false);
+    knowController.viewKnowMemberList();
+    profileController.viewUserProfile().then((onValue) {
+      knowController.intiUserMemberData(profileController.userProfileData);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,11 +52,22 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                 Expanded(
                   flex: 1,
                   child: SingleChildScrollView(
-                    child: Column(
+                    child: knowProvider.isLoadingMember
+                        ? SizedBox(
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+                    )
+                        : Column(
                       children: [
                         InkWell(
                           onTap: () {
-                            showDialog(context, KnowUserListDialog());
+                            customShowDialog(context, KnowUserListDialog(wayFrom: "member",));
                           },
                           child: Container(
                             margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
@@ -57,7 +84,7 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                             width: MediaQuery.sizeOf(context).width,
                             padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
                             child: Text(
-                              "Yogesh Tribe demo",
+                              knowProvider.selectedMemberName,
                               style: TextStyle(
                                 fontSize: Dimensions.sp14,
                                 color: ColorResources.color9a9a9a, // Replace with ColorResources.mainColor
@@ -87,10 +114,7 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                 flex: 30,
                                 child: Container(
                                   alignment: Alignment.center,
-                                  child: Text(
-                                    knowProvider.getEmoji("normal"),
-                                    style: const TextStyle(fontSize: 50),
-                                  ),
+                                  child: Image.asset(knowProvider.engagementKMImagePath,width: 50,height: 50,),
                                 ),
                               ),
                               Container(
@@ -115,25 +139,25 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                         getTranslated("engagement_index", context)!,
                                         style: TextStyle(
                                           fontSize: Dimensions.sp14,
-                                          color: ColorResources.color9a9a9a, // Replace with ColorResources.mainColor
+                                          color: ColorResources.color9a9a9a,
                                           fontWeight: FontWeight.w500,
                                           fontFamily: 'Roboto',
                                         ),
                                       ),
                                       Text(
-                                        "-50",
+                                        knowProvider.engagementKMDisplayValue,
                                         style: TextStyle(
                                           fontSize: Dimensions.sp14,
-                                          color: ColorResources.mainColor, // Replace with ColorResources.mainColor
+                                          color: knowProvider.engagementKMScoreColor,
                                           fontWeight: FontWeight.w500,
                                           fontFamily: 'Roboto',
                                         ),
                                       ),
                                       Text(
-                                        "LOW",
+                                        knowProvider.engagementKMStatus,
                                         style: TextStyle(
                                           fontSize: Dimensions.sp14,
-                                          color: ColorResources.black, // Replace with ColorResources.mainColor
+                                          color: ColorResources.black,
                                           fontWeight: FontWeight.w500,
                                           fontFamily: 'Roboto',
                                         ),
@@ -145,6 +169,64 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                             ],
                           ),
                         ),
+                        knowProvider.kudosCountCardStatus==true?
+                        knowProvider.kudosCountList==null?
+                        SizedBox.shrink():
+                        SizedBox(
+                          width: MediaQuery.sizeOf(context).width,
+                          child: Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            margin: const EdgeInsets.all(16),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: SizedBox(
+                                height: 300,
+                                child: ListView.builder(
+                                  itemCount: knowProvider.kudosCountList!.length,
+                                  itemBuilder: (context, index) {
+                                    KudosCount item = knowProvider.kudosCountList![index];
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                              item.name ?? '',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black,
+                                              ),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                              (item.kudosCount ?? 0).toString(),
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black,
+                                              ),
+                                              textAlign: TextAlign.end,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        ):
+                        SizedBox.shrink(),
                         Container(
                           margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
                           width: MediaQuery.sizeOf(context).width,
@@ -161,10 +243,13 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                   fontFamily: 'Roboto',
                                 ),
                               ),
+                              knowProvider.personalityTypeList==null?
+                              SizedBox.shrink():
+                              knowProvider.personalityTypeList!.isEmpty?
                               Container(
                                 margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                 child: Text(
-                                  getTranslated("you_have_not_submit_your_answers_yet", context)!,
+                                  knowProvider.personalityTypeDetailsMsg!,
                                   style: TextStyle(
                                     fontSize: Dimensions.sp12,
                                     color: ColorResources.black, // Replace with ColorResources.mainColor
@@ -172,11 +257,11 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                     fontFamily: 'Roboto',
                                   ),
                                 ),
-                              ),
-                             /* Container(
+                              ):
+                              Container(
                                 margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                                 child: GridView.builder(
-                                  itemCount: 4,
+                                  itemCount: knowProvider.personalityTypeList!.length,
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
                                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -186,10 +271,10 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return PersonalityTypeItem();
+                                    return PersonalityTypeItem(personalityTypeDetails:knowProvider.personalityTypeList![index] ,);
                                   },
                                 ),
-                              ),*/
+                              ),
                             ],
                           ),
                         ),
@@ -209,10 +294,13 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                   fontFamily: 'Roboto',
                                 ),
                               ),
-                              /*Container(
+                              knowProvider.teamRoleList==null?
+                              SizedBox.shrink():
+                              knowProvider.teamRoleList!.isEmpty?
+                              Container(
                                 margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                 child: Text(
-                                  getTranslated("you_have_not_submit_your_answers_yet", context)!,
+                                 knowProvider.teamRoleDetailsMsg!,
                                   style: TextStyle(
                                     fontSize: Dimensions.sp12,
                                     color: ColorResources.black, // Replace with ColorResources.mainColor
@@ -220,11 +308,11 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                     fontFamily: 'Roboto',
                                   ),
                                 ),
-                              ),*/
+                              ):
                               Container(
                                 margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                                 child: GridView.builder(
-                                  itemCount: 3,
+                                  itemCount: knowProvider.teamRoleList!.length,
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
                                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -234,7 +322,7 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return TeamRoleItem();
+                                    return TeamRoleItem(name:knowProvider.teamRoleList![index] ,);
                                   },
                                 ),
                               ),
@@ -257,10 +345,13 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                   fontFamily: 'Roboto',
                                 ),
                               ),
-                              /*Container(
+                              knowProvider.motivationList==null?
+                              SizedBox.shrink():
+                              knowProvider.motivationList!.isEmpty?
+                              Container(
                                 margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                 child: Text(
-                                  getTranslated("you_have_not_submit_your_answers_yet", context)!,
+                                  knowProvider.motivationDetails!,
                                   style: TextStyle(
                                     fontSize: Dimensions.sp12,
                                     color: ColorResources.black, // Replace with ColorResources.mainColor
@@ -268,11 +359,11 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                     fontFamily: 'Roboto',
                                   ),
                                 ),
-                              ),*/
+                              ):
                               Container(
                                 margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                                 child: GridView.builder(
-                                  itemCount: 3,
+                                  itemCount: knowProvider.motivationList!.length,
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
                                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -282,7 +373,7 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return MotivationItem();
+                                    return MotivationItem(name: knowProvider.motivationList![index],);
                                   },
                                 ),
                               ),
@@ -300,53 +391,6 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
             ),
           );
         }),
-      ),
-    );
-  }
-
-  void route(BuildContext context, Widget screen) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: Duration(milliseconds: 500),
-        reverseTransitionDuration: Duration(milliseconds: 500),
-        pageBuilder: (context, animation, secondaryAnimation) => screen,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0); // from right
-          const end = Offset.zero;
-          const curve = Curves.easeInOut;
-          final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          final offsetAnimation = animation.drive(tween);
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
-        },
-      ),
-    );
-  }
-
-  void showDialog(BuildContext context, Widget workNotDialog) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        opaque: false,
-        barrierDismissible: true,
-        barrierColor: Colors.black54,
-        pageBuilder: (context, animation, secondaryAnimation) {
-          return Center(child: workNotDialog);
-        },
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0); // From right
-          const end = Offset(-1.0, 0.0); // To left when popping
-          final tween = Tween(begin: begin, end: Offset.zero);
-          final reverseTween = Tween(begin: Offset.zero, end: end);
-          final offsetAnimation = animation.drive(tween);
-          final reverseOffset = secondaryAnimation.drive(reverseTween);
-
-          return SlideTransition(
-            position: animation.status == AnimationStatus.reverse ? reverseOffset : offsetAnimation,
-            child: child,
-          );
-        },
       ),
     );
   }
