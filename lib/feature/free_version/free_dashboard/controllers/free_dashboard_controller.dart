@@ -318,11 +318,6 @@ class FreeDashboardController extends ChangeNotifier {
       if (!feedbackStatus && leaveStatus != 1) {
         if (checkTime()) {
           isHappyIndexStatus = true;
-
-
-          // happyImageOnTap = () => apiAddHappyIndex("3");
-          // neutralImageOnTap = () => apiAddHappyIndex("2");
-          // sadImageOnTap = () => apiAddHappyIndex("1");
         } else {
           isHappyIndexStatus = false;
         }

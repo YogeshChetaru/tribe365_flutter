@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:tribe365_new/feature/paid_version/home/domain/models/amazingawardusermodel.dart';
 import 'package:tribe365_new/utill/images.dart';
 import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
@@ -16,10 +17,17 @@ class HomeController extends ChangeNotifier {
 
   HomeController({required this.homeServiceInterface});
 
+  bool _isPopupLoading = false;
+  bool get isPopupLoading => _isPopupLoading;
+
   TextEditingController searchController = TextEditingController();
   FocusNode searchFocus = FocusNode();
   ViewHomeData? homeData;
  String? notificationCount;
+  bool isAbsentVisible = false;
+  bool isHappyIndexStatus = false;
+  String orgId = "";
+  String userId = "";
 
   final List<DayData> weekData = [
     DayData(day: 'Sun', date: '01'),
@@ -70,7 +78,23 @@ class HomeController extends ChangeNotifier {
     }
     notifyListeners();
   }
+  void pickStartDate(BuildContext context, String type) async {
+    DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
 
+    if (date != null) {
+      if (type == "start") {
+        selectedStartDate = DateFormat('dd-MMM-yyyy').format(date);
+      } else if (type == "end") {
+        selectedEndDate = DateFormat('dd-MMM-yyyy').format(date);
+      }
+      notifyListeners();
+    }
+  }
   int getDeviceType() {
     if (kIsWeb) {
       return 0; // Web (you can return any code you want, e.g. 3 for Web)
@@ -88,6 +112,9 @@ class HomeController extends ChangeNotifier {
   String imagePath = Images.imgLowRed; // default
   Color textColor = Colors.red; // default
   double animatedValue = 150;
+  String selectedStartDate = DateFormat('dd-MMM-yyyy').format(DateTime.now());
+  String selectedEndDate = "";
+  final DateFormat dateDDMMMYYYYFormatter = DateFormat('dd-MMM-yyyy');
 
   void indexEngScoreData(String engValue) {
     double indexEngScore = double.tryParse(engValue) ?? 0.0;
@@ -113,7 +140,10 @@ class HomeController extends ChangeNotifier {
     animatedValue = 600;
     notifyListeners();
   }
-
+  void updateUserID(int? id) {
+    userId = id.toString();
+    notifyListeners();
+  }
   String _trimTrailingZeros(String value) {
     // Example trimming logic
     if (value.contains(".")) {
@@ -121,6 +151,35 @@ class HomeController extends ChangeNotifier {
       value = value.replaceAll(RegExp(r'\.$'), '');
     }
     return value;
+  }
+  void getHappyIndexBlink(int? leaveStatus) {
+    if (leaveStatus != 1  && checkTime()) {
+      isHappyIndexStatus = true;
+    } else {
+      isHappyIndexStatus = false;
+    }
+    notifyListeners();
+  }
+  void updateDate() {
+    selectedStartDate = DateFormat('dd-MMM-yyyy').format(DateTime.now());
+    selectedEndDate = "";
+    notifyListeners();
+  }
+
+  bool checkTime() {
+    try {
+      final now = DateTime.now();
+      final startTime = TimeOfDay(hour: 16, minute: 0);
+      final endTime = TimeOfDay(hour: 23, minute: 59);
+      final currentMinutes = now.hour * 60 + now.minute;
+      final startMinutes = startTime.hour * 60 + startTime.minute;
+      final endMinutes = endTime.hour * 60 + endTime.minute;
+
+      return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+    } catch (e) {
+      debugPrint('Error in checkTime: $e');
+      return false;
+    }
   }
 
   //API calling
@@ -136,6 +195,7 @@ class HomeController extends ChangeNotifier {
       ViewHomeResponse homeResponse = ViewHomeResponse.fromJson(map);
       homeData = homeResponse.data;
       indexEngScoreData(homeData!.todayEIScore!);
+      getHappyIndexBlink(homeData!.leaveStatus);
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
@@ -159,4 +219,63 @@ class HomeController extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<void> userApplyLeave(String startDate, String endDate) async {
+    Map<String, dynamic> requestData = {
+      "userId": userId,
+      "startDate": startDate,
+      "endDate":endDate
+    };
+
+    ApiResponse apiResponse = await homeServiceInterface!.userApplyLeave(requestData);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      showCustomSnackBar(map["message"], Get.context!, isError: false);
+      isAbsentVisible = true;
+      isHappyIndexStatus = false;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> userChangeLeaveStatus() async {
+    _isPopupLoading = true;
+    notifyListeners();
+    Map<String, dynamic> requestData = {
+      "userId": userId,
+    };
+
+    ApiResponse apiResponse = await homeServiceInterface!.userChangeLeaveStatus(requestData);
+    _isPopupLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      showCustomSnackBar(map["message"], Get.context!, isError: false);
+      Navigator.of(Get.context!).pop();
+      getHomeData(orgId);
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> addHappyIndex(String status) async {
+    Map<String, dynamic> requestData = {
+      "userId": userId,
+      "moodStatus": status,
+    };
+    ApiResponse apiResponse = await homeServiceInterface!.addHappyIndex(requestData);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      showCustomSnackBar(map["message"], Get.context!, isError: false);
+      isHappyIndexStatus = false;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
 }

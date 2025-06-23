@@ -8,7 +8,7 @@ class ViewUnreadNotificationList {
   ToDoList? toDoList;
   ReminderList? reminderList;
   int? totalPageCount;
-  String? currentPage;
+  int? currentPage;
   List<NotificationAction>? actions;
 
   ViewUnreadNotificationList(
@@ -95,6 +95,8 @@ class ViewUnreadNotificationData {
   int? fromUserId;
   int? teamFeedbackId;
   bool? isRead;
+
+
 
   ViewUnreadNotificationData(
       {this.id,

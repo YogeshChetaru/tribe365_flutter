@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribe365_new/feature/paid_version/home/screens/amazing_award_your_list_screen.dart';
+import 'package:tribe365_new/feature/paid_version/home/widgets/home_out_office_mode_dialog.dart';
 import 'package:tribe365_new/feature/paid_version/profile/controllers/profile_controller.dart';
 import 'package:tribe365_new/main.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
@@ -14,6 +15,7 @@ import '../../../free_version/hptm/screens/hptm_screen.dart';
 import '../../notification/screens/notification_screen.dart';
 import '../controllers/home_controller.dart';
 import '../widgets/amazingawardsetdialog.dart';
+import '../widgets/home_worknotdialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,6 +32,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   void apiLoad() {
     profileController.viewUserProfile().then((onValue) {
+      homeController.updateUserID(profileController.userProfileData!.id);
       homeController.getHomeData(profileController.userProfileData!.orgId.toString());
       homeController.viewNotificationCount(profileController.userProfileData!.id.toString());
 
@@ -198,6 +201,145 @@ class HomeScreenState extends State<HomeScreen> {
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
+
+                              /*homeController.isHappyIndexStatus==false ?
+                              SizedBox.shrink():*/
+                              Container(
+                                margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                                width: MediaQuery.sizeOf(context).width,
+                                padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: ColorResources.mainColor,
+                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      getTranslated("how_s_things_at_work_today", context)!,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: Dimensions.sp16,
+                                        color: ColorResources.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'Roboto',
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: InkWell(
+                                            onTap: (){
+                                              homeController.addHappyIndex("3");
+                                            },child: SizedBox(
+                                            width: 55,
+                                            height: 55,
+                                            child: Image.asset(
+                                              Images.imgHappyEmoji,
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: InkWell(
+                                            onTap: (){
+                                              homeController.addHappyIndex("2");
+                                            },child: SizedBox(
+                                            width: 55,
+                                            height: 55,
+                                            child: Image.asset(
+                                              Images.imgNeutralEmoji,
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: InkWell(
+                                            onTap: (){
+                                              homeController.addHappyIndex("1");
+                                            },child: SizedBox(
+                                            width: 55,
+                                            height: 55,
+                                            child: Image.asset(
+                                              Images.imgSadEmoji,
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        homeController.updateDate();
+                                        customShowDialog(context, HomeWorkNotDialog());
+                                      },
+                                      child: Text(
+                                        getTranslated("i_m_not_in_work_today", context)!,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          fontSize: Dimensions.sp16,
+                                          color: ColorResources.white,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'Roboto',
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: ColorResources.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              if (homeController.isAbsentVisible)
+                                InkWell(
+                                  onTap: (){
+                                    customShowDialog(context, HomeOutOfficeModeDialog());
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                                    width: MediaQuery.sizeOf(context).width,
+                                    padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: ColorResources.mainColor,
+                                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        getTranslated("out_of_office_mode_enabled", context)!,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18.0,
+                                          fontFamily: 'Roboto',
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),),
+
                               Container(
                                 height: 80,
                                 margin: EdgeInsets.fromLTRB(15, 20, 15, 0),

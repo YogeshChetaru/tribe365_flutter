@@ -15,4 +15,16 @@ class HomeService implements HomeServiceInterface {
   Future<ApiResponse> viewNotificationsCount(Map<String, dynamic> body) {
     return homeRepositoryInterface.viewNotificationsCount(body);
   }
+  @override
+  Future<ApiResponse> userApplyLeave(Map<String, dynamic> body) {
+    return homeRepositoryInterface.userApplyLeave(body);
+  }
+  @override
+  Future<ApiResponse> userChangeLeaveStatus(Map<String, dynamic> body) {
+    return homeRepositoryInterface.userChangeLeaveStatus(body);
+  }
+  @override
+  Future<ApiResponse> addHappyIndex(Map<String, dynamic> body) {
+    return homeRepositoryInterface.addHappyIndex(body);
+  }
 }

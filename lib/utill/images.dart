@@ -63,4 +63,12 @@ class Images {
   static const String imgDocumentRed = 'assets/images/img_document_red.png';
   static const String imgUpArrowRed = 'assets/images/img_up_arrow_red.png';
   static const String imgLeftArrowCircleRed = 'assets/images/img_left_arrow_circle_red.png';
+  static const String imgActionImageNoti = 'assets/images/img_action_image_noti.png';
+  static const String imgReminder = 'assets/images/img_reminder.png';
+  static const String imgChatHollowBlue = 'assets/images/img_chat_hollow_blue.png';
+  static const String imgCup = 'assets/images/img_cup.png';
+  static const String imgAwardsKudosOrange = 'assets/images/img_awards_kudos_orange.png';
+  static const String imgDirect = 'assets/images/img_direct.png';
+  static const String imgTeamFeedback = 'assets/images/img_team_feedback.png';
+  static const String imgLikeHollowGreen = 'assets/images/img_like_hollow_green.png';
 }
