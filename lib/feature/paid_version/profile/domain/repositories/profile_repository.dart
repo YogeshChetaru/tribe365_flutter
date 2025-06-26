@@ -1,6 +1,5 @@
-
-
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../data/datasource/remote/dio/dio_client.dart';
 import '../../../../../data/datasource/remote/exception/api_error_handler.dart';
@@ -13,7 +12,6 @@ class ProfileRepository implements ProfileRepositoryInterface {
   final SharedPreferences? sharedPreferences;
 
   ProfileRepository({required this.dioClient, required this.sharedPreferences});
-
 
   @override
   Future<ApiResponse> updateProfile(Map<String, dynamic> loginBody) async {
@@ -53,11 +51,66 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<ApiResponse> viewCOTindividualSummary() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getCOTindividualSummaryUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> getCOTMapperSummary() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getCOTMapperSummaryUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
   String getUserToken() {
     return sharedPreferences!.getString(AppConstants.userLoginToken) ?? "";
   }
 
+  @override
+  Future<void> saveUserTeamRoleData(String userData) async {
+    try {
+      await sharedPreferences!
+          .setString(AppConstants.userTeamRoleData, userData);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
+  @override
+  String getUserTeamRoleData() {
+    return sharedPreferences!.getString(AppConstants.userTeamRoleData) ?? "";
+  }
+
+  @override
+  Future<void> clearSavedUserTeamRoleData() async {
+    sharedPreferences!.remove(AppConstants.userTeamRoleData);
+  }
+
+  @override
+  Future<ApiResponse> sendTeamRoleData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.addCOTAnswerUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
 
   @override
   Future add(value) {

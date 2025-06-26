@@ -20,6 +20,7 @@ class AppConstants {
   static const String userLoginToken = 'user_login_token';
   static const String userLoginStatus = 'user_login_status';
   static const String userLoginType = 'user_login_type';
+  static const String userTeamRoleData = 'User_team_role_data';
 
   static const String user = 'user';
   static const String langKey = 'lang';
@@ -68,6 +69,9 @@ class AppConstants {
   static const String dotDetailUriUri = 'dotDetail';
   static const String getDepartmentUserListUri = 'getDepartmentUserList';
   static const String getCOTQuestionsUri = 'getCOTQuestions';
+  static const String addCOTAnswerUri = 'addCOTAnswer';
+  static const String getCOTMapperSummaryUri = 'getCOTMapperSummary';
+  static const String getCOTindividualSummaryUri = 'getCOTindividualSummary';
 
 
 

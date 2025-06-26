@@ -193,5 +193,9 @@
   "belief_and_values_are_not_available": "Belief and values are not available",
   "watch_video": "Watch Video",
   "please_enter_comment_first": "Please enter comment first",
-  "please_revise_your_scores_total_scores_should_be_10": "Please revise your scores, total scores should be 10"
+  "please_revise_your_scores_total_scores_should_be_10": "Please revise your scores, total scores should be 10",
+  "category_description": "Category Description",
+  "no_data_found": "No Data Found",
+  "title": "Title",
+  "value": "Value"
 }

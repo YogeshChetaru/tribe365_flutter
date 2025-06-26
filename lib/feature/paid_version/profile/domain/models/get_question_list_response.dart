@@ -5,8 +5,13 @@ class GetQuestionListResponse {
   String? message;
   List<GetQuestionListData>? data;
 
-  GetQuestionListResponse(
-      {this.code, this.status, this.serviceName, this.message, this.data});
+  GetQuestionListResponse({
+    this.code,
+    this.status,
+    this.serviceName,
+    this.message,
+    this.data,
+  });
 
   GetQuestionListResponse.fromJson(Map<String, dynamic> json) {
     code = json['code'];
@@ -22,15 +27,13 @@ class GetQuestionListResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['code'] = code;
-    data['status'] = status;
-    data['service_name'] = serviceName;
-    data['message'] = message;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    return data;
+    return {
+      'code': code,
+      'status': status,
+      'service_name': serviceName,
+      'message': message,
+      'data': data?.map((v) => v.toJson()).toList(),
+    };
   }
 }
 
@@ -40,7 +43,12 @@ class GetQuestionListData {
   List<Option>? option;
   bool? flag = false;
 
-  GetQuestionListData({this.questionId, this.questionName, this.option,this.flag});
+  GetQuestionListData({
+    this.questionId,
+    this.questionName,
+    this.option,
+    this.flag,
+  });
 
   GetQuestionListData.fromJson(Map<String, dynamic> json) {
     questionId = json['questionId'];
@@ -55,14 +63,12 @@ class GetQuestionListData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['questionId'] = questionId;
-    data['questionName'] = questionName;
-    data['flag'] = flag;
-    if (option != null) {
-      data['option'] = option!.map((v) => v.toJson()).toList();
-    }
-    return data;
+    return {
+      'questionId': questionId,
+      'questionName': questionName,
+      'flag': flag,
+      'option': option?.map((v) => v.toJson()).toList(),
+    };
   }
 }
 
@@ -71,34 +77,35 @@ class Option {
   String? option;
   String? roleMapId;
   String? label;
-  String? answer="0";
+  String? answer;
   bool? flag;
-  String? oldValue;
 
-
-  Option({this.optionId, this.option, this.roleMapId,  this.label,
+  Option({
+    this.optionId,
+    this.option,
+    this.roleMapId,
+    this.label,
     this.answer = "0",
     this.flag = false,
-    this.oldValue,});
+  });
 
   Option.fromJson(Map<String, dynamic> json) {
     optionId = json['OptionId'];
     option = json['option'];
     roleMapId = json['roleMapId'];
     label = json['label'];
-    answer= json['answer'] ?? "0";
-    oldValue= json['answer'] ?? "0";
-
+    answer = json['answer'] ?? "0";
+    flag = json['flag'] ?? false;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['OptionId'] = optionId;
-    data['option'] = option;
-    data['roleMapId'] = roleMapId;
-    data['label'] = label;
-    data['answer'] = answer;
-    data['answer'] = oldValue;
-    return data;
+    return {
+      'OptionId': optionId,
+      'option': option,
+      'roleMapId': roleMapId,
+      'label': label,
+      'answer': answer,
+      'flag': flag,
+    };
   }
 }

@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tribe365_new/main.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
-import '../../../../common/basewidget/custom_header_back_widget.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
@@ -181,6 +179,7 @@ class TeamRoleScreenState extends State<TeamRoleScreen> {
                 if (isLastQuestion)
                 InkWell(
                   onTap: () {
+                   profileController.validateAndSubmitQuestion(profileProvider.currentIndex, context);
                   },
                   child: Container(
                     height: 50,
@@ -241,30 +240,6 @@ class TeamRoleScreenState extends State<TeamRoleScreen> {
   }
 
 
-  Future<bool> _onBackPressed() async {
-    final profileProvider = Provider.of<ProfileController>(context, listen: false);
-    for (var i = 0; i < profileProvider.questions.length; i++) {
-      for (var j = 0; j < profileProvider.currentOptions.length; j++) {
-        if (profileProvider.currentOptions[j].flag == true) {
-          profileProvider.questions[i].flag = true;
-        }
-      }
-    }
-
-    int count = profileProvider.questions.where((q) => q.flag == true).length;
-
-    if (count > 0) {
-      bool shouldSave = await _showSaveDialog(context);
-      if (shouldSave) {
-       saveAnswersToLocal(); // save to SharedPreferences
-        return true; // allow pop
-      } else {
-        return true; // allow pop without saving
-      }
-    } else {
-      return true; // just go back
-    }
-  }
 
   Future<bool> _showSaveDialog(BuildContext context) async {
     return await showDialog<bool>(
@@ -280,7 +255,7 @@ class TeamRoleScreenState extends State<TeamRoleScreen> {
             onPressed: () => Navigator.of(context).pop(false),
           ),
           TextButton(
-            child: const Text("Yes", style: TextStyle(color: Colors.red)),
+            child: const Text("Yes", style: TextStyle(color: ColorResources.mainColor)),
             onPressed: () => Navigator.of(context).pop(true),
           ),
         ],
@@ -288,9 +263,34 @@ class TeamRoleScreenState extends State<TeamRoleScreen> {
     ) ??
         false;
   }
-  void saveAnswersToLocal() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String encoded = jsonEncode(profileController.questions.map((q) => q.toJson()).toList());
-    prefs.setString('SaveQuslist', encoded);
+
+
+
+  Future<bool> _onBackPressed() async {
+    final profileProvider = Provider.of<ProfileController>(context, listen: false);
+
+    // Step 1: Check if any answer exists in the main question list
+    bool hasAnsweredAnything = profileProvider.questions.any((question) {
+      return question.option?.any((opt) {
+        final answer = int.tryParse(opt.answer ?? "0") ?? 0;
+        return answer > 0;
+      }) ?? false;
+    });
+
+
+    // Step 2: If answered, show save dialog
+    if (hasAnsweredAnything) {
+      bool shouldSave = await _showSaveDialog(context);
+      if (shouldSave) {
+        profileProvider.saveUserTeamRoleData(
+          jsonEncode(profileProvider.questions.map((q) => q.toJson()).toList()),
+          Get.context!,
+        );
+      }
+      return true; // Always allow screen to pop
+    } else {
+      return true; // No answers → just pop
+    }
   }
+
 }

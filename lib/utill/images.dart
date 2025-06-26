@@ -72,4 +72,5 @@ class Images {
   static const String imgTeamFeedback = 'assets/images/img_team_feedback.png';
   static const String imgLikeHollowGreen = 'assets/images/img_like_hollow_green.png';
   static const String imgAppLogo = 'assets/images/img_app_icon.png';
+  static const String imgCotDescriptionRed = 'assets/images/img_cot_description_red.png';
 }

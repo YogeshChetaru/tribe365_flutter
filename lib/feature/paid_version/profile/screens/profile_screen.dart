@@ -30,7 +30,7 @@ class ProfileScreen extends StatefulWidget {
   ProfileScreenState createState() => ProfileScreenState();
 }
 
-class ProfileScreenState extends State<ProfileScreen> {
+class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserver {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
   String _appVersion = '';
   ProfileController profileController = Provider.of<ProfileController>(Get.context!, listen: false);
@@ -38,8 +38,18 @@ class ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadVersion();
     loadAPI();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // App is resumed
+      debugPrint("onResume called");
+      loadAPI();
+    }
   }
 
   void loadAPI() {
@@ -52,7 +62,11 @@ class ProfileScreenState extends State<ProfileScreen> {
       _appVersion = info.version;
     });
   }
-
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // ✅ Remove on dispose
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

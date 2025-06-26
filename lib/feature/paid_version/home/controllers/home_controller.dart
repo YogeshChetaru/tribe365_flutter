@@ -502,7 +502,7 @@ class HomeController extends ChangeNotifier {
       Map<String, dynamic> map = apiResponse.response!.data;
       showCustomSnackBar(map["message"], Get.context!, isError: false);
       isHappyIndexStatus = false;
-      String todayEIScore = map["todayEIScore"];
+      String todayEIScore = map["data"]["todayEIScore"];
       indexEngScoreData(todayEIScore);
       //sentiment index user send not happy
       if (status=="1"){

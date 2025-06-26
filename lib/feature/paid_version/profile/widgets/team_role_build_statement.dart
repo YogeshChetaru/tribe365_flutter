@@ -14,8 +14,6 @@ class TeamRoleBuildStatement extends StatelessWidget {
     return Consumer<ProfileController>(builder: (context, profileProvider, _) {
       final option = profileProvider.currentOptions[index];
       final counter = profileProvider.counters[index] ?? 0;
-      debugPrint("counter >>>>>$counter");
-      debugPrint("answer >>>>>${option.answer!}");
 
       return Card(
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
