@@ -23,5 +23,8 @@ class ProfileService implements ProfileServiceInterface {
   Future<ApiResponse> updateProfile(Map<String, dynamic> body) {
     return profileRepositoryInterface.updateProfile(body);
   }
-
+  @override
+  Future<ApiResponse> viewQuestionsList() {
+    return profileRepositoryInterface.viewQuestionsList();
+  }
 }

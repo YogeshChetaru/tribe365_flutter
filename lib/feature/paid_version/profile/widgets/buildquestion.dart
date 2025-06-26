@@ -36,7 +36,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
                 ),
               ),
               const SizedBox(height: 15),
-              Wrap(
+              /*Wrap(
                 spacing: 10,
                 runSpacing: 13,
                 children: profileProvider.options.map((option) {
@@ -60,7 +60,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
                     ),
                   );
                 }).toList(),
-              ),
+              ),*/
             ],
           ),
         ),

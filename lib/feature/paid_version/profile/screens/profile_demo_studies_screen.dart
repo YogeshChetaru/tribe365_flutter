@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import '../../../../common/basewidget/custom_header_back_widget.dart';
-import '../../../../utill/dimensions.dart';
+
 import '../../know/controllers/know_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../widgets/build_chart_card.dart';

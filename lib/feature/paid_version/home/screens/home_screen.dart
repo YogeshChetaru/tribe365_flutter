@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribe365_new/feature/paid_version/home/screens/amazing_award_your_list_screen.dart';
 import 'package:tribe365_new/feature/paid_version/home/widgets/home_out_office_mode_dialog.dart';
+import 'package:tribe365_new/feature/paid_version/home/widgets/home_vision_card_view.dart';
+import 'package:tribe365_new/feature/paid_version/home/widgets/update_app_design.dart';
 import 'package:tribe365_new/feature/paid_version/profile/controllers/profile_controller.dart';
 import 'package:tribe365_new/main.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/custom_route.dart';
+import 'package:tribe365_new/utill/utility.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
@@ -32,10 +35,11 @@ class HomeScreenState extends State<HomeScreen> {
 
   void apiLoad() {
     profileController.viewUserProfile().then((onValue) {
-      homeController.updateUserID(profileController.userProfileData!.id);
+      homeController.updateUserID(profileController.userProfileData!.id,profileController.userProfileData!.orgId);
       homeController.getHomeData(profileController.userProfileData!.orgId.toString());
       homeController.viewNotificationCount(profileController.userProfileData!.id.toString());
-
+      homeController.getDepartmentUserList();
+      updateApp();
     });
   }
 
@@ -202,8 +206,11 @@ class HomeScreenState extends State<HomeScreen> {
                           child: Column(
                             children: [
 
-                              /*homeController.isHappyIndexStatus==false ?
-                              SizedBox.shrink():*/
+                              if(homeController.updateLayoutStatus==true)
+                              UpdateAppDesign(),
+
+                              homeController.isHappyIndexStatus==false ?
+                              SizedBox.shrink():
                               Container(
                                 margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
                                 width: MediaQuery.sizeOf(context).width,
@@ -340,9 +347,22 @@ class HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),),
 
+                              if(homeController.homeVisionStatus)
+                                homeProvider.vision==null?
+                                SizedBox.shrink():
+                              HomeVisionCardView(
+                                visionText: "Vision" ,
+                               videoURL: homeProvider.visionUrl!,
+                                subTitleName: homeProvider.vision!,
+                                description: homeProvider.visionDesc!,
+                              ),
+
+
+
+
                               Container(
                                 height: 80,
-                                margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                                margin: EdgeInsets.fromLTRB(15, 5, 15, 0),
                                 decoration: BoxDecoration(
                                   color: ColorResources.mainColor,
                                   borderRadius: BorderRadius.circular(10),
@@ -360,7 +380,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       top: 20,
                                       child: InkWell(
                                         onTap: () {
-                                          showDialog(context, AmazingAwardSetDialog());
+                                          customShowDialog(context, AmazingAwardSetDialog(name: homeProvider.awardName,));
                                         },
                                         child: Container(
                                           margin: EdgeInsets.fromLTRB(30, 0, 0, 0),
@@ -405,7 +425,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           ),
                                           alignment: Alignment.center,
                                           child: Text(
-                                            '0',
+                                           homeProvider.amazingValue.toString(),
                                             style: TextStyle(
                                               color: ColorResources.mainColor,
                                               fontSize: 18,
@@ -458,7 +478,7 @@ class HomeScreenState extends State<HomeScreen> {
                                             final isWeekend = day.day == 'Sun' || day.day == 'Sat';
                                             return InkWell(
                                               onTap: () {
-                                                showDialog(
+                                                customShowDialog(
                                                     context,
                                                     ShowSentimentDialog(
                                                       mood: "sad",
@@ -648,29 +668,17 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void showDialog(BuildContext context, Widget workNotDialog) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        opaque: false,
-        barrierDismissible: true,
-        barrierColor: Colors.black54,
-        pageBuilder: (context, animation, secondaryAnimation) {
-          return Center(child: workNotDialog);
-        },
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0); // From right
-          const end = Offset(-1.0, 0.0); // To left when popping
-          final tween = Tween(begin: begin, end: Offset.zero);
-          final reverseTween = Tween(begin: Offset.zero, end: end);
-          final offsetAnimation = animation.drive(tween);
-          final reverseOffset = secondaryAnimation.drive(reverseTween);
-
-          return SlideTransition(
-            position: animation.status == AnimationStatus.reverse ? reverseOffset : offsetAnimation,
-            child: child,
-          );
-        },
-      ),
-    );
+  Future<void> updateApp() async {
+    if (!homeController.checkLater){
+      final info = await Utility.getAppVersionInfo();
+      debugPrint("Platform: ${info['platform']}");
+      debugPrint("Version: ${info['version']}");
+      debugPrint("Build Number: ${info['buildNumber']}");
+      String newVersion = info['version']!;
+      String platform = info['platform']!;
+      homeController.getCurrentVersionOfApp(newVersion,platform);
+    }
   }
+
 }
+

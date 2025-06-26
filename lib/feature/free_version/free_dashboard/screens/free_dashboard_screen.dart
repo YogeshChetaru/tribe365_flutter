@@ -25,17 +25,10 @@ class FreeDashboardScreen extends StatefulWidget {
 }
 
 class FreeDashboardScreenState extends State<FreeDashboardScreen> {
-  void updateNotificationStatus() {}
-
-  void dialogAbsent() {}
-
-  void dialogEnableAbsent() {}
 
   @override
   void initState() {
     super.initState();
-    //---------setup---------
-    updateNotificationStatus();
     //----------
     loadAPI();
   }

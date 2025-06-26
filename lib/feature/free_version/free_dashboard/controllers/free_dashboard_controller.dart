@@ -207,7 +207,8 @@ class FreeDashboardController extends ChangeNotifier {
     required List<HappyIndexMonthly> monthlyList,
     required String monthStart,
     required List<String> notWorkingDays,
-  }) {
+  })
+  {
     List<Map<String, dynamic>> updatedCalendar = [];
 
     // Padding empty slots based on month start

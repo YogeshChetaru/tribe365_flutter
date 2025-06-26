@@ -5,24 +5,26 @@ import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 
+import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
 import 'amazingawardset2dialog.dart';
 
 
 class AmazingAwardSetDialog extends StatefulWidget {
-  const AmazingAwardSetDialog({super.key});
+  final String name;
+  const AmazingAwardSetDialog({super.key,required this.name});
 
   @override
   State<AmazingAwardSetDialog> createState() => _AmazingAwardSetDialogState();
 }
 
 class _AmazingAwardSetDialogState extends State<AmazingAwardSetDialog> {
-  final TextEditingController currentPasswordController = TextEditingController();
-  final FocusNode currentPasswordFocus = FocusNode();
+  final TextEditingController textController = TextEditingController();
+  final FocusNode textFocus = FocusNode();
 
   @override
   void dispose() {
-    currentPasswordController.dispose();
-    currentPasswordFocus.dispose();
+    textController.dispose();
+    textFocus.dispose();
     super.dispose();
   }
   @override
@@ -36,10 +38,10 @@ class _AmazingAwardSetDialogState extends State<AmazingAwardSetDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                getTranslated("amazing_awards", context)!,
+                "${widget.name} ${getTranslated("awards", context)!}",
                 style: TextStyle(
                   fontSize: Dimensions.sp16,
-                  color: ColorResources.mainColor, // Replace with ColorResources.mainColor
+                  color: ColorResources.mainColor,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Roboto',
                 ),
@@ -58,8 +60,8 @@ class _AmazingAwardSetDialogState extends State<AmazingAwardSetDialog> {
                 child: TextField(
                   maxLines: 5,
                   textAlign: TextAlign.start,
-                  controller: currentPasswordController,
-                  focusNode: currentPasswordFocus,
+                  controller: textController,
+                  focusNode: textFocus,
                   keyboardType: TextInputType.multiline,
                   textInputAction:TextInputAction.done,
                   style: const TextStyle(
@@ -82,8 +84,15 @@ class _AmazingAwardSetDialogState extends State<AmazingAwardSetDialog> {
               ),
               InkWell(
                 onTap: (){
-                  Navigator.of(context).pop();
-                  showDialog(context, AmazingAwardSet2Dialog());
+                  String msg = textController.text.toString().trim();
+                  if(msg.isEmpty){
+                    showCustomSnackBar(getTranslated('please_enter_comment_first', context), context,isError: true);
+                  }
+                  else{
+                    Navigator.of(context).pop();
+                    showDialog(context, AmazingAwardSet2Dialog(name:widget.name));
+                  }
+
                 },child: Container(
                   alignment: Alignment.center,
                   width: MediaQuery.sizeOf(context).width,

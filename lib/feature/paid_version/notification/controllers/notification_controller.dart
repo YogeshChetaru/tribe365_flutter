@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 
 import 'package:flutter/material.dart';
 import 'package:tribe365_new/helper/api_checker.dart';
@@ -195,7 +195,7 @@ class NotificationController extends ChangeNotifier {
     };
     ApiResponse apiResponse = await notificationServiceInterface!.readAllNotification(requestData);
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
-      Map<String, dynamic> map = apiResponse.response!.data;
+
       archiveStatus = true;
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
@@ -210,7 +210,7 @@ class NotificationController extends ChangeNotifier {
     };
     ApiResponse apiResponse = await notificationServiceInterface!.updateNotificationStatus(requestData);
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
-      Map<String, dynamic> map = apiResponse.response!.data;
+
 
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);

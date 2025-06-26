@@ -3,6 +3,7 @@ import '../../../../../interface/repo_interface.dart';
 
 abstract class ProfileRepositoryInterface implements RepositoryInterface {
   Future<ApiResponse> viewUserProfileData();
+  Future<ApiResponse> viewQuestionsList();
 
   String getUserToken();
 

@@ -179,5 +179,19 @@
   "no_kudos_awards_yet": "No Kudos Awards Yet",
   "view_more": "View More",
   "more": "more",
-  "archive_all": "Archive all"
+  "archive_all": "Archive all",
+  "sentiment_submit": "Sentiment Submit",
+  "tell_us_more": "Tell us more...",
+  "write_your_feedback_here": "Write your feedback here...",
+  "please_enter_your_offloading_feedback": "Please enter your offloading feedback",
+  "kudos_sent": "Kudos Sent",
+  "app_update": "App Update",
+  "a_new_version_of_the_app_is_available_please_update_to_continue": "A new version of the app is available. Please update to continue.",
+  "LATER": "LATER",
+  "UPDATE": "UPDATE",
+  "vision_map": "Vision Map",
+  "belief_and_values_are_not_available": "Belief and values are not available",
+  "watch_video": "Watch Video",
+  "please_enter_comment_first": "Please enter comment first",
+  "please_revise_your_scores_total_scores_should_be_10": "Please revise your scores, total scores should be 10"
 }

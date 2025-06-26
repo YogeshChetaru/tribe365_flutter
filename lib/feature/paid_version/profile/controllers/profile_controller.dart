@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
 import '../../../../data/model/api_response.dart';
 import '../../../../helper/api_checker.dart';
+import '../../../../localization/language_constrants.dart';
 import '../../../../main.dart';
+import '../domain/models/get_question_list_response.dart';
 import '../domain/models/viewuserprofileresponse.dart';
 import '../domain/services/profile_service_interface.dart';
 
@@ -25,6 +27,7 @@ class ProfileController extends ChangeNotifier {
   bool userDataPrivateStatus = false;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
 
   void controllerInit(bool notify) {
     fNameController = TextEditingController();
@@ -77,24 +80,6 @@ class ProfileController extends ChangeNotifier {
 
   List<String> tierList = ['All Tier', 'Primary', 'Secondary', 'Tertiary'];
 
-  final List<String> questions = [
-    'I love working on my own in peace and quiet',
-    'I assess my ideas/opinions before voicing them',
-    'I catch every detail of what is discussed with me',
-    'I notice the small details around me',
-    'I love working on my own in peace and quiet',
-    'I assess my ideas/opinions before voicing them',
-    'I catch every detail of what is discussed with me',
-    'I notice the small details around me',
-  ];
-
-  final List<String> options = [
-    'DISAGREE',
-    'MOSTLY DISAGREE',
-    'NEUTRAL',
-    'MOSTLY AGREE',
-    'AGREE',
-  ];
 
   final List<Map<String, String>> statements = [
     {'label': 'A', 'text': 'identifying improved ways of doing things'},
@@ -253,6 +238,125 @@ class ProfileController extends ChangeNotifier {
   }
 
 
+  List<GetQuestionListData> _questions = [];
+  List<GetQuestionListData> get questions => _questions;
+
+  final List<Option> _currentOptions = [];
+  List<Option> get currentOptions => _currentOptions;
+
+  int _currentIndex = 0;
+  int get currentIndex => _currentIndex;
+
+  void loadQuestion(int index) {
+    _currentIndex = index;
+    _currentOptions.clear();
+
+    final question = _questions[index];
+    for (int i = 0; i < (question.option?.length ?? 0); i++) {
+      final opt = question.option![i];
+      String label = String.fromCharCode(65 + i); // A, B, C...
+      _currentOptions.add(
+        Option(
+          optionId: opt.optionId,
+          option: opt.option,
+          roleMapId: opt.roleMapId,
+          label: label,
+          answer: opt.answer?.isNotEmpty == true ? opt.answer : "0",
+        ),
+      );
+    }
+
+    notifyListeners();
+  }
+
+  void updateAnswer(int optionIndex, String value) {
+    _currentOptions[optionIndex].answer = value;
+    notifyListeners();
+  }
+
+  bool get isLastQuestion => _currentIndex == _questions.length - 1;
+
+  void nextQuestion() {
+    if (!isLastQuestion) {
+      loadQuestion(_currentIndex + 1);
+    }
+  }
+
+  int get currentTotal {
+    if (questions.isEmpty) return 0;
+    return questions[currentIndex].option!.fold(
+      0,
+          (prev, opt) => prev + (int.tryParse(opt.answer!) ?? 0),
+    );
+  }
+  void incrementOption(int index) {
+    final option = currentOptions[index];
+    int currentAnswer = int.tryParse(option.answer!) ?? 0;
+    if (currentTotal < 10 && currentAnswer < 10) {
+      option.answer = (currentAnswer + 1).toString();
+      option.flag = true;
+      notifyListeners();
+    }
+  }
+  void decrementOption(int index) {
+    final option = currentOptions[index];
+    // final option = questions[currentIndex].option![index];
+    int currentAnswer = int.tryParse(option.answer!) ?? 0;
+
+    if (currentAnswer > 0) {
+      option.answer = (currentAnswer - 1).toString();
+      option.flag = true;
+      notifyListeners();
+    }
+  }
+  void totalCount() {
+    int sum = 0;
+    try {
+      for (int i = 0; i < _currentOptions.length; i++) {
+        int getAns = int.tryParse(_currentOptions[i].answer ?? '0') ?? 0;
+        sum += getAns;
+      }
+
+      for (int i = 0; i < questions.length; i++) {
+        for (int j = 0; j < _currentOptions.length; j++) {
+          if (_currentOptions[j].flag == true) {
+            _currentOptions[i].flag = true;
+          }
+        }
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint('TotalCount CotQuest Error: $e');
+    }
+  }
+  void validateAnswers(BuildContext context) {
+    List<String> listAns = [];
+    int stTotalAns = 0;
+
+    List<Option> currentOptions = questions[currentIndex].option ?? [];
+
+    for (int i = 0; i < currentOptions.length; i++) {
+      if ((currentOptions[i].answer ?? '').isEmpty) {
+        currentOptions[i].answer = '0';
+      }
+
+      listAns.add(currentOptions[i].answer ?? '0');
+    }
+
+    if (listAns.length == currentOptions.length) {
+      for (String ans in listAns) {
+        stTotalAns += int.tryParse(ans) ?? 0;
+      }
+
+      if (stTotalAns == 10) {
+        nextQuestion();
+      } else {
+        showCustomSnackBar(getTranslated('please_revise_your_scores_total_scores_should_be_10', context), context,isError: true);
+
+      }
+    }
+  }
+
   //API calling
   Future<void> viewUserProfile() async {
     ApiResponse apiResponse = await profileServiceInterface!.viewUserProfileData();
@@ -273,7 +377,8 @@ class ProfileController extends ChangeNotifier {
       String email,
       String lastName,
       String fName
-      ) async {
+      ) async
+  {
     _isLoading = true;
     notifyListeners();
     Map<String, dynamic> request = {
@@ -299,5 +404,23 @@ class ProfileController extends ChangeNotifier {
     }
     notifyListeners();
   }
+  Future<void> viewQuestionsList() async {
+    _isLoading = true;
+    ApiResponse apiResponse = await profileServiceInterface!.viewQuestionsList();
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      GetQuestionListResponse response = GetQuestionListResponse.fromJson(map);
+
+      _questions = response.data ?? [];
+      if (_questions.isNotEmpty) {
+        loadQuestion(0);
+      }
+    }
+
+
+    notifyListeners();
+  }
+
 
 }

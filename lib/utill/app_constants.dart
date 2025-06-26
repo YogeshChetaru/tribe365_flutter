@@ -64,6 +64,11 @@ class AppConstants {
   static const String getBubbleRatingNotificationListUri = 'getBubbleRatingNotificationList';
   static const String readAllNotificationUri = 'readAllNotification';
   static const String changeNotificationStatusUri = 'changeNotificationStatus';
+  static const String getCurrentVersionOfAppUri = 'getCurrentVersionOfApp';
+  static const String dotDetailUriUri = 'dotDetail';
+  static const String getDepartmentUserListUri = 'getDepartmentUserList';
+  static const String getCOTQuestionsUri = 'getCOTQuestions';
+
 
 
   static final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');

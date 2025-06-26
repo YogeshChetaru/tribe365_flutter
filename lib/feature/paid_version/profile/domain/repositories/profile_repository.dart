@@ -39,6 +39,19 @@ class ProfileRepository implements ProfileRepositoryInterface {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
+  @override
+  Future<ApiResponse> viewQuestionsList() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getCOTQuestionsUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
   @override
   String getUserToken() {
     return sharedPreferences!.getString(AppConstants.userLoginToken) ?? "";

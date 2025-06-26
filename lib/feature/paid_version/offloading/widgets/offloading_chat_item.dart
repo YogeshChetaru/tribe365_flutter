@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 
-import '../../../../utill/dimensions.dart';
 import '../../../../utill/utility.dart';
 import '../domain/models/view_message_details_response.dart';
-import '../domain/models/view_offloading_list_response.dart';
-import '../screens/offloading_chat_details_screen.dart';
 
 class OffloadingChatItem extends StatelessWidget {
   final Messages data;

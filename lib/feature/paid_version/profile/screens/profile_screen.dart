@@ -222,7 +222,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 getTranslated("team_role", context)!,
                                 style: TextStyle(
                                   fontSize: Dimensions.sp14,
-                                  color: ColorResources.black, // Replace with ColorResources.mainColor
+                                  color: ColorResources.black,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'Roboto',
                                 ),
@@ -237,7 +237,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                     profileProvider.userProfileData!.cotTeamRoleMap!,
                                     style: TextStyle(
                                       fontSize: Dimensions.sp12,
-                                      color: ColorResources.black, // Replace with ColorResources.mainColor
+                                      color: ColorResources.black,
                                       fontWeight: FontWeight.w400,
                                       fontFamily: 'Roboto',
                                     ),

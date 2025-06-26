@@ -15,17 +15,17 @@ class ViewReflectionListResponse {
     if (json['data'] != null) {
       data = <ViewReflectionListData>[];
       json['data'].forEach((v) {
-        data!.add(new ViewReflectionListData.fromJson(v));
+        data!.add(ViewReflectionListData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['code'] = this.code;
-    data['status'] = this.status;
-    data['service_name'] = this.serviceName;
-    data['message'] = this.message;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['code'] = code;
+    data['status'] = status;
+    data['service_name'] = serviceName;
+    data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -50,11 +50,11 @@ class ViewReflectionListData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['message'] = this.message;
-    data['image'] = this.image;
-    data['createdAt'] = this.createdAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['message'] = message;
+    data['image'] = image;
+    data['createdAt'] = createdAt;
 
     return data;
   }

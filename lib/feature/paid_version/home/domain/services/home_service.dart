@@ -27,4 +27,24 @@ class HomeService implements HomeServiceInterface {
   Future<ApiResponse> addHappyIndex(Map<String, dynamic> body) {
     return homeRepositoryInterface.addHappyIndex(body);
   }
+
+  @override
+  Future<ApiResponse> postFeedback(Map<String, dynamic> body) {
+    return homeRepositoryInterface.postFeedback(body);
+  }
+  @override
+  Future<ApiResponse> getCurrentVersionOfApp(Map<String, dynamic> body) {
+    return homeRepositoryInterface.getCurrentVersionOfApp(body);
+  }
+
+  @override
+  Future<ApiResponse> getDepartmentUserList(Map<String, dynamic> body) {
+    return homeRepositoryInterface.getDepartmentUserList(body);
+  }
+
+  @override
+  Future<ApiResponse> getDotDetail(Map<String, dynamic> body) {
+    return homeRepositoryInterface.getDotDetail(body);
+  }
+
 }

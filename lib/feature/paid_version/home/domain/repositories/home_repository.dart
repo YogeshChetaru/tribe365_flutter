@@ -37,6 +37,7 @@ class HomeRepository implements HomeRepositoryInterface {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
   @override
   Future<ApiResponse> userApplyLeave(Map<String, dynamic> loginBody) async {
     try {
@@ -68,6 +69,60 @@ class HomeRepository implements HomeRepositoryInterface {
     try {
       Response response = await dioClient!.post(
         AppConstants.addHappyIndexUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> postFeedback(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.postFeedbackUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> getCurrentVersionOfApp(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getCurrentVersionOfAppUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> getDotDetail(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.dotDetailUriUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> getDepartmentUserList(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getDepartmentUserListUri,
         data: loginBody,
       );
       return ApiResponse.withSuccess(response);

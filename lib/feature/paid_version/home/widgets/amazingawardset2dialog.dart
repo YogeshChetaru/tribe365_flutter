@@ -11,7 +11,8 @@ import 'amazingawarduseritem.dart';
 
 
 class AmazingAwardSet2Dialog extends StatefulWidget {
-  const AmazingAwardSet2Dialog({super.key});
+  final String name;
+  const AmazingAwardSet2Dialog({super.key,required this.name});
 
   @override
   State<AmazingAwardSet2Dialog> createState() => _AmazingAwardSet2DialogState();
@@ -25,7 +26,6 @@ class _AmazingAwardSet2DialogState extends State<AmazingAwardSet2Dialog> {
   void initState() {
     super.initState();
     homeProvider.intiData(false);
-    homeProvider.viewFilteredUsersList(false);
     homeProvider.searchController.addListener(homeProvider.filterUsers);
   }
 
@@ -115,13 +115,18 @@ class _AmazingAwardSet2DialogState extends State<AmazingAwardSet2Dialog> {
                   return InkWell(onTap: (){
                     homeProvider.toggleSelection(parentIndex);
                   },child: AmazingAwardUserItem(
-                    userName: user.name,
+                    userName: user.name!,
                     isSelected: user.isSelected,
                   ));
                 },
               ),
               InkWell(
                 onTap: (){
+                  for(int i=0;i<homeProvider.filteredUsers.length;i++){
+                    if(homeProvider.filteredUsers[i].isSelected){
+                    }
+                  }
+                  // kudosSendApi();
                   Navigator.of(context).pop();
                 },child: Container(
                 width: MediaQuery.sizeOf(context).width,

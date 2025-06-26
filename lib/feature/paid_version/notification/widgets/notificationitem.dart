@@ -3,7 +3,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../utill/images.dart';
-import '../../../../utill/utility.dart';
 import '../domain/models/view_unread_notification_list.dart';
 
 class NotificationItem extends StatelessWidget {
