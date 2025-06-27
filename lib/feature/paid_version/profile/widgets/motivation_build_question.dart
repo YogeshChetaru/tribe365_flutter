@@ -1,77 +1,98 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../../utill/color_resources.dart';
-import '../controllers/profile_controller.dart';
-import 'motivation_build_option_score_selector.dart';
+import 'package:tribe365_new/utill/color_resources.dart';
+import '../domain/models/get_motivation_list_response.dart';
 
-class MotivationBuildQuestion extends StatefulWidget {
-  final int index;
+class MotivationBuildQuestion extends StatelessWidget {
+  final SOTMotivationQuestion question;
+  final int questionIndex;
+  final void Function(int optionIndex, String selectedRating) onRatingChanged;
 
-  const MotivationBuildQuestion({super.key, required this.index});
+  const MotivationBuildQuestion({
+    super.key,
+    required this.question,
+    required this.questionIndex,
+    required this.onRatingChanged,
+  });
 
-  @override
-  State<MotivationBuildQuestion> createState() => _MotivationBuildQuestionState();
-}
-
-class _MotivationBuildQuestionState extends State<MotivationBuildQuestion> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<ProfileController>(builder: (context, profileController, _) {
-      return Card(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Question text
+            Text(
+              'Question ${questionIndex + 1}: ${question.questionName ?? ''}' ,
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+                fontFamily: 'Roboto',
+                color: Color(0xFF333333),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              height: 0.5,
+              color: const Color(0xFF9A9A9A),
+            ),
+            const SizedBox(height: 10),
+            // Option blocks
+            ...List.generate(question.option?.length ?? 0, (optIndex) {
+              final option = question.option![optIndex];
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Question ${widget.index + 1} : ',
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, fontFamily: 'Roboto', color: ColorResources.color333333),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      '${profileController.motivationQuestions[widget.index]['question']}',
-                      style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16, fontFamily: 'Roboto', color: ColorResources.color333333),
+                    option.option ?? '',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Color(0xFF333333),
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: List.generate(6, (score) {
+                      final isSelected = option.rating == score.toString();
+                      return GestureDetector(
+                        onTap: () {
+                          onRatingChanged(optIndex, score.toString());
+                        },
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          margin: const EdgeInsets.only(right: 8),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.red : Colors.white,
+                            border: Border.all(color: ColorResources.colorAAADC4,width: 0.5),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            '$score',
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.black,
+                              fontSize: 14,
+                              fontFamily: 'Roboto',
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 16),
                 ],
-              ),
-              const SizedBox(height: 10),
-              Container(
-                width: MediaQuery.sizeOf(context).width,
-                height: 0.5,
-                color: ColorResources.color9a9a9a,
-              ),
-              const SizedBox(height: 10),
-              ...List.generate(profileController.motivationQuestions[widget.index]['options'].length, (optionIndex) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      profileController.motivationQuestions[widget.index]['options'][optionIndex],
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: ColorResources.color333333,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    MotivationBuildOptionScoreSelector(questionIndex: widget.index, optionIndex: optionIndex),
-                    const SizedBox(height: 16),
-                  ],
-                );
-              }),
-            ],
-          ),
+              );
+            }),
+          ],
         ),
-      );
-    });
+      ),
+    );
   }
 }

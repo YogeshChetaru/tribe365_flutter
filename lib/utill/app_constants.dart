@@ -72,6 +72,9 @@ class AppConstants {
   static const String addCOTAnswerUri = 'addCOTAnswer';
   static const String getCOTMapperSummaryUri = 'getCOTMapperSummary';
   static const String getCOTindividualSummaryUri = 'getCOTindividualSummary';
+  static const String getCOTteamRoleCompletedAnswersUri = 'getCOTteamRoleCompletedAnswers';
+  static const String updateCOTTeamRoleMapAnswersUri = 'updateCOTteamRoleMapAnswers';
+  static const String getSOTmotivationQuestionsUri = 'getSOTmotivationQuestions';
 
 
 

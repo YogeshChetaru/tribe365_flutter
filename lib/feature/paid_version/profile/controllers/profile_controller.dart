@@ -6,7 +6,10 @@ import '../../../../data/model/api_response.dart';
 import '../../../../helper/api_checker.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../main.dart';
+import '../domain/models/cotquestiondata.dart';
+import '../domain/models/get_motivation_list_response.dart';
 import '../domain/models/get_question_list_response.dart';
+import '../domain/models/get_update_question_list_response.dart';
 import '../domain/models/view_cot_individual_summary_response.dart';
 import '../domain/models/view_cot_mapper_summary_response.dart';
 import '../domain/models/viewuserprofileresponse.dart';
@@ -30,10 +33,21 @@ class ProfileController extends ChangeNotifier {
   FocusNode contactFocus = FocusNode();
   bool userDataPrivateStatus = false;
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
 
   bool _isLoadingBtn = false;
+
   bool get isLoadingBtn => _isLoadingBtn;
+  CotQuestionData? _CotQuestiondata;
+
+  CotQuestionData? get CotQuestiondata => _CotQuestiondata;
+  final rolePairs = [
+    ["shaper", "coordinator"],
+    ["implementer", "completerFinisher"],
+    ["monitorEvaluator", "teamworker"],
+    ["plant", "resourceInvestigator"],
+  ];
 
   List<ViewCotMapperSummaryData>? cotMapperSummaryDataList;
   ViewCotIndividualSummaryData? cotIndividualSummaryData;
@@ -100,8 +114,20 @@ class ProfileController extends ChangeNotifier {
     },
     {'label': 'E', 'text': 'completing the activity'},
   ];
+  final List<Map<String, String>> statementsUpdate = [
+    {'label': 'A', 'text': 'identifying improved ways of doing things'},
+    {'label': 'B', 'text': 'making sure everyone in the team is happy'},
+    {'label': 'C', 'text': 'being the best at what I do'},
+    {
+      'label': 'D',
+      'text':
+          'assessing what is required against what we have and finding the best way forward'
+    },
+    {'label': 'E', 'text': 'completing the activity'},
+  ];
 
   Map<int, int> counters = {};
+  Map<int, int> countersUpdate = {};
 
   Map<int, String> selectedAnswers = {};
 
@@ -323,6 +349,12 @@ class ProfileController extends ChangeNotifier {
     }
   }
 
+  void initCountersUpdate() {
+    for (int i = 0; i < statementsUpdate.length; i++) {
+      countersUpdate[i] = 0;
+    }
+  }
+
   void initMotivationQuestions() {
     for (int q = 0; q < motivationQuestions.length; q++) {
       selectedScores[q] = {};
@@ -352,16 +384,25 @@ class ProfileController extends ChangeNotifier {
   }
 
   List<GetQuestionListData> _questions = [];
+  List<GetUpdateQuestionListData> _questionsUpdate = [];
 
   List<GetQuestionListData> get questions => _questions;
 
+  List<GetUpdateQuestionListData> get questionsUpdate => _questionsUpdate;
+
   final List<Option> _currentOptions = [];
+  final List<Options> _currentOptionsUpdate = [];
 
   List<Option> get currentOptions => _currentOptions;
 
+  List<Options> get currentOptionsUpdate => _currentOptionsUpdate;
+
   int _currentIndex = 0;
+  int _currentIndexUpdate = 0;
 
   int get currentIndex => _currentIndex;
+
+  int get currentIndexUpdate => _currentIndexUpdate;
 
   void loadQuestion(int index) {
     _currentIndex = index;
@@ -372,8 +413,23 @@ class ProfileController extends ChangeNotifier {
       final opt = question.option![i];
       String label = String.fromCharCode(65 + i);
 
-      opt.label = label; // assign label directly
-      _currentOptions.add(opt); // ✅ add by reference, not copy
+      opt.label = label;
+      _currentOptions.add(opt);
+    }
+
+    notifyListeners();
+  }
+
+  void loadQuestionUpdate(int index) {
+    _currentIndexUpdate = index;
+    _currentOptionsUpdate.clear();
+
+    final question = _questionsUpdate[index];
+    for (int i = 0; i < (question.options?.length ?? 0); i++) {
+      final opt = question.options![i];
+      final label = String.fromCharCode(65 + i); // A, B, C, ...
+      opt.alphabate = label;
+      _currentOptionsUpdate.add(opt);
     }
 
     notifyListeners();
@@ -384,11 +440,30 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateAnswerUpdate(int optionIndex, String value) {
+    _currentOptionsUpdate[optionIndex].answer = value;
+    _currentOptionsUpdate[optionIndex].flag = true;
+
+    _questionsUpdate[_currentIndexUpdate].options![optionIndex].answer = value;
+    _questionsUpdate[_currentIndexUpdate].options![optionIndex].flag = true;
+
+    notifyListeners();
+  }
+
   bool get isLastQuestion => _currentIndex == _questions.length - 1;
+
+  bool get isLastQuestionUpdate =>
+      _currentIndexUpdate == _questionsUpdate.length - 1;
 
   void nextQuestion() {
     if (!isLastQuestion) {
       loadQuestion(_currentIndex + 1);
+    }
+  }
+
+  void nextQuestionUpdate() {
+    if (!isLastQuestionUpdate) {
+      loadQuestionUpdate(_currentIndexUpdate + 1);
     }
   }
 
@@ -400,6 +475,13 @@ class ProfileController extends ChangeNotifier {
         );
   }
 
+  int get currentTotalUpdate {
+    return _currentOptionsUpdate.fold(
+      0,
+      (prev, opt) => prev + (int.tryParse(opt.answer ?? '0') ?? 0),
+    );
+  }
+
   void incrementOption(int index) {
     final option = _currentOptions[index];
     int currentAnswer = int.tryParse(option.answer!) ?? 0;
@@ -408,10 +490,25 @@ class ProfileController extends ChangeNotifier {
       currentAnswer++;
       option.answer = currentAnswer.toString();
       option.flag = true;
-
-      // Sync back to main question list
       _questions[_currentIndex].option![index].answer = option.answer;
       _questions[_currentIndex].option![index].flag = true;
+
+      notifyListeners();
+    }
+  }
+
+  void incrementOptionUpdate(int index) {
+    final option = _currentOptionsUpdate[index];
+    int currentAnswer = int.tryParse(option.answer ?? '0') ?? 0;
+
+    if (currentTotalUpdate < 10 && currentAnswer < 10) {
+      currentAnswer++;
+      option.answer = currentAnswer.toString();
+      option.flag = true;
+
+      _questionsUpdate[_currentIndexUpdate].options![index].answer =
+          option.answer;
+      _questionsUpdate[_currentIndexUpdate].options![index].flag = true;
 
       notifyListeners();
     }
@@ -426,9 +523,25 @@ class ProfileController extends ChangeNotifier {
       option.answer = currentAnswer.toString();
       option.flag = true;
 
-      // Sync back to main question list
       _questions[_currentIndex].option![index].answer = option.answer;
       _questions[_currentIndex].option![index].flag = true;
+
+      notifyListeners();
+    }
+  }
+
+  void decrementOptionUpdate(int index) {
+    final option = _currentOptionsUpdate[index];
+    int currentAnswer = int.tryParse(option.answer ?? '0') ?? 0;
+
+    if (currentAnswer > 0) {
+      currentAnswer--;
+      option.answer = currentAnswer.toString();
+      option.flag = true;
+
+      _questionsUpdate[_currentIndexUpdate].options![index].answer =
+          option.answer;
+      _questionsUpdate[_currentIndexUpdate].options![index].flag = true;
 
       notifyListeners();
     }
@@ -453,6 +566,15 @@ class ProfileController extends ChangeNotifier {
     } catch (e) {
       debugPrint('TotalCount CotQuest Error: $e');
     }
+  }
+
+  void totalCountUpdate() {
+    int sum = 0;
+    for (final opt in _currentOptionsUpdate) {
+      sum += int.tryParse(opt.answer ?? '0') ?? 0;
+    }
+    debugPrint('Current total points: $sum');
+    notifyListeners();
   }
 
   void validateAnswers(BuildContext context) {
@@ -486,6 +608,33 @@ class ProfileController extends ChangeNotifier {
     }
   }
 
+  void validateAnswersUpdate(BuildContext context) {
+    List<String> listAns = [];
+    int stTotalAns = 0;
+
+    for (final opt in _currentOptionsUpdate) {
+      if ((opt.answer ?? '').isEmpty) {
+        opt.answer = '0';
+      }
+      listAns.add(opt.answer ?? '0');
+    }
+
+    if (listAns.length == _currentOptionsUpdate.length) {
+      for (final ans in listAns) {
+        stTotalAns += int.tryParse(ans) ?? 0;
+      }
+
+      if (stTotalAns == 10) {
+        nextQuestionUpdate();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Please revise your scores. Total must be 10.')),
+        );
+      }
+    }
+  }
+
   void saveUserTeamRoleData(String userData, BuildContext context) {
     profileServiceInterface!.saveUserTeamRoleData(userData);
     Navigator.pop(context);
@@ -514,7 +663,7 @@ class ProfileController extends ChangeNotifier {
       }
 
       if (totalPoints == 10) {
-        sendTeamRoleData(); // ✅ submit
+        sendTeamRoleData();
       } else {
         showCustomSnackBar(
           getTranslated("please_revise_your_score", context),
@@ -525,6 +674,35 @@ class ProfileController extends ChangeNotifier {
     }
   }
 
+  void validateAndSubmitQuestionUpdate(int index, BuildContext context) {
+    int totalPoints = 0;
+    final questionOptions = questionsUpdate[index].options ?? [];
+
+    List<String> listAns = [];
+
+    for (var option in questionOptions) {
+      if ((option.answer ?? '').isEmpty) {
+        option.answer = "0"; // default to zero
+      }
+      listAns.add(option.answer!);
+    }
+
+    if (listAns.length == questionOptions.length) {
+      for (var ans in listAns) {
+        totalPoints += int.tryParse(ans) ?? 0;
+      }
+
+      if (totalPoints == 10) {
+        sendTeamRoleDataUpdate();
+      } else {
+        showCustomSnackBar(
+          getTranslated("please_revise_your_score", context),
+          context,
+          isError: true,
+        );
+      }
+    }
+  }
 
   //API calling
   Future<void> viewUserProfile() async {
@@ -634,13 +812,31 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> viewQuestionsListUpdate() async {
+    _isLoading = true;
+    ApiResponse apiResponse =
+        await profileServiceInterface!.viewCompletedQuestionsList();
+    _isLoading = false;
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      GetUpdateQuestionListResponse response =
+          GetUpdateQuestionListResponse.fromJson(map);
+
+      _questionsUpdate = response.data ?? [];
+      if (_questionsUpdate.isNotEmpty) {
+        loadQuestionUpdate(0);
+      }
+    }
+
+    notifyListeners();
+  }
 
   Future<void> sendTeamRoleData() async {
     _isLoadingBtn = true;
     notifyListeners();
 
     try {
-
       List<Map<String, dynamic>> answerArray = [];
 
       for (var question in questions) {
@@ -662,12 +858,12 @@ class ProfileController extends ChangeNotifier {
 
       Map<String, dynamic> request = {
         "userId": userProfileData!.id!,
-        "orgId":userProfileData!.orgId,
+        "orgId": userProfileData!.orgId,
         "answer": answerArray,
       };
 
       ApiResponse apiResponse =
-      await profileServiceInterface!.sendTeamRoleData(request);
+          await profileServiceInterface!.sendTeamRoleData(request);
 
       if (apiResponse.response != null &&
           apiResponse.response!.statusCode == 200) {
@@ -693,15 +889,15 @@ class ProfileController extends ChangeNotifier {
   Future<void> viewCOTMapperSummary() async {
     _isLoading = true;
     ApiResponse apiResponse =
-    await profileServiceInterface!.getCOTMapperSummary();
+        await profileServiceInterface!.getCOTMapperSummary();
     _isLoading = false;
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
-      ViewCotMapperSummaryResponse response = ViewCotMapperSummaryResponse.fromJson(map);
+      ViewCotMapperSummaryResponse response =
+          ViewCotMapperSummaryResponse.fromJson(map);
       cotMapperSummaryDataList = response.data;
-    }
-    else{
+    } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
     }
@@ -712,19 +908,186 @@ class ProfileController extends ChangeNotifier {
   Future<void> viewCOTindividualSummary() async {
     _isLoading = true;
     ApiResponse apiResponse =
-    await profileServiceInterface!.viewCOTindividualSummary();
+        await profileServiceInterface!.viewCOTindividualSummary();
     _isLoading = false;
-    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
-      ViewCotIndividualSummaryResponse response = ViewCotIndividualSummaryResponse.fromJson(map);
+      ViewCotIndividualSummaryResponse response =
+          ViewCotIndividualSummaryResponse.fromJson(map);
       cotIndividualSummaryData = response.data;
-    }
-    else{
+
+      _CotQuestiondata = CotQuestionData.fromJson(map["data"]);
+    } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
     }
 
     notifyListeners();
   }
+
+  Future<void> sendTeamRoleDataUpdate() async {
+    try {
+      final List<Map<String, dynamic>> answerList = [];
+
+      for (final question in _questionsUpdate) {
+        final Map<String, dynamic> questionMap = {
+          "questionId": question.questionId?.toString() ?? "",
+          "option": [],
+        };
+
+        for (final option in question.options ?? []) {
+          questionMap["option"].add({
+            "answerId": option.answerId?.toString() ?? "",
+            "point": option.answer ?? "0",
+          });
+        }
+
+        answerList.add(questionMap);
+      }
+
+      /// Wrap in the outer object
+      final Map<String, dynamic> body = {
+        "answer": answerList,
+      };
+
+      debugPrint("Submitting Answers JSON: ${jsonEncode(body)}");
+
+      /// Send POST
+      ApiResponse apiResponse =
+          await profileServiceInterface!.sendTeamRoleDataUpdate(body);
+
+      if (apiResponse.response != null &&
+          apiResponse.response!.statusCode == 200) {
+        final responseData = apiResponse.response!.data;
+
+        final String msg = responseData["message"] ?? "Submitted successfully";
+        showCustomSnackBar(msg, Get.context!, isError: false);
+
+        Navigator.of(Get.context!).pop();
+      } else {
+        showCustomSnackBar("Submission failed", Get.context!, isError: true);
+      }
+    } catch (e) {
+      debugPrint("Submit error: $e");
+      showCustomSnackBar("An error occurred submitting answers", Get.context!,
+          isError: true);
+    }
+  }
+
+
+  //---------------------motivation ---------------------
+  List<SOTMotivationQuestion> viewMotivationQuestions = [];
+
+
+  void updateOptionRating(
+      int? questionId,
+      int? optionId,
+      String rating,
+      ) {
+    final question = viewMotivationQuestions.firstWhere(
+          (q) => q.questionId == questionId,
+      orElse: () => SOTMotivationQuestion(),
+    );
+
+    if (question.questionId != null) {
+      final option = question.option?.firstWhere(
+            (o) => o.optionId == optionId,
+        orElse: () => SOTMotivationOption(),
+      );
+
+      if (option != null && option.optionId != null) {
+        option.rating = rating;
+
+        // ✅ Mark question as answered (like setFalg(true) in Java)
+        question.flag = true;
+
+        notifyListeners();
+      }
+    }
+  }
+
+
+  void updateRatings(int index, String ratingOpt1, String ratingOpt2) {
+    viewMotivationQuestions[index].option?[0].rating = ratingOpt1;
+    viewMotivationQuestions[index].option?[1].rating = ratingOpt2;
+
+    // ✅ Mark question as answered
+    viewMotivationQuestions[index].flag = true;
+
+    notifyListeners();
+  }
+
+
+  String get submissionJson {
+    final List<Map<String, dynamic>> list =
+    viewMotivationQuestions.map((e) => e.toJson()).toList();
+    return jsonEncode({'answer': list});
+  }
+  Future<void> viewMotivationList(
+      String savedJsonList,
+      BuildContext context,
+      ) async
+  {
+    _isLoading = true;
+
+    ApiResponse apiResponse =
+    await profileServiceInterface!.viewMotivationList();
+
+    _isLoading = false;
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      final Map<String, dynamic> map =
+      apiResponse.response!.data as Map<String, dynamic>;
+
+      // Convert the API response to your model
+      final response = SOTMotivationQuestionListResponse.fromJson(map);
+
+      viewMotivationQuestions = response.data ?? [];
+
+      // Merge saved answers (if any)
+      if (savedJsonList.isNotEmpty && savedJsonList != "[]") {
+        debugPrint("Saved JSON: $savedJsonList");
+        final List<dynamic> savedArray = jsonDecode(savedJsonList);
+
+        for (var savedItem in savedArray) {
+          final savedQuestionId = savedItem["questionId"]?.toString();
+          final List<dynamic> savedOptions = savedItem["option"] ?? [];
+
+          // Find the matching question in the fresh API data
+          final matchingQuestion = viewMotivationQuestions.firstWhere(
+                (q) => q.questionId?.toString() == savedQuestionId,
+            orElse: () => SOTMotivationQuestion(),
+          );
+
+          if (matchingQuestion.questionId != null) {
+            for (var savedOpt in savedOptions) {
+              final savedOptionId = savedOpt["OptionId"]?.toString();
+              final savedRating = savedOpt["rating"]?.toString() ?? "0";
+
+              final matchingOption = matchingQuestion.option?.firstWhere(
+                    (o) => o.optionId?.toString() == savedOptionId,
+                orElse: () => SOTMotivationOption(),
+              );
+
+              if (matchingOption != null && matchingOption.optionId != null) {
+                matchingOption.rating = savedRating;
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      showCustomSnackBar(
+        "Failed to load questions",
+        Get.context!,
+        isError: true,
+      );
+    }
+
+    notifyListeners();
+  }
+
 
 }

@@ -51,6 +51,30 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<ApiResponse> viewMotivationList() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getSOTmotivationQuestionsUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewCompletedQuestionsList() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getCOTteamRoleCompletedAnswersUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
   Future<ApiResponse> viewCOTindividualSummary() async {
     try {
       Response response = await dioClient!.get(
@@ -104,6 +128,20 @@ class ProfileRepository implements ProfileRepositoryInterface {
     try {
       Response response = await dioClient!.post(
         AppConstants.addCOTAnswerUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> sendTeamRoleDataUpdate(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.updateCOTTeamRoleMapAnswersUri,
         data: loginBody,
       );
       return ApiResponse.withSuccess(response);

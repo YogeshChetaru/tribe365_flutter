@@ -29,6 +29,16 @@ class ProfileService implements ProfileServiceInterface {
   }
 
   @override
+  Future<ApiResponse> viewMotivationList() {
+    return profileRepositoryInterface.viewMotivationList();
+  }
+
+  @override
+  Future<ApiResponse> viewCompletedQuestionsList() {
+    return profileRepositoryInterface.viewCompletedQuestionsList();
+  }
+
+  @override
   Future<ApiResponse> getCOTMapperSummary() {
     return profileRepositoryInterface.getCOTMapperSummary();
   }
@@ -46,6 +56,11 @@ class ProfileService implements ProfileServiceInterface {
   @override
   Future<ApiResponse> sendTeamRoleData(Map<String, dynamic> body) {
     return profileRepositoryInterface.sendTeamRoleData(body);
+  }
+
+  @override
+  Future<ApiResponse> sendTeamRoleDataUpdate(Map<String, dynamic> body) {
+    return profileRepositoryInterface.sendTeamRoleDataUpdate(body);
   }
 
   @override

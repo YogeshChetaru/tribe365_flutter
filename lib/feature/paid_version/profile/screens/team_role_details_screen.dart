@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribe365_new/feature/paid_version/profile/screens/team_role_cate_desc_screen.dart';
+import 'package:tribe365_new/feature/paid_version/profile/screens/team_role_update_screen.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/custom_route.dart';
 import '../../../../localization/language_constrants.dart';
@@ -23,8 +24,13 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    loadAPI();
   }
-
+  void loadAPI() {
+    ProfileController controller =
+    Provider.of<ProfileController>(context, listen: false);
+    controller.viewCOTindividualSummary();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,72 +110,70 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
                             Container(
                                 margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
                                 child: preferenceGrid()),
-                            Container(
-                              margin: EdgeInsets.fromLTRB(15, 10, 15, 0),
-                              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-                              width: MediaQuery.sizeOf(context).width,
-                              decoration: BoxDecoration(
-                                color: ColorResources.color9a9a9a.withAlpha(50),
-                                borderRadius: BorderRadius.all(Radius.circular(10))
-                              ),
-                              child: Column(
-                                children: [
-                                  roleScoreCard(
-                                    leftTitle: "Shaper",
-                                    leftScore: "22",
-                                    leftBoxText: "A",
-                                    leftBoxColor: Colors.green,
-                                    rightTitle: "Coordinator",
-                                    rightScore: "22",
-                                    rightBoxText: "B",
-                                    rightBoxColor: Colors.orange,
-                                  ),
-                                  SizedBox(height: 15,),
-                                  roleScoreCard(
-                                    leftTitle: "Shaper",
-                                    leftScore: "22",
-                                    leftBoxText: "A",
-                                    leftBoxColor: Colors.green,
-                                    rightTitle: "Coordinator",
-                                    rightScore: "22",
-                                    rightBoxText: "B",
-                                    rightBoxColor: Colors.orange,
-                                  ),
-                                  SizedBox(height: 15,),
-                                  roleScoreCard(
-                                    leftTitle: "Shaper",
-                                    leftScore: "22",
-                                    leftBoxText: "A",
-                                    leftBoxColor: Colors.green,
-                                    rightTitle: "Coordinator",
-                                    rightScore: "22",
-                                    rightBoxText: "B",
-                                    rightBoxColor: Colors.orange,
-                                  ),
-                                  SizedBox(height: 15,),
-                                  roleScoreCard(
-                                    leftTitle: "Shaper",
-                                    leftScore: "22",
-                                    leftBoxText: "A",
-                                    leftBoxColor: Colors.green,
-                                    rightTitle: "Coordinator",
-                                    rightScore: "22",
-                                    rightBoxText: "B",
-                                    rightBoxColor: Colors.orange,
-                                  ),
 
-                                ],
-                              ),
-                            ),
+                            profileProvider.CotQuestiondata == null
+                                ? SizedBox()
+                                : ListView.separated(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    padding: const EdgeInsets.all(15),
+                                    itemCount: profileProvider.rolePairs.length,
+                                    separatorBuilder: (_, __) =>
+                                        const SizedBox(height: 12),
+                                    itemBuilder: (context, index) {
+                                      final leftKey =
+                                          profileProvider.rolePairs[index][0];
+                                      final rightKey =
+                                          profileProvider.rolePairs[index][1];
+
+                                      final leftScore = profileProvider
+                                          .CotQuestiondata!.scores[leftKey]
+                                          .toString();
+                                      final rightScore = profileProvider
+                                          .CotQuestiondata!.scores[rightKey]
+                                          .toString();
+
+                                      final leftTitle = profileProvider
+                                              .CotQuestiondata!
+                                              .mappers[leftKey] ??
+                                          leftKey;
+                                      final rightTitle = profileProvider
+                                              .CotQuestiondata!
+                                              .mappers[rightKey] ??
+                                          rightKey;
+
+                                      final leftColor =
+                                          getRoleColor(leftScore).background;
+                                      final rightColor =
+                                          getRoleColor(rightScore).background;
+
+                                      return roleScoreCard(
+                                        leftTitle: leftTitle,
+                                        leftScore: leftScore,
+                                        leftBoxText: leftScore,
+                                        leftBoxColor: leftColor,
+                                        rightTitle: rightTitle,
+                                        rightScore: rightScore,
+                                        rightBoxText: rightScore,
+                                        rightBoxColor: rightColor,
+                                      );
+                                    },
+                                  ),
                             InkWell(
-
+                              onTap: (){
+                                routePush(context, TeamRoleUpdateScreen());
+                              },
                               child: Container(
                                 margin: EdgeInsets.fromLTRB(15, 20, 15, 15),
                                 width: MediaQuery.sizeOf(context).width,
                                 padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
                                 decoration: BoxDecoration(
                                   color: ColorResources.mainColor,
-                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      bottomLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10),
+                                      bottomRight: Radius.circular(10)),
                                 ),
                                 child: Text(
                                   getTranslated("REDO_REVIEW_QUESTIONNAIRE", context)!,
@@ -182,8 +186,7 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
                                   ),
                                 ),
                               ),
-                            )
-
+                            ),
                           ],
                         ),
                 ),
@@ -204,14 +207,14 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
             children: [
               Expanded(
                 child: preferenceItem(
-                  color: Colors.green,
+                  color: ColorResources.color6ba74b,
                   label: '1st Preference',
                 ),
               ),
               SizedBox(width: 16),
               Expanded(
                 child: preferenceItem(
-                  color: Colors.yellow,
+                  color: ColorResources.colorfdfd02,
                   label: '2nd Preference',
                 ),
               ),
@@ -222,14 +225,14 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
             children: [
               Expanded(
                 child: preferenceItem(
-                  color: Colors.blue,
+                  color: ColorResources.color0001fb,
                   label: '3rd Preference',
                 ),
               ),
               SizedBox(width: 16),
               Expanded(
                 child: preferenceItem(
-                  color: Colors.orange,
+                  color: ColorResources.colorfc9802,
                   label: 'Reserve Role',
                 ),
               ),
@@ -282,8 +285,7 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
     required String rightScore,
     required String rightBoxText,
     required Color rightBoxColor,
-  })
-  {
+  }) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -311,7 +313,6 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
                           fontFamily: 'Roboto',
                         ),
                       ),
-
                       Row(
                         children: [
                           const Text(
@@ -383,7 +384,6 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
                           fontFamily: 'Roboto',
                         ),
                       ),
-
                       Row(
                         children: [
                           const Text(
@@ -432,4 +432,28 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
     );
   }
 
+
+}
+
+/// Color helper
+class RoleColor {
+  final Color background;
+  final Color text;
+
+  const RoleColor({required this.background, required this.text});
+}
+
+RoleColor getRoleColor(String score) {
+  switch (score) {
+    case "0":
+      return const RoleColor(background: Colors.white, text: Colors.black);
+    case "1":
+      return const RoleColor(background: ColorResources.color6ba74b, text: Colors.white);
+    case "2":
+      return const RoleColor(background: ColorResources.colorfdfd02, text: Colors.black);
+    case "3":
+      return const RoleColor(background: ColorResources.color0001fb, text: Colors.white);
+    default:
+      return const RoleColor(background: ColorResources.colorfc9802, text: Colors.white);
+  }
 }
