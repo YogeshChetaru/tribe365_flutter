@@ -34,6 +34,12 @@ class ProfileService implements ProfileServiceInterface {
   }
 
   @override
+  Future<ApiResponse> viewMotivationCompletedAnswerList() {
+    return profileRepositoryInterface.viewMotivationCompletedAnswerList();
+  }
+
+
+  @override
   Future<ApiResponse> viewCompletedQuestionsList() {
     return profileRepositoryInterface.viewCompletedQuestionsList();
   }
@@ -49,9 +55,20 @@ class ProfileService implements ProfileServiceInterface {
   }
 
   @override
+  Future<void> saveUserMotivationData(String userData) {
+    return profileRepositoryInterface.saveUserMotivationData(userData);
+  }
+
+  @override
   String getUserTeamRoleData() {
     return profileRepositoryInterface.getUserTeamRoleData();
   }
+
+  @override
+  String getUserMotivationData() {
+    return profileRepositoryInterface.getUserMotivationData();
+  }
+
 
   @override
   Future<ApiResponse> sendTeamRoleData(Map<String, dynamic> body) {
@@ -66,6 +83,23 @@ class ProfileService implements ProfileServiceInterface {
   @override
   Future<void> clearSavedUserTeamRoleData() {
     return profileRepositoryInterface.clearSavedUserTeamRoleData();
+  }
+
+  @override
+  Future<void> clearSavedUserMotivationData() {
+    return profileRepositoryInterface.clearSavedUserMotivationData();
+  }
+
+  @override
+  Future<ApiResponse> sendMotivationData(Map<String, dynamic> body) {
+    return profileRepositoryInterface.sendMotivationData(body);
+  }
+
+
+
+  @override
+  Future<void> viewSOTmotivationUserList(Map<String, dynamic> loginBody) {
+    return profileRepositoryInterface.viewSOTmotivationUserList(loginBody);
   }
 
   @override

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import '../domain/models/get_motivation_list_response.dart';
+import '../domain/models/view_sot_motivation_completed_answer_list_response.dart';
 
-class MotivationBuildQuestion extends StatelessWidget {
-  final SOTMotivationQuestion question;
+class MotivationBuildQuestionUpdate extends StatelessWidget {
+  final ViewSotMotivationCompletedAnswerListData question;
   final int questionIndex;
   final void Function(int optionIndex, String selectedRating) onRatingChanged;
 
-  const MotivationBuildQuestion({
+  const MotivationBuildQuestionUpdate({
     super.key,
     required this.question,
     required this.questionIndex,
@@ -57,7 +58,7 @@ class MotivationBuildQuestion extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: List.generate(6, (score) {
-                      final isSelected = option.rating == score.toString();
+                      final isSelected = option.points == score;
                       return GestureDetector(
                         onTap: () {
                           onRatingChanged(optIndex, score.toString());

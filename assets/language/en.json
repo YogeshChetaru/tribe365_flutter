@@ -197,5 +197,7 @@
   "category_description": "Category Description",
   "no_data_found": "No Data Found",
   "title": "Title",
-  "value": "Value"
+  "value": "Value",
+  "please_provide_score_for_question": "Please provide score for Question",
+  "supercharging_motivation": "Supercharging Motivation"
 }

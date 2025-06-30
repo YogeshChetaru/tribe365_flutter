@@ -12,6 +12,8 @@ import '../domain/models/get_question_list_response.dart';
 import '../domain/models/get_update_question_list_response.dart';
 import '../domain/models/view_cot_individual_summary_response.dart';
 import '../domain/models/view_cot_mapper_summary_response.dart';
+import '../domain/models/view_sot_motivation_completed_answer_list_response.dart';
+import '../domain/models/view_sot_motivation_user_list_response.dart';
 import '../domain/models/viewuserprofileresponse.dart';
 import '../domain/services/profile_service_interface.dart';
 
@@ -704,6 +706,123 @@ class ProfileController extends ChangeNotifier {
     }
   }
 
+  String get submissionJson {
+    final List<Map<String, dynamic>> list =
+    viewMotivationQuestions.map((e) => e.toJson()).toList();
+    return jsonEncode({'answer': list});
+  }
+
+  Future<void> saveUserMotivationData(List<SOTMotivationQuestion> questions) async {
+    final jsonList = questions.map((q) => q.toJson()).toList();
+    final jsonString = jsonEncode(jsonList);
+    profileServiceInterface!.saveUserMotivationData(jsonString);
+  }
+
+  String getUserMotivationData() {
+    return profileServiceInterface!.getUserMotivationData();
+  }
+
+  List<SOTMotivationQuestion> viewMotivationQuestions = [];
+  List<ViewSotMotivationCompletedAnswerListData> viewMotivationQuestionsCompletedList = [];
+  int resultCount = 0;
+  void validateAndSubmit(BuildContext context) {
+    int count = 0;
+
+    for (int i = 0; i < viewMotivationQuestions.length; i++) {
+      final question = viewMotivationQuestions[i];
+
+      for (int j = 0; j < (question.option?.length ?? 0); j++) {
+        final rating = question.option?[j].rating ?? "";
+
+        if (rating.isEmpty) {
+          showCustomSnackBar("${getTranslated("please_provide_score_for_question", context)} : ${i + 1}", context,isError: true);
+          return;
+        } else {
+          count++;
+        }
+      }
+    }
+
+    if (count == resultCount) {
+      sendMotivationData();
+    }
+  }
+
+  void updateOptionRating(int? questionId, int optionIndexClicked, String selectedRating,)
+  {
+    final question = viewMotivationQuestions.firstWhere(
+          (q) => q.questionId == questionId,
+      orElse: () => SOTMotivationQuestion(),
+    );
+
+    if (question.questionId != null) {
+      // Always expect 2 options
+      final options = question.option ?? [];
+
+      if (options.length >= 2) {
+        // Determine which is the "other" option
+        final otherIndex = optionIndexClicked == 0 ? 1 : 0;
+
+        // Compute the paired rating
+        final pairedRating = (5 - int.parse(selectedRating)).toString();
+
+        // Update the clicked option
+        options[optionIndexClicked].rating = selectedRating;
+
+        // Update the paired option
+        options[otherIndex].rating = pairedRating;
+
+        // Mark the question as flagged
+        question.flag = true;
+
+        notifyListeners();
+      }
+    }
+  }
+
+  void updateOptionRatingUpdate(
+      int? questionId,
+      int optionIndexClicked,
+      String selectedRating,
+      ) {
+    final question = viewMotivationQuestionsCompletedList.firstWhere(
+          (q) => q.questionId == questionId,
+      orElse: () => ViewSotMotivationCompletedAnswerListData(),
+    );
+
+    if (question.questionId != null) {
+      final options = question.option ?? [];
+
+      if (options.length >= 2) {
+        final otherIndex = optionIndexClicked == 0 ? 1 : 0;
+        final clickedRating = int.tryParse(selectedRating) ?? 0;
+        final pairedRating = 5 - clickedRating;
+
+        // 🔁 Update both ratings via 'points'
+        options[optionIndexClicked].points = clickedRating;
+        options[otherIndex].points = pairedRating;
+
+        question.flag = true;
+
+        notifyListeners();
+      }
+    }
+  }
+
+
+
+  void updateRatings(int index, String ratingOpt1, String ratingOpt2) {
+    viewMotivationQuestions[index].option?[0].rating = ratingOpt1;
+    viewMotivationQuestions[index].option?[1].rating = ratingOpt2;
+
+    // ✅ Mark question as answered
+    viewMotivationQuestions[index].flag = true;
+
+    notifyListeners();
+  }
+
+
+
   //API calling
   Future<void> viewUserProfile() async {
     ApiResponse apiResponse =
@@ -975,60 +1094,7 @@ class ProfileController extends ChangeNotifier {
     }
   }
 
-
-  //---------------------motivation ---------------------
-  List<SOTMotivationQuestion> viewMotivationQuestions = [];
-
-
-  void updateOptionRating(
-      int? questionId,
-      int? optionId,
-      String rating,
-      ) {
-    final question = viewMotivationQuestions.firstWhere(
-          (q) => q.questionId == questionId,
-      orElse: () => SOTMotivationQuestion(),
-    );
-
-    if (question.questionId != null) {
-      final option = question.option?.firstWhere(
-            (o) => o.optionId == optionId,
-        orElse: () => SOTMotivationOption(),
-      );
-
-      if (option != null && option.optionId != null) {
-        option.rating = rating;
-
-        // ✅ Mark question as answered (like setFalg(true) in Java)
-        question.flag = true;
-
-        notifyListeners();
-      }
-    }
-  }
-
-
-  void updateRatings(int index, String ratingOpt1, String ratingOpt2) {
-    viewMotivationQuestions[index].option?[0].rating = ratingOpt1;
-    viewMotivationQuestions[index].option?[1].rating = ratingOpt2;
-
-    // ✅ Mark question as answered
-    viewMotivationQuestions[index].flag = true;
-
-    notifyListeners();
-  }
-
-
-  String get submissionJson {
-    final List<Map<String, dynamic>> list =
-    viewMotivationQuestions.map((e) => e.toJson()).toList();
-    return jsonEncode({'answer': list});
-  }
-  Future<void> viewMotivationList(
-      String savedJsonList,
-      BuildContext context,
-      ) async
-  {
+  Future<void> viewMotivationList(String savedJsonList, BuildContext context,) async {
     _isLoading = true;
 
     ApiResponse apiResponse =
@@ -1061,9 +1127,17 @@ class ProfileController extends ChangeNotifier {
           );
 
           if (matchingQuestion.questionId != null) {
+            // ✅ Reset ALL ratings to "0"
+            if (matchingQuestion.option != null) {
+              for (var opt in matchingQuestion.option!) {
+                opt.rating = "";
+              }
+            }
+
+            // Now apply saved ratings
             for (var savedOpt in savedOptions) {
               final savedOptionId = savedOpt["OptionId"]?.toString();
-              final savedRating = savedOpt["rating"]?.toString() ?? "0";
+              final savedRating = savedOpt["rating"]?.toString() ?? "";
 
               final matchingOption = matchingQuestion.option?.firstWhere(
                     (o) => o.optionId?.toString() == savedOptionId,
@@ -1077,8 +1151,8 @@ class ProfileController extends ChangeNotifier {
           }
         }
       }
-    }
-    else {
+      resultCount = viewMotivationQuestions.length * 2;
+    } else {
       showCustomSnackBar(
         "Failed to load questions",
         Get.context!,
@@ -1089,5 +1163,96 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> sendMotivationData() async {
+    _isLoadingBtn = true;
+    notifyListeners();
+
+    try {
+      final List<Map<String, dynamic>> answerList = viewMotivationQuestions.map((question) {
+        return {
+          "questionId": question.questionId,
+          "option": question.option?.map((opt) {
+            return {
+              "optionId": opt.optionId,
+              "rating": opt.rating ?? "0"
+            };
+          }).toList() ?? [],
+        };
+      }).toList();
+
+      final Map<String, dynamic> request = {
+        "answer": answerList,
+      };
+      debugPrint("Sending answer JSON: $request");
+
+      ApiResponse apiResponse = await profileServiceInterface!.sendMotivationData(request);
+
+      if (apiResponse.response != null &&
+          apiResponse.response!.statusCode == 200) {
+        Map<String, dynamic> map = apiResponse.response!.data;
+
+        String msg = map['message'] ?? "Submission successful";
+        showCustomSnackBar(msg, Get.context!,isError: false);
+
+        profileServiceInterface!.clearSavedUserMotivationData();
+        Navigator.of(Get.context!).pop(true);
+      } else {
+        showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+        ApiChecker.checkApi(apiResponse);
+      }
+    } catch (e) {
+      showCustomSnackBar("Error: $e", Get.context!, isError: true);
+    }
+
+    _isLoadingBtn = false;
+    notifyListeners();
+  }
+
+
+  //--------------------------------------
+  List<ViewSotMotivationUserListData>? sotMotivationUserList;
+  Future<void> viewSOTmotivationUserList() async {
+    _isLoading = true;
+    Map<String, dynamic> request = {
+      "orgId":userProfileData!.orgId.toString(),
+      "userId":userProfileData!.id.toString()
+    };
+
+    ApiResponse apiResponse = await profileServiceInterface!.viewSOTmotivationUserList(request);
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewSotMotivationUserListResponse response = ViewSotMotivationUserListResponse.fromJson(map);
+      sotMotivationUserList = response.data;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewMotivationCompletedAnswerList(BuildContext context,) async {
+    _isLoading = true;
+
+    ApiResponse apiResponse = await profileServiceInterface!
+        .viewMotivationCompletedAnswerList();
+
+    _isLoading = false;
+
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
+      final Map<String, dynamic> map =
+      apiResponse.response!.data as Map<String, dynamic>;
+
+      final response = ViewSotMotivationCompletedAnswerListResponse.fromJson(map);
+
+      viewMotivationQuestionsCompletedList = response.data ?? [];
+    }
+    else{
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
 
 }

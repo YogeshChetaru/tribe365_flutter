@@ -63,6 +63,18 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<ApiResponse> viewMotivationCompletedAnswerList() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getSOTmotivationCompletedAnswerUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
   Future<ApiResponse> viewCompletedQuestionsList() async {
     try {
       Response response = await dioClient!.get(
@@ -79,6 +91,19 @@ class ProfileRepository implements ProfileRepositoryInterface {
     try {
       Response response = await dioClient!.get(
         AppConstants.getCOTindividualSummaryUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewSOTmotivationUserList(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getSOTmotivationUserListUri,
+      data: loginBody
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {
@@ -114,8 +139,22 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<void> saveUserMotivationData(String userData) async {
+    try {
+      await sharedPreferences!.setString(AppConstants.userMotivationData, userData);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
   String getUserTeamRoleData() {
     return sharedPreferences!.getString(AppConstants.userTeamRoleData) ?? "";
+  }
+
+  @override
+  String getUserMotivationData() {
+    return sharedPreferences!.getString(AppConstants.userMotivationData) ?? "";
   }
 
   @override
@@ -124,10 +163,28 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<void> clearSavedUserMotivationData() async {
+    sharedPreferences!.remove(AppConstants.userMotivationData);
+  }
+
+  @override
   Future<ApiResponse> sendTeamRoleData(Map<String, dynamic> loginBody) async {
     try {
       Response response = await dioClient!.post(
         AppConstants.addCOTAnswerUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> sendMotivationData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.addSOTmotivationAnswerUri,
         data: loginBody,
       );
       return ApiResponse.withSuccess(response);

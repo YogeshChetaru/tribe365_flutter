@@ -21,6 +21,7 @@ class AppConstants {
   static const String userLoginStatus = 'user_login_status';
   static const String userLoginType = 'user_login_type';
   static const String userTeamRoleData = 'User_team_role_data';
+  static const String userMotivationData = 'User_motivation_data';
 
   static const String user = 'user';
   static const String langKey = 'lang';
@@ -75,6 +76,9 @@ class AppConstants {
   static const String getCOTteamRoleCompletedAnswersUri = 'getCOTteamRoleCompletedAnswers';
   static const String updateCOTTeamRoleMapAnswersUri = 'updateCOTteamRoleMapAnswers';
   static const String getSOTmotivationQuestionsUri = 'getSOTmotivationQuestions';
+  static const String addSOTmotivationAnswerUri = 'addSOTmotivationAnswer';
+  static const String getSOTmotivationUserListUri = 'getSOTmotivationUserList';
+  static const String getSOTmotivationCompletedAnswerUri = 'getSOTmotivationCompletedAnswer';
 
 
 

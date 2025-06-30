@@ -1,16 +1,12 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tribe365_new/main.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
-import '../../../../common/basewidget/custom_header_back_widget.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
 import '../controllers/profile_controller.dart';
-import '../domain/models/get_motivation_list_response.dart';
 import '../widgets/motivation_build_question.dart';
 
 class MotivationQuestionsScreen extends StatefulWidget {
@@ -30,7 +26,8 @@ class MotivationQuestionsScreenState extends State<MotivationQuestionsScreen> {
     super.initState();
   }
   void loadAPI(){
-    profileController.viewMotivationList("", context);
+    String userMotivationData = profileController.getUserMotivationData();
+    profileController.viewMotivationList(userMotivationData, context);
   }
 
   @override
@@ -124,7 +121,7 @@ class MotivationQuestionsScreenState extends State<MotivationQuestionsScreen> {
                                 onRatingChanged: (optionIndex, selectedRating) {
                                   profileProvider.updateOptionRating(
                                     question.questionId,
-                                    question.option![optionIndex].optionId,
+                                    optionIndex,
                                     selectedRating,
                                   );
                                 },
@@ -143,17 +140,21 @@ class MotivationQuestionsScreenState extends State<MotivationQuestionsScreen> {
         bottomNavigationBar: SafeArea(child: Consumer<ProfileController>(builder: (context, profileProvider, _) {
           return  profileProvider.isLoading==true?
           SizedBox.shrink() :
-          Container(
+              profileProvider.isLoadingBtn==true?
+              Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).primaryColor,
+                  ),
+                ),
+              ) :
+              Container(
             width: MediaQuery.sizeOf(context).width,
             height: 70,
             color: ColorResources.white,
             child: InkWell(
               onTap: () {
-                profileController.selectedScores.forEach((qIndex, optionsMap) {
-                  optionsMap.forEach((oIndex, score) {
-                    debugPrint('Q${qIndex + 1} - Option ${oIndex + 1}: Score = ${score == -1 ? "Not selected" : score}');
-                  });
-                });
+                profileProvider.validateAndSubmit(context);
               },
               child: Container(
                 alignment: Alignment.center,
@@ -188,7 +189,6 @@ class MotivationQuestionsScreenState extends State<MotivationQuestionsScreen> {
     int count = controller.viewMotivationQuestions
         .where((q) => q.flag == true)
         .length;
-    debugPrint("count>>>>>$count");
     if (count != 0) {
       // Show save dialog
       final shouldSave = await showDialog<bool>(
@@ -223,9 +223,12 @@ class MotivationQuestionsScreenState extends State<MotivationQuestionsScreen> {
           );
         },
       );
-
       if (shouldSave == true) {
-        await _saveAnswers(controller.viewMotivationQuestions);
+        profileController.saveUserMotivationData(controller.viewMotivationQuestions);
+        Navigator.of(Get.context!).pop();
+      }
+      else{
+        Navigator.of(Get.context!).pop();
       }
 
       return true; // Allow pop
@@ -234,16 +237,6 @@ class MotivationQuestionsScreenState extends State<MotivationQuestionsScreen> {
       Navigator.of(context).pop();
     }
     return true;
-  }
-
-  Future<void> _saveAnswers(List<SOTMotivationQuestion> questions) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    final jsonList = questions.map((q) => q.toJson()).toList();
-
-    final jsonString = jsonEncode(jsonList);
-
-    await prefs.setString("saved_motivation_answers", jsonString);
   }
 
 }

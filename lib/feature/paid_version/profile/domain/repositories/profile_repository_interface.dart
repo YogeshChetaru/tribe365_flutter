@@ -5,14 +5,20 @@ abstract class ProfileRepositoryInterface implements RepositoryInterface {
   Future<ApiResponse> viewUserProfileData();
   Future<ApiResponse> viewQuestionsList();
   Future<ApiResponse> viewMotivationList();
+  Future<ApiResponse> viewMotivationCompletedAnswerList();
   Future<ApiResponse> viewCompletedQuestionsList();
   Future<ApiResponse> getCOTMapperSummary();
   Future<ApiResponse> viewCOTindividualSummary();
+  Future<ApiResponse> viewSOTmotivationUserList(Map<String, dynamic> loginBody);
   String getUserToken();
   Future<ApiResponse> updateProfile(Map<String, dynamic> body);
   Future<ApiResponse> sendTeamRoleData(Map<String, dynamic> body);
+  Future<ApiResponse> sendMotivationData(Map<String, dynamic> body);
   Future<ApiResponse> sendTeamRoleDataUpdate(Map<String, dynamic> body);
   Future<void> saveUserTeamRoleData(String userData);
+  Future<void> saveUserMotivationData(String userData);
   String getUserTeamRoleData();
+  String getUserMotivationData();
   Future<void> clearSavedUserTeamRoleData();
+  Future<void> clearSavedUserMotivationData();
 }
