@@ -199,5 +199,9 @@
   "title": "Title",
   "value": "Value",
   "please_provide_score_for_question": "Please provide score for Question",
-  "supercharging_motivation": "Supercharging Motivation"
+  "supercharging_motivation": "Supercharging Motivation",
+  "do_you_want_to_save_the_answers": "Do you want to save the answers?",
+  "yes": "Yes",
+  "no": "No",
+  "please_agree_with_a_statement_for_question": "Please agree with a statement for Question"
 }

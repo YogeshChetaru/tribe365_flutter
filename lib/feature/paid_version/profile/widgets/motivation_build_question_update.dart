@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
-import '../domain/models/get_motivation_list_response.dart';
 import '../domain/models/view_sot_motivation_completed_answer_list_response.dart';
 
 class MotivationBuildQuestionUpdate extends StatelessWidget {

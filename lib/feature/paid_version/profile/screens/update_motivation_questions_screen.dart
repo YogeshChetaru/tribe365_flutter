@@ -139,12 +139,16 @@ class MotivationQuestionsUpdateScreenState extends State<MotivationQuestionsUpda
       ),
       bottomNavigationBar: SafeArea(child: Consumer<ProfileController>(builder: (context, profileProvider, _) {
         return  profileProvider.isLoading==true?
-        SizedBox.shrink() :
+        SizedBox.shrink():
             profileProvider.isLoadingBtn==true?
-            Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).primaryColor,
+            Container(
+              height: 70,
+              color: ColorResources.white,
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).primaryColor,
+                  ),
                 ),
               ),
             ) :
@@ -154,7 +158,7 @@ class MotivationQuestionsUpdateScreenState extends State<MotivationQuestionsUpda
           color: ColorResources.white,
           child: InkWell(
             onTap: () {
-              profileProvider.validateAndSubmit(context);
+              profileProvider.validateAndSubmitUpdate(context);
             },
             child: Container(
               alignment: Alignment.center,
@@ -165,7 +169,7 @@ class MotivationQuestionsUpdateScreenState extends State<MotivationQuestionsUpda
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
               ),
               child: Text(
-                getTranslated("update", context)!,
+                getTranslated("UPDATE", context)!,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: Dimensions.sp16,

@@ -141,10 +141,14 @@ class MotivationQuestionsScreenState extends State<MotivationQuestionsScreen> {
           return  profileProvider.isLoading==true?
           SizedBox.shrink() :
               profileProvider.isLoadingBtn==true?
-              Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).primaryColor,
+              Container(
+                height: 70,
+                color: ColorResources.white,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).primaryColor,
+                    ),
                   ),
                 ),
               ) :
@@ -196,8 +200,8 @@ class MotivationQuestionsScreenState extends State<MotivationQuestionsScreen> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
-            content: const Text(
-              "Do you want to save the answers?",
+            content:  Text(
+              getTranslated("do_you_want_to_save_the_answers", context)!,
               style: TextStyle(color: Color(0xFF515050)),
             ),
             actions: [
@@ -206,8 +210,8 @@ class MotivationQuestionsScreenState extends State<MotivationQuestionsScreen> {
                   Navigator.pop(context, true);
                 },
                 child: Text(
-                  "Yes",
-                  style: TextStyle(color: Colors.red),
+                  getTranslated("yes", context)!,
+                  style: TextStyle(color: ColorResources.mainColor),
                 ),
               ),
               TextButton(
@@ -215,7 +219,7 @@ class MotivationQuestionsScreenState extends State<MotivationQuestionsScreen> {
                   Navigator.pop(context, false);
                 },
                 child: Text(
-                  "No",
+                  getTranslated("no", context)!,
                   style: TextStyle(color: Colors.grey),
                 ),
               ),

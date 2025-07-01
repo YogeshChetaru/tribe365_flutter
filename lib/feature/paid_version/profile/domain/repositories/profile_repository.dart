@@ -51,6 +51,18 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<ApiResponse> viewPersonalityTypeQuestionList() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getPersonalityTypeQuestionListUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
   Future<ApiResponse> viewMotivationList() async {
     try {
       Response response = await dioClient!.get(
@@ -148,6 +160,15 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<void> saveUserPersonalityTypeData(String userData) async {
+    try {
+      await sharedPreferences!.setString(AppConstants.userPersonalityTypeData, userData);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
   String getUserTeamRoleData() {
     return sharedPreferences!.getString(AppConstants.userTeamRoleData) ?? "";
   }
@@ -155,6 +176,11 @@ class ProfileRepository implements ProfileRepositoryInterface {
   @override
   String getUserMotivationData() {
     return sharedPreferences!.getString(AppConstants.userMotivationData) ?? "";
+  }
+
+  @override
+  String getUserPersonalityTypeData() {
+    return sharedPreferences!.getString(AppConstants.userPersonalityTypeData) ?? "";
   }
 
   @override
@@ -168,10 +194,28 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<void> clearSavedPersonalityTypeData() async {
+    sharedPreferences!.remove(AppConstants.userPersonalityTypeData);
+  }
+
+  @override
   Future<ApiResponse> sendTeamRoleData(Map<String, dynamic> loginBody) async {
     try {
       Response response = await dioClient!.post(
         AppConstants.addCOTAnswerUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> sendPersonalityTypeData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.addPersonalityTypeAnswersUri,
         data: loginBody,
       );
       return ApiResponse.withSuccess(response);
@@ -193,6 +237,18 @@ class ProfileRepository implements ProfileRepositoryInterface {
     }
   }
 
+  @override
+  Future<ApiResponse> sendMotivationDataUpdate(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.updateSOTmotivationAnswersUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
 
   @override
   Future<ApiResponse> sendTeamRoleDataUpdate(Map<String, dynamic> loginBody) async {

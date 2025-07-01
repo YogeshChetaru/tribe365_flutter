@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../utill/color_resources.dart';
-import '../../../../utill/dimensions.dart';
+import 'package:tribe365_new/utill/color_resources.dart';
 import '../controllers/profile_controller.dart';
+import '../domain/models/view_personality_type_question_list_response.dart';
 
 class BuildQuestion extends StatefulWidget {
+  final ViewPersonalityTypeQuestionListData itemData;
   final int index;
-  const BuildQuestion({super.key,required this.index});
+  const BuildQuestion({super.key,required this.itemData,required this.index});
 
   @override
   State<BuildQuestion> createState() => _BuildQuestionState();
@@ -19,48 +19,58 @@ class _BuildQuestionState extends State<BuildQuestion> {
   Widget build(BuildContext context) {
     return Consumer<ProfileController>(builder: (context, profileProvider, _) {
       return Card(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: EdgeInsets.fromLTRB(15, 15, 15, 0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        elevation: 2,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '${widget.index + 1}  ${profileProvider.questions[widget.index]}',
-                style: const TextStyle(
-                    fontSize: Dimensions.sp14,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Roboto',
-                    color: ColorResources.color333333
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "${widget.index + 1}     ${widget.itemData.question ?? ""}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 15),
-              /*Wrap(
-                spacing: 10,
-                runSpacing: 13,
-                children: profileProvider.options.map((option) {
-                  final isSelected = profileProvider.selectedAnswers[widget.index] == option;
-                  return InkWell(
-                    onTap: (){
-                      profileProvider.updateSelectedAnswers(option, widget.index);
+              const SizedBox(height: 12),
+
+              // Options Buttons
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: List.generate(widget.itemData.options?.length ?? 0, (optIndex) {
+                  final option = widget.itemData.options![optIndex];
+                  final isSelected = widget.itemData.answer == (optIndex + 1).toString();
+
+                  return GestureDetector(
+                    onTap: () {
+                      profileProvider.setPersonalityTypeQuestionListAnswer(widget.index, (optIndex + 1).toString());
                     },
                     child: Container(
-                      padding: EdgeInsets.fromLTRB(10, 5, 10,5),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        color:isSelected?ColorResources.mainColor : ColorResources.color808080.withAlpha(80),
+                        color: isSelected ? ColorResources.mainColor : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Text(option,style: TextStyle(
-                        fontSize: Dimensions.sp13,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Roboto',
-                        color: isSelected? ColorResources.white : ColorResources.color333333,
-                      ),),
+                      child: Text(
+                        option.optionName ?? "",
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   );
-                }).toList(),
-              ),*/
+                }),
+              ),
             ],
           ),
         ),

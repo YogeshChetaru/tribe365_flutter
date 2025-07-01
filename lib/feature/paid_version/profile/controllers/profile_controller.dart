@@ -12,6 +12,7 @@ import '../domain/models/get_question_list_response.dart';
 import '../domain/models/get_update_question_list_response.dart';
 import '../domain/models/view_cot_individual_summary_response.dart';
 import '../domain/models/view_cot_mapper_summary_response.dart';
+import '../domain/models/view_personality_type_question_list_response.dart';
 import '../domain/models/view_sot_motivation_completed_answer_list_response.dart';
 import '../domain/models/view_sot_motivation_user_list_response.dart';
 import '../domain/models/viewuserprofileresponse.dart';
@@ -724,8 +725,8 @@ class ProfileController extends ChangeNotifier {
   }
 
   List<SOTMotivationQuestion> viewMotivationQuestions = [];
-  List<ViewSotMotivationCompletedAnswerListData>
-      viewMotivationQuestionsCompletedList = [];
+  List<ViewSotMotivationCompletedAnswerListData> viewMotivationQuestionsCompletedList = [];
+  List<ViewSotMotivationCompletedAnswerListData> viewMotivationQuestionsCopyList = [];
   int resultCount = 0;
 
   void validateAndSubmit(BuildContext context) {
@@ -754,11 +755,58 @@ class ProfileController extends ChangeNotifier {
     }
   }
 
+  void validateAndSubmitUpdate(BuildContext context) {
+    for (int i = 0; i < viewMotivationQuestionsCompletedList.length; i++) {
+      final question = viewMotivationQuestionsCompletedList[i];
+
+      if ((question.option?[0].rating ?? "").isEmpty) {
+        viewMotivationQuestionsCopyList[i].option?[0].rating =
+            (question.option?[0].points ?? 0).toString();
+      } else {
+        viewMotivationQuestionsCopyList[i].option?[0].rating =
+            question.option?[0].rating;
+      }
+
+      if ((question.option?[1].rating ?? "").isEmpty) {
+        viewMotivationQuestionsCopyList[i].option?[1].rating =
+            (question.option?[1].points ?? 0).toString();
+      } else {
+        viewMotivationQuestionsCopyList[i].option?[1].rating =
+            question.option?[1].rating;
+      }
+    }
+
+    int count = 0;
+    for (int i = 0; i < viewMotivationQuestionsCompletedList.length; i++) {
+      final question = viewMotivationQuestionsCompletedList[i];
+
+      for (int j = 0; j < (question.option?.length ?? 0); j++) {
+        final rating = question.option?[j].rating ?? "";
+
+        if (rating.isEmpty) {
+          showCustomSnackBar(
+            "${getTranslated("please_provide_score_for_question", context)} : ${i + 1}",
+            context,
+            isError: true,
+          );
+          return;
+        } else {
+          count++;
+        }
+      }
+    }
+    if (count >0) {
+      sendMotivationDataUpdate(viewMotivationQuestionsCopyList);
+    }
+  }
+
+
   void updateOptionRating(
     int? questionId,
     int optionIndexClicked,
     String selectedRating,
-  ) {
+  )
+  {
     final question = viewMotivationQuestions.firstWhere(
       (q) => q.questionId == questionId,
       orElse: () => SOTMotivationQuestion(),
@@ -793,7 +841,8 @@ class ProfileController extends ChangeNotifier {
     int? questionId,
     int optionIndexClicked,
     String selectedRating,
-  ) {
+  )
+  {
     final question = viewMotivationQuestionsCompletedList.firstWhere(
       (q) => q.questionId == questionId,
       orElse: () => ViewSotMotivationCompletedAnswerListData(),
@@ -848,7 +897,8 @@ class ProfileController extends ChangeNotifier {
       String contact,
       String email,
       String lastName,
-      String fName) async {
+      String fName) async
+  {
     _isLoading = true;
     notifyListeners();
     Map<String, dynamic> request = {
@@ -1099,11 +1149,11 @@ class ProfileController extends ChangeNotifier {
   Future<void> viewMotivationList(
     String savedJsonList,
     BuildContext context,
-  ) async {
+  ) async
+  {
     _isLoading = true;
 
-    ApiResponse apiResponse =
-        await profileServiceInterface!.viewMotivationList();
+    ApiResponse apiResponse = await profileServiceInterface!.viewMotivationList();
 
     _isLoading = false;
 
@@ -1214,6 +1264,57 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
+
+  Map<String, dynamic> buildAnswerPayload(List<ViewSotMotivationCompletedAnswerListData> questionsCopyList) {
+    List<Map<String, dynamic>> answerList = [];
+
+    for (var question in questionsCopyList) {
+      List<Map<String, dynamic>> options = [];
+
+      for (var option in question.option ?? []) {
+        options.add({
+          "answerId": option.answerId,
+          "rating": option.rating,
+        });
+      }
+
+      answerList.add({
+        "questionId": question.questionId,
+        "option": options,
+      });
+    }
+
+    return {
+      "answer": answerList,
+    };
+  }
+
+
+  Future<void> sendMotivationDataUpdate(List<ViewSotMotivationCompletedAnswerListData> listData) async {
+    _isLoadingBtn = true;
+    notifyListeners();
+    try {
+      final payload = buildAnswerPayload(viewMotivationQuestionsCopyList);
+
+      ApiResponse apiResponse = await profileServiceInterface!.sendMotivationDataUpdate(payload);
+
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+        Map<String, dynamic> map = apiResponse.response!.data;
+        String msg = map['message'] ?? "Submission successful";
+        showCustomSnackBar(msg, Get.context!, isError: false);
+        Navigator.of(Get.context!).pop(true);
+      } else {
+        showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+        ApiChecker.checkApi(apiResponse);
+      }
+    } catch (e) {
+      showCustomSnackBar("Error: $e", Get.context!, isError: true);
+    }
+
+    _isLoadingBtn = false;
+    notifyListeners();
+  }
+
   //--------------------------------------
   List<ViewSotMotivationUserListData>? sotMotivationUserList;
 
@@ -1242,7 +1343,8 @@ class ProfileController extends ChangeNotifier {
 
   Future<void> viewMotivationCompletedAnswerList(
     BuildContext context,
-  ) async {
+  ) async
+  {
     _isLoading = true;
 
     ApiResponse apiResponse =
@@ -1259,10 +1361,124 @@ class ProfileController extends ChangeNotifier {
           ViewSotMotivationCompletedAnswerListResponse.fromJson(map);
 
       viewMotivationQuestionsCompletedList = response.data ?? [];
+      viewMotivationQuestionsCopyList = response.data ?? [];
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
     }
+    notifyListeners();
+  }
+
+  //--------------------------------------
+
+  void validateAndSubmitPersonalityType(BuildContext context) {
+    final questions = personalityQuestionList;
+
+    int count = 0;
+
+    for (var q in questions!) {
+      if (q.answer == null || q.answer.isEmpty) {
+        showCustomSnackBar("${getTranslated("please_agree_with_a_statement_for_question", context)} ${q.questionId}", context,isError: true);
+        return;
+      } else {
+        count++;
+      }
+    }
+
+    if (count == questions.length) {
+      sendPersonalityTypeData();
+    }
+  }
+
+
+  Future<void> saveUserPersonalityTypeData() async {
+    final jsonList = personalityQuestionList!.map((q) => q.toJson()).toList();
+    final jsonString = jsonEncode(jsonList);
+    profileServiceInterface!.saveUserPersonalityTypeData(jsonString);
+  }
+  int getAnsweredCount() {
+    return personalityQuestionList!.where((q) => q.flag).length;
+  }
+  String getUserPersonalityTypeData() {
+    return profileServiceInterface!.getUserPersonalityTypeData();
+  }
+
+  void setPersonalityTypeQuestionListAnswer(int index, String answer) {
+    if (index < 0 || index >= personalityQuestionList!.length) return;
+    personalityQuestionList![index].answer = answer;
+    personalityQuestionList![index].flag = true;
+    notifyListeners();
+  }
+
+  List<ViewPersonalityTypeQuestionListData> getAnsweredQuestions() {
+    return personalityQuestionList!.where((q) => q.answer.isNotEmpty).toList();
+  }
+  List<ViewPersonalityTypeQuestionListData>? personalityQuestionList;
+  Future<void> viewPersonalityTypeQuestionList(String? savedJsonList,) async {
+    _isLoading = true;
+
+    ApiResponse apiResponse =
+    await profileServiceInterface!.viewPersonalityTypeQuestionList();
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewPersonalityTypeQuestionListResponse response =
+      ViewPersonalityTypeQuestionListResponse.fromJson(map);
+      personalityQuestionList = response.data;
+      if (savedJsonList != null && savedJsonList.trim() != "[]" && savedJsonList!="") {
+        final List<dynamic> savedArray = json.decode(savedJsonList);
+
+        for (int i = 0; i < savedArray.length; i++) {
+          final savedAnswer = savedArray[i]["answer"] ?? "";
+          if (i < personalityQuestionList!.length) {
+            personalityQuestionList![i].answer = savedAnswer;
+          }
+        }
+      }
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+  Future<void> sendPersonalityTypeData() async {
+    _isLoadingBtn = true;
+    notifyListeners();
+
+    try {
+
+      final List<Map<String, dynamic>> answerList = [];
+
+      for (var q in personalityQuestionList!) {
+        answerList.add({
+          "questionId": q.questionId.toString(),
+          "optionId": q.answer.toString(),
+        });
+      }
+
+      final Map<String, dynamic> payload = {
+        "answer": answerList,
+      };
+
+      ApiResponse apiResponse = await profileServiceInterface!.sendPersonalityTypeData(payload);
+
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+        Map<String, dynamic> map = apiResponse.response!.data;
+
+        String msg = map['message'] ?? "Submission successful";
+        showCustomSnackBar(msg, Get.context!, isError: false);
+
+        profileServiceInterface!.clearSavedPersonalityTypeData();
+        Navigator.of(Get.context!).pop(true);
+      } else {
+        showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+        ApiChecker.checkApi(apiResponse);
+      }
+    } catch (e) {
+      showCustomSnackBar("Error: $e", Get.context!, isError: true);
+    }
+
+    _isLoadingBtn = false;
     notifyListeners();
   }
 }

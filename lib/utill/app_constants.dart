@@ -22,6 +22,7 @@ class AppConstants {
   static const String userLoginType = 'user_login_type';
   static const String userTeamRoleData = 'User_team_role_data';
   static const String userMotivationData = 'User_motivation_data';
+  static const String userPersonalityTypeData = 'User_personality_type_data';
 
   static const String user = 'user';
   static const String langKey = 'lang';
@@ -79,6 +80,9 @@ class AppConstants {
   static const String addSOTmotivationAnswerUri = 'addSOTmotivationAnswer';
   static const String getSOTmotivationUserListUri = 'getSOTmotivationUserList';
   static const String getSOTmotivationCompletedAnswerUri = 'getSOTmotivationCompletedAnswer';
+  static const String updateSOTmotivationAnswersUri = 'updateSOTmotivationAnswers';
+  static const String getPersonalityTypeQuestionListUri = 'getPersonalityTypeQuestionList';
+  static const String addPersonalityTypeAnswersUri = 'addPersonalityTypeAnswers';
 
 
 

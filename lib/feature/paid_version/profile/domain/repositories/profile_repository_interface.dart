@@ -5,6 +5,7 @@ abstract class ProfileRepositoryInterface implements RepositoryInterface {
   Future<ApiResponse> viewUserProfileData();
   Future<ApiResponse> viewQuestionsList();
   Future<ApiResponse> viewMotivationList();
+  Future<ApiResponse> viewPersonalityTypeQuestionList();
   Future<ApiResponse> viewMotivationCompletedAnswerList();
   Future<ApiResponse> viewCompletedQuestionsList();
   Future<ApiResponse> getCOTMapperSummary();
@@ -13,12 +14,17 @@ abstract class ProfileRepositoryInterface implements RepositoryInterface {
   String getUserToken();
   Future<ApiResponse> updateProfile(Map<String, dynamic> body);
   Future<ApiResponse> sendTeamRoleData(Map<String, dynamic> body);
+  Future<ApiResponse> sendPersonalityTypeData(Map<String, dynamic> body);
   Future<ApiResponse> sendMotivationData(Map<String, dynamic> body);
+  Future<ApiResponse> sendMotivationDataUpdate(Map<String, dynamic> body);
   Future<ApiResponse> sendTeamRoleDataUpdate(Map<String, dynamic> body);
   Future<void> saveUserTeamRoleData(String userData);
   Future<void> saveUserMotivationData(String userData);
+  Future<void> saveUserPersonalityTypeData(String userData);
   String getUserTeamRoleData();
   String getUserMotivationData();
+  String getUserPersonalityTypeData();
   Future<void> clearSavedUserTeamRoleData();
   Future<void> clearSavedUserMotivationData();
+  Future<void> clearSavedPersonalityTypeData();
 }
