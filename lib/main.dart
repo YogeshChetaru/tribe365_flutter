@@ -25,28 +25,44 @@ import 'feature/splash/screens/splash_screen.dart';
 import 'helper/custom_delegate.dart';
 import 'localization/app_localization.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+/// Must be top-level function for background isolate
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  FcmBroadcastReceiver.handleIncomingMessage(message);
+  // IMPORTANT: Do NOT call FcmBroadcastReceiver.handleIncomingMessage() here,
+  // because it uses Flutter plugins (e.g., notifications, toasts).
+  // Firebase itself displays notification automatically if you use the 'notification' field.
+  print('Background message: ${message.messageId}');
 }
 
 Future<void> main() async {
-  HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Firebase
+  await Firebase.initializeApp();
+
+  // Register background message handler
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  await Firebase.initializeApp();
+  // Optional: override HTTP for self-signed certs
+  HttpOverrides.global = MyHttpOverrides();
+
+  // Initialize your dependency injection
   await di.init();
+
+  // Request notification permission
   await Permission.notification.isDenied.then((value) {
     if (value) {
       Permission.notification.request();
     }
   });
+
+  // Initialize the local notifications plugin for foreground
+  FcmBroadcastReceiver.initLocalNotifications();
+
   runApp(
     MultiProvider(
       providers: [
@@ -68,15 +84,10 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    List<Locale> locals = [];
-    for (var language in AppConstants.languages) {
-      locals.add(Locale(language.languageCode!, language.countryCode));
-    }
     return MaterialApp(
       title: AppConstants.appName,
       navigatorKey: navigatorKey,
@@ -92,27 +103,31 @@ class MyApp extends StatelessWidget {
       ],
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(textScaler: TextScaler.noScaling),
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.noScaling,
+          ),
           child: child!,
         );
       },
-      supportedLocales: locals,
+      supportedLocales: AppConstants.languages
+          .map((lang) => Locale(lang.languageCode!, lang.countryCode))
+          .toList(),
       home: SplashScreen(),
     );
   }
 }
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
 class Get {
   static BuildContext? get context => navigatorKey.currentContext;
 
   static NavigatorState? get navigator => navigatorKey.currentState;
 }
 
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-  }
-}

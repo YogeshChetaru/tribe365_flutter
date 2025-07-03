@@ -1,10 +1,13 @@
 
 
+import '../../../../../data/model/api_response.dart';
+
 abstract class ProfileServiceInterface {
   Future<dynamic> viewUserProfileData();
   Future<dynamic> viewQuestionsList();
   Future<dynamic> viewMotivationList();
   Future<dynamic> viewPersonalityTypeQuestionList();
+  Future<dynamic> viewPersonalityTypeCompletedQuestionList();
   Future<dynamic> viewMotivationCompletedAnswerList();
   Future<dynamic> viewCompletedQuestionsList();
   Future<dynamic> getCOTMapperSummary();
@@ -12,8 +15,11 @@ abstract class ProfileServiceInterface {
   Future<dynamic> viewSOTmotivationUserList(Map<String, dynamic> loginBody);
   String getUserToken();
   Future<dynamic> updateProfile(Map<String, dynamic> body);
+  Future<dynamic> viewPersonalityTypeReport(Map<String, dynamic> body);
+  Future<dynamic> viewCOTFunctionalLensDetail(Map<String, dynamic> body);
   Future<dynamic> sendTeamRoleData(Map<String, dynamic> body);
   Future<dynamic> sendPersonalityTypeData(Map<String, dynamic> body);
+  Future<dynamic> sendPersonalityCompletedData(Map<String, dynamic> body);
   Future<dynamic> sendMotivationData(Map<String, dynamic> body);
   Future<dynamic> sendMotivationDataUpdate(Map<String, dynamic> body);
   Future<dynamic> sendTeamRoleDataUpdate(Map<String, dynamic> body);
@@ -26,4 +32,5 @@ abstract class ProfileServiceInterface {
   Future<void> clearSavedUserTeamRoleData();
   Future<void> clearSavedUserMotivationData();
   Future<void> clearSavedPersonalityTypeData();
+  Future<ApiResponse> viewActionList(Map<String, dynamic> body);
 }

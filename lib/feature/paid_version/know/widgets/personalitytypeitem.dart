@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
-
 import '../../../../utill/custom_route.dart';
 import '../../profile/domain/models/viewuserprofileresponse.dart';
-import '../../profile/screens/personality_type_screen.dart';
+import '../../profile/screens/personality_type_result_screen.dart';
 
 class PersonalityTypeItem extends StatelessWidget {
-
   final PersonalityTypeDetailsArr? personalityTypeDetails;
   const PersonalityTypeItem({super.key,required this.personalityTypeDetails});
 
@@ -15,7 +13,7 @@ class PersonalityTypeItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        // routePush(context, PersonalityTypeScreen());
+        routePush(context, PersonalityTypeResultScreen());
       },
       child: Container(
         decoration: BoxDecoration(

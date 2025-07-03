@@ -10,9 +10,13 @@ import '../domain/models/cotquestiondata.dart';
 import '../domain/models/get_motivation_list_response.dart';
 import '../domain/models/get_question_list_response.dart';
 import '../domain/models/get_update_question_list_response.dart';
+import '../domain/models/view_action_list_response.dart';
+import '../domain/models/view_cot_functional_lens_response.dart';
 import '../domain/models/view_cot_individual_summary_response.dart';
 import '../domain/models/view_cot_mapper_summary_response.dart';
+import '../domain/models/view_personality_completed_answers_response.dart';
 import '../domain/models/view_personality_type_question_list_response.dart';
+import '../domain/models/view_personality_type_report_response.dart';
 import '../domain/models/view_sot_motivation_completed_answer_list_response.dart';
 import '../domain/models/view_sot_motivation_user_list_response.dart';
 import '../domain/models/viewuserprofileresponse.dart';
@@ -103,29 +107,20 @@ class ProfileController extends ChangeNotifier {
 
   String actionStatus = "";
   String tierSelectedValue = 'All Tier';
-
-  List<String> tierList = ['All Tier', 'Primary', 'Secondary', 'Tertiary'];
+  List<String> tierList = ["All Tier", "Primary", "Secondary", "Tertiary", "Office", "Department", "Individual"];
 
   final List<Map<String, String>> statements = [
     {'label': 'A', 'text': 'identifying improved ways of doing things'},
     {'label': 'B', 'text': 'making sure everyone in the team is happy'},
     {'label': 'C', 'text': 'being the best at what I do'},
-    {
-      'label': 'D',
-      'text':
-          'assessing what is required against what we have and finding the best way forward'
-    },
+    {'label': 'D', 'text': 'assessing what is required against what we have and finding the best way forward'},
     {'label': 'E', 'text': 'completing the activity'},
   ];
   final List<Map<String, String>> statementsUpdate = [
     {'label': 'A', 'text': 'identifying improved ways of doing things'},
     {'label': 'B', 'text': 'making sure everyone in the team is happy'},
     {'label': 'C', 'text': 'being the best at what I do'},
-    {
-      'label': 'D',
-      'text':
-          'assessing what is required against what we have and finding the best way forward'
-    },
+    {'label': 'D', 'text': 'assessing what is required against what we have and finding the best way forward'},
     {'label': 'E', 'text': 'completing the activity'},
   ];
 
@@ -158,23 +153,9 @@ class ProfileController extends ChangeNotifier {
     },
   ];
 
-  Map<int, Map<int, int>> selectedScores =
-      {}; // {questionIndex: {optionIndex: selectedScore}}
+  Map<int, Map<int, int>> selectedScores = {}; // {questionIndex: {optionIndex: selectedScore}}
 
-  final List<double> cultureData = [
-    671,
-    368,
-    15,
-    -271,
-    -554,
-    -940,
-    -510,
-    75,
-    -62,
-    525,
-    -1808,
-    -1390
-  ];
+  final List<double> cultureData = [671, 368, 15, -271, -554, -940, -510, 75, -62, 525, -1808, -1390];
   final List<String> cultureLabels = [
     'Jul24',
     'Sep24',
@@ -190,19 +171,7 @@ class ProfileController extends ChangeNotifier {
     'May25',
   ];
 
-  final List<double> engagementData = [
-    79,
-    -768,
-    -1726,
-    -2533,
-    -3326,
-    -4401,
-    -2603,
-    -1633,
-    -1992,
-    -3387,
-    -6145
-  ];
+  final List<double> engagementData = [79, -768, -1726, -2533, -3326, -4401, -2603, -1633, -1992, -3387, -6145];
   final List<String> engagementLabels = [
     'Jul24',
     'Sep24',
@@ -217,16 +186,7 @@ class ProfileController extends ChangeNotifier {
     'Mar25',
   ];
   List<double> percentages = [69.3, 73.3, 67.8, 78.9, 62.7, 76.0, 78.7, 80.0];
-  List<String> labels = [
-    'Int',
-    'Ext',
-    'Innov',
-    'Lgc',
-    'Ppl',
-    'Tsk',
-    'Stru',
-    'Flxbl'
-  ];
+  List<String> labels = ['Int', 'Ext', 'Innov', 'Lgc', 'Ppl', 'Tsk', 'Stru', 'Flxbl'];
 
   final List<Map<String, String>> cultureItems = [
     {'label': 'PERSON', 'value': '0'},
@@ -235,18 +195,7 @@ class ProfileController extends ChangeNotifier {
     {'label': 'COLLABORATIVE', 'value': '0'},
   ];
 
-  final List<double> motivationScores = [
-    28.0,
-    28.0,
-    18.0,
-    20.0,
-    17.5,
-    21.0,
-    27.5,
-    18.5,
-    25.0,
-    21.5
-  ];
+  final List<double> motivationScores = [28.0, 28.0, 18.0, 20.0, 17.5, 21.0, 27.5, 18.5, 25.0, 21.5];
 
   final List<String> motivationLabels = [
     'Financial Security',
@@ -260,32 +209,12 @@ class ProfileController extends ChangeNotifier {
     'Freedom',
     'Freedom'
   ];
-  final List<double> diagnosticsScores = [
-    50.0,
-    61.7,
-    56.94,
-    63.89,
-    64.58,
-    75.0
-  ];
+  final List<double> diagnosticsScores = [50.0, 61.7, 56.94, 63.89, 64.58, 75.0];
 
-  final List<String> diagnosticsLabels = [
-    'Personal Development',
-    'Teamwork',
-    'Leadership/Management',
-    'Communication',
-    'Stress',
-    'Performance'
-  ];
+  final List<String> diagnosticsLabels = ['Personal Development', 'Teamwork', 'Leadership/Management', 'Communication', 'Stress', 'Performance'];
   final List<double> tribeMeterScores = [11.9, 16.67, 22.22, 44.44, 0.0];
 
-  final List<String> tribeMeterLabels = [
-    'Structure',
-    'Belief',
-    'Balance',
-    'Honesty',
-    'Inclusiveness'
-  ];
+  final List<String> tribeMeterLabels = ['Structure', 'Belief', 'Balance', 'Honesty', 'Inclusiveness'];
   List<String> months = [
     "Jul 2024",
     "Aug 2024",
@@ -301,19 +230,7 @@ class ProfileController extends ChangeNotifier {
     "Jun 2025"
   ];
 
-  List<double> sentimentValues = [
-    16.3,
-    14.8,
-    3.3,
-    3.6,
-    0.0,
-    10.9,
-    33.3,
-    20.6,
-    16.7,
-    21.2,
-    25.0
-  ];
+  List<double> sentimentValues = [16.3, 14.8, 3.3, 3.6, 0.0, 10.9, 33.3, 20.6, 16.7, 21.2, 25.0];
 
   bool isPushNotification = false;
 
@@ -334,6 +251,14 @@ class ProfileController extends ChangeNotifier {
 
   void updateTierSelectedValue(String? newValue) {
     tierSelectedValue = newValue!;
+    if (newValue == "All Tier") {
+      filteredActions = List.from(viewActionList!);
+    } else {
+      filteredActions = viewActionList!
+          .where((item) => item.tier?.toLowerCase() == newValue.toLowerCase())
+          .toList();
+    }
+
     notifyListeners();
   }
 
@@ -455,8 +380,7 @@ class ProfileController extends ChangeNotifier {
 
   bool get isLastQuestion => _currentIndex == _questions.length - 1;
 
-  bool get isLastQuestionUpdate =>
-      _currentIndexUpdate == _questionsUpdate.length - 1;
+  bool get isLastQuestionUpdate => _currentIndexUpdate == _questionsUpdate.length - 1;
 
   void nextQuestion() {
     if (!isLastQuestion) {
@@ -509,8 +433,7 @@ class ProfileController extends ChangeNotifier {
       option.answer = currentAnswer.toString();
       option.flag = true;
 
-      _questionsUpdate[_currentIndexUpdate].options![index].answer =
-          option.answer;
+      _questionsUpdate[_currentIndexUpdate].options![index].answer = option.answer;
       _questionsUpdate[_currentIndexUpdate].options![index].flag = true;
 
       notifyListeners();
@@ -542,8 +465,7 @@ class ProfileController extends ChangeNotifier {
       option.answer = currentAnswer.toString();
       option.flag = true;
 
-      _questionsUpdate[_currentIndexUpdate].options![index].answer =
-          option.answer;
+      _questionsUpdate[_currentIndexUpdate].options![index].answer = option.answer;
       _questionsUpdate[_currentIndexUpdate].options![index].flag = true;
 
       notifyListeners();
@@ -551,13 +473,7 @@ class ProfileController extends ChangeNotifier {
   }
 
   void totalCount() {
-    int sum = 0;
     try {
-      for (int i = 0; i < _currentOptions.length; i++) {
-        int getAns = int.tryParse(_currentOptions[i].answer ?? '0') ?? 0;
-        sum += getAns;
-      }
-
       for (int i = 0; i < questions.length; i++) {
         for (int j = 0; j < _currentOptions.length; j++) {
           if (_currentOptions[j].flag == true) {
@@ -602,11 +518,7 @@ class ProfileController extends ChangeNotifier {
       if (stTotalAns == 10) {
         nextQuestion();
       } else {
-        showCustomSnackBar(
-            getTranslated(
-                'please_revise_your_scores_total_scores_should_be_10', context),
-            context,
-            isError: true);
+        showCustomSnackBar(getTranslated('please_revise_your_scores_total_scores_should_be_10', context), context, isError: true);
       }
     }
   }
@@ -631,8 +543,7 @@ class ProfileController extends ChangeNotifier {
         nextQuestionUpdate();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Please revise your scores. Total must be 10.')),
+          SnackBar(content: Text('Please revise your scores. Total must be 10.')),
         );
       }
     }
@@ -708,13 +619,11 @@ class ProfileController extends ChangeNotifier {
   }
 
   String get submissionJson {
-    final List<Map<String, dynamic>> list =
-        viewMotivationQuestions.map((e) => e.toJson()).toList();
+    final List<Map<String, dynamic>> list = viewMotivationQuestions.map((e) => e.toJson()).toList();
     return jsonEncode({'answer': list});
   }
 
-  Future<void> saveUserMotivationData(
-      List<SOTMotivationQuestion> questions) async {
+  Future<void> saveUserMotivationData(List<SOTMotivationQuestion> questions) async {
     final jsonList = questions.map((q) => q.toJson()).toList();
     final jsonString = jsonEncode(jsonList);
     profileServiceInterface!.saveUserMotivationData(jsonString);
@@ -739,10 +648,7 @@ class ProfileController extends ChangeNotifier {
         final rating = question.option?[j].rating ?? "";
 
         if (rating.isEmpty) {
-          showCustomSnackBar(
-              "${getTranslated("please_provide_score_for_question", context)} : ${i + 1}",
-              context,
-              isError: true);
+          showCustomSnackBar("${getTranslated("please_provide_score_for_question", context)} : ${i + 1}", context, isError: true);
           return;
         } else {
           count++;
@@ -760,19 +666,15 @@ class ProfileController extends ChangeNotifier {
       final question = viewMotivationQuestionsCompletedList[i];
 
       if ((question.option?[0].rating ?? "").isEmpty) {
-        viewMotivationQuestionsCopyList[i].option?[0].rating =
-            (question.option?[0].points ?? 0).toString();
+        viewMotivationQuestionsCopyList[i].option?[0].rating = (question.option?[0].points ?? 0).toString();
       } else {
-        viewMotivationQuestionsCopyList[i].option?[0].rating =
-            question.option?[0].rating;
+        viewMotivationQuestionsCopyList[i].option?[0].rating = question.option?[0].rating;
       }
 
       if ((question.option?[1].rating ?? "").isEmpty) {
-        viewMotivationQuestionsCopyList[i].option?[1].rating =
-            (question.option?[1].points ?? 0).toString();
+        viewMotivationQuestionsCopyList[i].option?[1].rating = (question.option?[1].points ?? 0).toString();
       } else {
-        viewMotivationQuestionsCopyList[i].option?[1].rating =
-            question.option?[1].rating;
+        viewMotivationQuestionsCopyList[i].option?[1].rating = question.option?[1].rating;
       }
     }
 
@@ -795,18 +697,16 @@ class ProfileController extends ChangeNotifier {
         }
       }
     }
-    if (count >0) {
+    if (count > 0) {
       sendMotivationDataUpdate(viewMotivationQuestionsCopyList);
     }
   }
-
 
   void updateOptionRating(
     int? questionId,
     int optionIndexClicked,
     String selectedRating,
-  )
-  {
+  ) {
     final question = viewMotivationQuestions.firstWhere(
       (q) => q.questionId == questionId,
       orElse: () => SOTMotivationQuestion(),
@@ -841,8 +741,7 @@ class ProfileController extends ChangeNotifier {
     int? questionId,
     int optionIndexClicked,
     String selectedRating,
-  )
-  {
+  ) {
     final question = viewMotivationQuestionsCompletedList.firstWhere(
       (q) => q.questionId == questionId,
       orElse: () => ViewSotMotivationCompletedAnswerListData(),
@@ -869,7 +768,6 @@ class ProfileController extends ChangeNotifier {
     viewMotivationQuestions[index].option?[0].rating = ratingOpt1;
     viewMotivationQuestions[index].option?[1].rating = ratingOpt2;
 
-
     viewMotivationQuestions[index].flag = true;
 
     notifyListeners();
@@ -877,28 +775,17 @@ class ProfileController extends ChangeNotifier {
 
   //API calling
   Future<void> viewUserProfile() async {
-    ApiResponse apiResponse =
-        await profileServiceInterface!.viewUserProfileData();
-    if (apiResponse.response != null &&
-        apiResponse.response!.statusCode == 200) {
+    ApiResponse apiResponse = await profileServiceInterface!.viewUserProfileData();
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
-      ViewUserProfileResponse userResponse =
-          ViewUserProfileResponse.fromJson(map);
+      ViewUserProfileResponse userResponse = ViewUserProfileResponse.fromJson(map);
       userProfileData = userResponse.data;
     }
     notifyListeners();
   }
 
-  Future<void> updateUserInfo(
-      String departmentId,
-      String personalData,
-      String officeId,
-      String imgBase64,
-      String contact,
-      String email,
-      String lastName,
-      String fName) async
-  {
+  Future<void> updateUserInfo(String departmentId, String personalData, String officeId, String imgBase64, String contact, String email,
+      String lastName, String fName) async {
     _isLoading = true;
     notifyListeners();
     Map<String, dynamic> request = {
@@ -912,11 +799,9 @@ class ProfileController extends ChangeNotifier {
       "departmentId": departmentId,
     };
 
-    ApiResponse apiResponse =
-        await profileServiceInterface!.updateProfile(request);
+    ApiResponse apiResponse = await profileServiceInterface!.updateProfile(request);
     _isLoading = false;
-    if (apiResponse.response != null &&
-        apiResponse.response!.statusCode == 200) {
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
       showCustomSnackBar(map["message"], Get.context!, isError: false);
       viewUserProfile();
@@ -929,11 +814,9 @@ class ProfileController extends ChangeNotifier {
 
   Future<void> viewQuestionsList() async {
     _isLoading = true;
-    ApiResponse apiResponse =
-        await profileServiceInterface!.viewQuestionsList();
+    ApiResponse apiResponse = await profileServiceInterface!.viewQuestionsList();
     _isLoading = false;
-    if (apiResponse.response != null &&
-        apiResponse.response!.statusCode == 200) {
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
       GetQuestionListResponse response = GetQuestionListResponse.fromJson(map);
 
@@ -943,9 +826,7 @@ class ProfileController extends ChangeNotifier {
       if (userTeamRoleData.isNotEmpty) {
         try {
           List<dynamic> jsonList = jsonDecode(userTeamRoleData);
-          savedQuestions = jsonList
-              .map((item) => GetQuestionListData.fromJson(item))
-              .toList();
+          savedQuestions = jsonList.map((item) => GetQuestionListData.fromJson(item)).toList();
         } catch (e) {
           debugPrint("Error decoding saved data: $e");
         }
@@ -959,9 +840,7 @@ class ProfileController extends ChangeNotifier {
           orElse: () => GetQuestionListData(),
         );
 
-        if (savedQuestion.questionId != null &&
-            savedQuestion.option != null &&
-            apiQuestion.option != null) {
+        if (savedQuestion.questionId != null && savedQuestion.option != null && apiQuestion.option != null) {
           for (final apiOption in apiQuestion.option!) {
             final savedOption = savedQuestion.option!.firstWhere(
               (opt) => opt.optionId == apiOption.optionId,
@@ -985,14 +864,11 @@ class ProfileController extends ChangeNotifier {
 
   Future<void> viewQuestionsListUpdate() async {
     _isLoading = true;
-    ApiResponse apiResponse =
-        await profileServiceInterface!.viewCompletedQuestionsList();
+    ApiResponse apiResponse = await profileServiceInterface!.viewCompletedQuestionsList();
     _isLoading = false;
-    if (apiResponse.response != null &&
-        apiResponse.response!.statusCode == 200) {
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
-      GetUpdateQuestionListResponse response =
-          GetUpdateQuestionListResponse.fromJson(map);
+      GetUpdateQuestionListResponse response = GetUpdateQuestionListResponse.fromJson(map);
 
       _questionsUpdate = response.data ?? [];
       if (_questionsUpdate.isNotEmpty) {
@@ -1033,11 +909,9 @@ class ProfileController extends ChangeNotifier {
         "answer": answerArray,
       };
 
-      ApiResponse apiResponse =
-          await profileServiceInterface!.sendTeamRoleData(request);
+      ApiResponse apiResponse = await profileServiceInterface!.sendTeamRoleData(request);
 
-      if (apiResponse.response != null &&
-          apiResponse.response!.statusCode == 200) {
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
         Map<String, dynamic> map = apiResponse.response!.data;
 
         String msg = map['message'] ?? "Submission successful";
@@ -1059,14 +933,11 @@ class ProfileController extends ChangeNotifier {
 
   Future<void> viewCOTMapperSummary() async {
     _isLoading = true;
-    ApiResponse apiResponse =
-        await profileServiceInterface!.getCOTMapperSummary();
+    ApiResponse apiResponse = await profileServiceInterface!.getCOTMapperSummary();
     _isLoading = false;
-    if (apiResponse.response != null &&
-        apiResponse.response!.statusCode == 200) {
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
-      ViewCotMapperSummaryResponse response =
-          ViewCotMapperSummaryResponse.fromJson(map);
+      ViewCotMapperSummaryResponse response = ViewCotMapperSummaryResponse.fromJson(map);
       cotMapperSummaryDataList = response.data;
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
@@ -1078,14 +949,11 @@ class ProfileController extends ChangeNotifier {
 
   Future<void> viewCOTindividualSummary() async {
     _isLoading = true;
-    ApiResponse apiResponse =
-        await profileServiceInterface!.viewCOTindividualSummary();
+    ApiResponse apiResponse = await profileServiceInterface!.viewCOTindividualSummary();
     _isLoading = false;
-    if (apiResponse.response != null &&
-        apiResponse.response!.statusCode == 200) {
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
-      ViewCotIndividualSummaryResponse response =
-          ViewCotIndividualSummaryResponse.fromJson(map);
+      ViewCotIndividualSummaryResponse response = ViewCotIndividualSummaryResponse.fromJson(map);
       cotIndividualSummaryData = response.data;
 
       _CotQuestiondata = CotQuestionData.fromJson(map["data"]);
@@ -1125,11 +993,9 @@ class ProfileController extends ChangeNotifier {
       debugPrint("Submitting Answers JSON: ${jsonEncode(body)}");
 
       /// Send POST
-      ApiResponse apiResponse =
-          await profileServiceInterface!.sendTeamRoleDataUpdate(body);
+      ApiResponse apiResponse = await profileServiceInterface!.sendTeamRoleDataUpdate(body);
 
-      if (apiResponse.response != null &&
-          apiResponse.response!.statusCode == 200) {
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
         final responseData = apiResponse.response!.data;
 
         final String msg = responseData["message"] ?? "Submitted successfully";
@@ -1141,26 +1007,22 @@ class ProfileController extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint("Submit error: $e");
-      showCustomSnackBar("An error occurred submitting answers", Get.context!,
-          isError: true);
+      showCustomSnackBar("An error occurred submitting answers", Get.context!, isError: true);
     }
   }
 
   Future<void> viewMotivationList(
     String savedJsonList,
     BuildContext context,
-  ) async
-  {
+  ) async {
     _isLoading = true;
 
     ApiResponse apiResponse = await profileServiceInterface!.viewMotivationList();
 
     _isLoading = false;
 
-    if (apiResponse.response != null &&
-        apiResponse.response!.statusCode == 200) {
-      final Map<String, dynamic> map =
-          apiResponse.response!.data as Map<String, dynamic>;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      final Map<String, dynamic> map = apiResponse.response!.data as Map<String, dynamic>;
 
       // Convert the API response to your model
       final response = SOTMotivationQuestionListResponse.fromJson(map);
@@ -1224,8 +1086,7 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final List<Map<String, dynamic>> answerList =
-          viewMotivationQuestions.map((question) {
+      final List<Map<String, dynamic>> answerList = viewMotivationQuestions.map((question) {
         return {
           "questionId": question.questionId,
           "option": question.option?.map((opt) {
@@ -1240,11 +1101,9 @@ class ProfileController extends ChangeNotifier {
       };
       debugPrint("Sending answer JSON: $request");
 
-      ApiResponse apiResponse =
-          await profileServiceInterface!.sendMotivationData(request);
+      ApiResponse apiResponse = await profileServiceInterface!.sendMotivationData(request);
 
-      if (apiResponse.response != null &&
-          apiResponse.response!.statusCode == 200) {
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
         Map<String, dynamic> map = apiResponse.response!.data;
 
         String msg = map['message'] ?? "Submission successful";
@@ -1263,7 +1122,6 @@ class ProfileController extends ChangeNotifier {
     _isLoadingBtn = false;
     notifyListeners();
   }
-
 
   Map<String, dynamic> buildAnswerPayload(List<ViewSotMotivationCompletedAnswerListData> questionsCopyList) {
     List<Map<String, dynamic>> answerList = [];
@@ -1288,7 +1146,6 @@ class ProfileController extends ChangeNotifier {
       "answer": answerList,
     };
   }
-
 
   Future<void> sendMotivationDataUpdate(List<ViewSotMotivationCompletedAnswerListData> listData) async {
     _isLoadingBtn = true;
@@ -1320,19 +1177,13 @@ class ProfileController extends ChangeNotifier {
 
   Future<void> viewSOTmotivationUserList() async {
     _isLoading = true;
-    Map<String, dynamic> request = {
-      "orgId": userProfileData!.orgId.toString(),
-      "userId": userProfileData!.id.toString()
-    };
+    Map<String, dynamic> request = {"orgId": userProfileData!.orgId.toString(), "userId": userProfileData!.id.toString()};
 
-    ApiResponse apiResponse =
-        await profileServiceInterface!.viewSOTmotivationUserList(request);
+    ApiResponse apiResponse = await profileServiceInterface!.viewSOTmotivationUserList(request);
     _isLoading = false;
-    if (apiResponse.response != null &&
-        apiResponse.response!.statusCode == 200) {
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
-      ViewSotMotivationUserListResponse response =
-          ViewSotMotivationUserListResponse.fromJson(map);
+      ViewSotMotivationUserListResponse response = ViewSotMotivationUserListResponse.fromJson(map);
       sotMotivationUserList = response.data;
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
@@ -1343,22 +1194,17 @@ class ProfileController extends ChangeNotifier {
 
   Future<void> viewMotivationCompletedAnswerList(
     BuildContext context,
-  ) async
-  {
+  ) async {
     _isLoading = true;
 
-    ApiResponse apiResponse =
-        await profileServiceInterface!.viewMotivationCompletedAnswerList();
+    ApiResponse apiResponse = await profileServiceInterface!.viewMotivationCompletedAnswerList();
 
     _isLoading = false;
 
-    if (apiResponse.response != null &&
-        apiResponse.response!.statusCode == 200) {
-      final Map<String, dynamic> map =
-          apiResponse.response!.data as Map<String, dynamic>;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      final Map<String, dynamic> map = apiResponse.response!.data as Map<String, dynamic>;
 
-      final response =
-          ViewSotMotivationCompletedAnswerListResponse.fromJson(map);
+      final response = ViewSotMotivationCompletedAnswerListResponse.fromJson(map);
 
       viewMotivationQuestionsCompletedList = response.data ?? [];
       viewMotivationQuestionsCopyList = response.data ?? [];
@@ -1377,8 +1223,8 @@ class ProfileController extends ChangeNotifier {
     int count = 0;
 
     for (var q in questions!) {
-      if (q.answer == null || q.answer.isEmpty) {
-        showCustomSnackBar("${getTranslated("please_agree_with_a_statement_for_question", context)} ${q.questionId}", context,isError: true);
+      if (q.answer.isEmpty) {
+        showCustomSnackBar("${getTranslated("please_agree_with_a_statement_for_question", context)} ${q.questionId}", context, isError: true);
         return;
       } else {
         count++;
@@ -1390,15 +1236,16 @@ class ProfileController extends ChangeNotifier {
     }
   }
 
-
   Future<void> saveUserPersonalityTypeData() async {
     final jsonList = personalityQuestionList!.map((q) => q.toJson()).toList();
     final jsonString = jsonEncode(jsonList);
     profileServiceInterface!.saveUserPersonalityTypeData(jsonString);
   }
+
   int getAnsweredCount() {
     return personalityQuestionList!.where((q) => q.flag).length;
   }
+
   String getUserPersonalityTypeData() {
     return profileServiceInterface!.getUserPersonalityTypeData();
   }
@@ -1413,19 +1260,22 @@ class ProfileController extends ChangeNotifier {
   List<ViewPersonalityTypeQuestionListData> getAnsweredQuestions() {
     return personalityQuestionList!.where((q) => q.answer.isNotEmpty).toList();
   }
+
   List<ViewPersonalityTypeQuestionListData>? personalityQuestionList;
-  Future<void> viewPersonalityTypeQuestionList(String? savedJsonList,) async {
+
+  Future<void> viewPersonalityTypeQuestionList(
+    String? savedJsonList,
+  ) async
+  {
     _isLoading = true;
 
-    ApiResponse apiResponse =
-    await profileServiceInterface!.viewPersonalityTypeQuestionList();
+    ApiResponse apiResponse = await profileServiceInterface!.viewPersonalityTypeQuestionList();
     _isLoading = false;
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
-      ViewPersonalityTypeQuestionListResponse response =
-      ViewPersonalityTypeQuestionListResponse.fromJson(map);
+      ViewPersonalityTypeQuestionListResponse response = ViewPersonalityTypeQuestionListResponse.fromJson(map);
       personalityQuestionList = response.data;
-      if (savedJsonList != null && savedJsonList.trim() != "[]" && savedJsonList!="") {
+      if (savedJsonList != null && savedJsonList.trim() != "[]" && savedJsonList != "") {
         final List<dynamic> savedArray = json.decode(savedJsonList);
 
         for (int i = 0; i < savedArray.length; i++) {
@@ -1441,12 +1291,12 @@ class ProfileController extends ChangeNotifier {
     }
     notifyListeners();
   }
+
   Future<void> sendPersonalityTypeData() async {
     _isLoadingBtn = true;
     notifyListeners();
 
     try {
-
       final List<Map<String, dynamic>> answerList = [];
 
       for (var q in personalityQuestionList!) {
@@ -1479,6 +1329,155 @@ class ProfileController extends ChangeNotifier {
     }
 
     _isLoadingBtn = false;
+    notifyListeners();
+  }
+
+  //-------------------------------
+
+  ViewCotFunctionalLensData? modelFutureLensDetails;
+
+  bool get hasData => modelFutureLensDetails != null && (modelFutureLensDetails!.funcLensKeyDetail?.isNotEmpty ?? false);
+  bool userNameStatus = false;
+  List<FuncLensKeyDetail>? funcLensKeyDetails;
+  List<ViewPersonalityTypeReportData>? viewPersonalityTypeReportList;
+  List<ViewPersonalityCompletedAnswersData>? viewPersonalityCompletedAnswersList;
+
+  void setPersonalityCompletedQuestionListAnswer(int questionIndex, int selectedOptionIndex) {
+    if (questionIndex < 0 || questionIndex >= viewPersonalityCompletedAnswersList!.length) return;
+
+    var question = viewPersonalityCompletedAnswersList![questionIndex];
+
+    // Update option selection
+    for (int i = 0; i < question.options!.length; i++) {
+      question.options![i].isChecked = i == selectedOptionIndex;
+    }
+
+    // Set selected answer as string ("1" for first option, "2" for second, etc.)
+    question.answer = (selectedOptionIndex + 1).toString();
+    question.flag = true;
+
+    notifyListeners();
+  }
+
+  Future<void> viewCOTFunctionalLensDetail() async {
+    _isLoading = true;
+    Map<String, dynamic> request = {"orgId": userProfileData!.orgId.toString(), "userId": userProfileData!.id.toString()};
+    ApiResponse apiResponse = await profileServiceInterface!.viewCOTFunctionalLensDetail(request);
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewCotFunctionalLensResponse response = ViewCotFunctionalLensResponse.fromJson(map);
+      modelFutureLensDetails = response.data;
+      funcLensKeyDetails = modelFutureLensDetails!.funcLensKeyDetail!;
+
+      if (modelFutureLensDetails!.funcLensKeyDetail!.isEmpty) {
+        userNameStatus = true;
+      } else {
+        userNameStatus = false;
+      }
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewPersonalityTypeReport() async {
+    _isLoading = true;
+    Map<String, dynamic> request = {"userId": userProfileData!.id.toString()};
+    ApiResponse apiResponse = await profileServiceInterface!.viewPersonalityTypeReport(request);
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewPersonalityTypeReportResponse response = ViewPersonalityTypeReportResponse.fromJson(map);
+      viewPersonalityTypeReportList = response.data;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewPersonalityCompletedQuestionList() async {
+    _isLoading = true;
+    ApiResponse apiResponse = await profileServiceInterface!.viewPersonalityTypeCompletedQuestionList();
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewPersonalityCompletedAnswersResponse response = ViewPersonalityCompletedAnswersResponse.fromJson(map);
+      viewPersonalityCompletedAnswersList = response.data;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> sendPersonalityCompletedData() async {
+    _isLoadingBtn = true;
+    notifyListeners();
+
+    try {
+      List<Map<String, dynamic>> answerList = [];
+      for (var item in viewPersonalityCompletedAnswersList!) {
+        String? optionId;
+
+        if (item.answer.trim().isNotEmpty) {
+          optionId = item.answer;
+        } else {
+          final selectedOption = item.options?.firstWhere(
+            (opt) => opt.isChecked == true,
+            orElse: () => ViewPersonalityCompletedAnswersOptions(),
+          );
+          optionId = selectedOption?.optionId?.toString();
+        }
+
+        answerList.add({
+          "answerId": item.answerId?.toString() ?? "",
+          "optionId": optionId ?? "",
+        });
+      }
+
+      Map<String, dynamic> finalObject = {
+        "answer": answerList,
+      };
+
+      ApiResponse apiResponse = await profileServiceInterface!.sendPersonalityCompletedData(finalObject);
+
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+        Map<String, dynamic> map = apiResponse.response!.data;
+        String msg = map['message'] ?? "Submission successful";
+        showCustomSnackBar(msg, Get.context!, isError: false);
+        Navigator.of(Get.context!).pop(true);
+      } else {
+        showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+        ApiChecker.checkApi(apiResponse);
+      }
+    } catch (e) {
+      showCustomSnackBar("Error: $e", Get.context!, isError: true);
+    }
+    _isLoadingBtn = false;
+    notifyListeners();
+  }
+
+  //------------Action---------------
+  List<ViewActionListData>? viewActionList;
+  List<ViewActionListData>? filteredActions;
+
+  Future<void> viewActionListAPI() async {
+    _isLoading = true;
+    Map<String, dynamic> request = {"orgId": userProfileData!.orgId.toString()};
+    ApiResponse apiResponse = await profileServiceInterface!.viewActionList(request);
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewActionListResponse response = ViewActionListResponse.fromJson(map);
+      viewActionList = response.data;
+      filteredActions = response.data;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
     notifyListeners();
   }
 }

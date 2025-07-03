@@ -5,23 +5,22 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../main.dart';
 
 class FcmBroadcastReceiver {
-  static late BuildContext _context;
   static final FlutterLocalNotificationsPlugin _localNotifications =
   FlutterLocalNotificationsPlugin();
 
   static const int notificationId = 101;
   static const int replyNotificationId = 102;
 
+  /// Initialize local notifications and Firebase foreground message listening
   static void initialize(BuildContext context) {
-    _context = context;
-    _initNotificationPlugin();
+    initLocalNotifications();
     _listenToFirebase();
   }
 
-  static void _initNotificationPlugin() async {
+  /// Initialize local notifications plugin
+  static void initLocalNotifications() async {
     const AndroidInitializationSettings androidSettings =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -38,11 +37,13 @@ class FcmBroadcastReceiver {
     );
   }
 
+  /// Listen to foreground messages
   static void _listenToFirebase() {
     FirebaseMessaging.onMessage.listen(handleIncomingMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(handleIncomingMessage);
   }
 
+  /// Handle foreground message
   static void handleIncomingMessage(RemoteMessage message) {
     final title = message.notification?.title ?? "Notification";
     final body = message.notification?.body ?? "";
@@ -96,7 +97,6 @@ class FcmBroadcastReceiver {
       }
 
       _sendInternalBroadcast("Reply");
-
     } catch (e) {
       replyErrorNotification("Failed to send mood.");
     }
@@ -194,33 +194,6 @@ class FcmBroadcastReceiver {
   }
 
   static void _sendInternalBroadcast(String action) {
-    // You can use an event bus or provider to send messages to other parts of your app
     Fluttertoast.showToast(msg: "Broadcast: $action");
   }
-
-  static void showLocalNotification(RemoteMessage message) async {
-    RemoteNotification? notification = message.notification;
-    AndroidNotification? android = message.notification?.android;
-
-    if (notification != null && android != null) {
-      const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        'high_importance_channel',
-        'High Importance Notifications',
-        channelDescription: 'Used for important notifications',
-        importance: Importance.max,
-        priority: Priority.high,
-      );
-
-      const NotificationDetails platformDetails =
-      NotificationDetails(android: androidDetails);
-
-      await flutterLocalNotificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        platformDetails,
-      );
-    }
-  }
-
 }

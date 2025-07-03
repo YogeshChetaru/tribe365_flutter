@@ -83,6 +83,11 @@ class AppConstants {
   static const String updateSOTmotivationAnswersUri = 'updateSOTmotivationAnswers';
   static const String getPersonalityTypeQuestionListUri = 'getPersonalityTypeQuestionList';
   static const String addPersonalityTypeAnswersUri = 'addPersonalityTypeAnswers';
+  static const String getCOTFunctionalLensDetailUri = 'getCOTFunctionalLensDetail';
+  static const String getPersonalityTypeReportUri = 'getPersonalityTypeReport';
+  static const String getPersonalityTypeCompletedAnswersUri = 'getPersonalityTypeCompletedAnswers';
+  static const String updatePersonalityTypeAnswersUri = 'updatePersonalityTypeAnswers';
+  static const String getActionListUri = 'getActionList';
 
 
 

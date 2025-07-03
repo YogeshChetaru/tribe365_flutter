@@ -23,6 +23,17 @@ class ProfileActionsScreenState extends State<ProfileActionsScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
 
   @override
+  void initState() {
+    loadAPI();
+    super.initState();
+  }
+
+  void loadAPI() {
+    ProfileController controller = Provider.of<ProfileController>(context, listen: false);
+    controller.viewActionListAPI();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
@@ -40,328 +51,364 @@ class ProfileActionsScreenState extends State<ProfileActionsScreen> {
                 ),
                 Expanded(
                   flex: 1,
-                  child: /*Container(
-                    width: MediaQuery.sizeOf(context).width,
-                    height: MediaQuery.sizeOf(context).height,
-                    alignment: Alignment.center,
-                    child: Text(
-                      getTranslated("no_action_found", context)!,
-                      style: TextStyle(
-                        color: ColorResources.color9a9a9a,
-                        fontSize: Dimensions.sp18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  )*/
-                      SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
-                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          decoration: BoxDecoration(
-                            color: ColorResources.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: ColorResources.colorAAADC4,
-                                blurRadius: 3.0,
+                  child: profileProvider.isLoading
+                      ? SizedBox(
+                          width: MediaQuery.sizeOf(context).width,
+                          height: MediaQuery.sizeOf(context).height,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).primaryColor,
                               ),
-                            ],
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            ),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  isExpanded: true,
-                                  value: profileProvider.tierSelectedValue,
-                                  items: profileProvider.tierList.map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(
-                                        value,
-                                        style: const TextStyle(
-                                          fontSize: Dimensions.sp14,
-                                          color: ColorResources.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: 'Roboto',
+                        )
+                      : profileProvider.viewActionList == null || profileProvider.viewActionList!.isEmpty
+                          ? Container(
+                              width: MediaQuery.sizeOf(context).width,
+                              height: MediaQuery.sizeOf(context).height,
+                              alignment: Alignment.center,
+                              child: Text(
+                                getTranslated("no_action_found", context)!,
+                                style: TextStyle(
+                                  color: ColorResources.color9a9a9a,
+                                  fontSize: Dimensions.sp18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            )
+                          : SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    decoration: BoxDecoration(
+                                      color: ColorResources.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: ColorResources.colorAAADC4,
+                                          blurRadius: 3.0,
                                         ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    profileProvider.updateTierSelectedValue(newValue);
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: 1,
-                            itemBuilder: (context, index) {
-                              return Slidable(
-                                startActionPane: ActionPane(
-                                  motion: const DrawerMotion(),
-                                  children: [
-                                    SlidableAction(
-                                      onPressed: (_) {
-                                        routePush(context, ProfileAddActionsScreen());
-                                      },
-                                      backgroundColor: ColorResources.mainColor,
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.edit,
-                                      label: getTranslated("edit", context)!,
+                                      ],
+                                      borderRadius: BorderRadius.all(Radius.circular(10)),
                                     ),
-                                  ],
-                                ),
-                                endActionPane: ActionPane(
-                                  motion: const DrawerMotion(),
-                                  children: [
-                                    SlidableAction(
-                                      onPressed: (_) {
-                                        customShowDialog(context, ActionDeleteDialog());
-                                      },
-                                      backgroundColor: ColorResources.mainColor,
-                                      foregroundColor: ColorResources.white,
-                                      icon: Icons.delete,
-                                      label: getTranslated("delete", context)!,
-                                    ),
-                                  ],
-                                ),
-                                child: Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  decoration: BoxDecoration(
-                                    color: ColorResources.white,
-                                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: ColorResources.colorAAADC4,
-                                        blurRadius: 1.0,
-                                      ),
-                                    ],
-                                  ),
-                                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: 20,
-                                            height: 20,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(color: ColorResources.mainColor, width: 1),
-                                              image: DecorationImage(
-                                                image: AssetImage(Images.imgUserCircleGray),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: Text(
-                                              "Alex",
-                                              style: TextStyle(
-                                                fontSize: Dimensions.sp14,
-                                                fontWeight: FontWeight.w600,
-                                                color: ColorResources.color9a9a9a,
-                                                fontFamily: 'Roboto',
-                                              ),
-                                            ),
-                                          ),
-                                          InkWell(
-                                            onTap: (){
-                                              routePush(context, ProfileActionsCommentsScreen());
-                                            },child: Image.asset(
-                                              Images.imgCommentRed,
-                                              width: 24,
-                                              height: 24,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text("Test",
-                                          style: TextStyle(
-                                            fontSize: Dimensions.sp12,
-                                            fontWeight: FontWeight.w500,
-                                            color: ColorResources.color9a9a9a,
-                                            fontFamily: 'Roboto',
-                                          )),
-                                      SizedBox(height: 5,),
-                                      Container(
-                                        width: MediaQuery.sizeOf(context).width,
-                                        height: 0.5,
-                                        color: ColorResources.color9a9a9a,
-                                      ),
-                                      SizedBox(height: 10,),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 30,
-                                            child: Text(
-                                              "${getTranslated("start_date", context)!}:",
-                                              style: TextStyle(
-                                                fontSize: Dimensions.sp13,
-                                                fontWeight: FontWeight.w500,
-                                                color: ColorResources.color9a9a9a,
-                                                fontFamily: 'Roboto',
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 70,
-                                            child: Text(
-                                              "05-06-2025",
-                                              style: TextStyle(
-                                                fontSize: Dimensions.sp14,
-                                                fontWeight: FontWeight.w600,
-                                                color: ColorResources.color9a9a9a,
-                                                fontFamily: 'Roboto',
-                                              ),
-                                            ),
-                                          ),
-
-                                        ],
-                                      ),
-                                      SizedBox(height: 10,),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 30,
-                                            child: Text(
-                                              "${getTranslated("due_date", context)!}:",
-                                              style: TextStyle(
-                                                fontSize: Dimensions.sp13,
-                                                fontWeight: FontWeight.w500,
-                                                color: ColorResources.color9a9a9a,
-                                                fontFamily: 'Roboto',
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 70,
-                                            child: Text(
-                                              "30-09-2025",
-                                              style: TextStyle(
-                                                fontSize: Dimensions.sp14,
-                                                fontWeight: FontWeight.w600,
-                                                color: ColorResources.color9a9a9a,
-                                                fontFamily: 'Roboto',
-                                              ),
-                                            ),
-                                          ),
-
-                                        ],
-                                      ),
-                                      SizedBox(height: 10,),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 30,
-                                            child: Text(
-                                              "${getTranslated("status", context)!}:",
-                                              style: TextStyle(
-                                                fontSize: Dimensions.sp13,
-                                                fontWeight: FontWeight.w500,
-                                                color: ColorResources.color9a9a9a,
-                                                fontFamily: 'Roboto',
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 70,
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                  width: 14,
-                                                  height: 14,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: ColorResources.mainColor,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            isExpanded: true,
+                                            value: profileProvider.tierSelectedValue,
+                                            items: profileProvider.tierList.map((String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(
+                                                  value,
+                                                  style: const TextStyle(
+                                                    fontSize: Dimensions.sp14,
+                                                    color: ColorResources.black,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontFamily: 'Roboto',
                                                   ),
-
                                                 ),
-                                                SizedBox(width: 5,),
-                                                Text("not started",textAlign: TextAlign.center,style: TextStyle(
-                                                  fontSize: Dimensions.sp12,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: ColorResources.mainColor,
-                                                  fontFamily: 'Roboto',
-                                                ),),
-                                                SizedBox(width: 10,),
-                                                InkWell(onTap: (){
-                                                  showBottomMenuSheet(context);
-                                                },child: Image.asset(Images.imgEditRed,width: 20,height: 20,)),
+                                              );
+                                            }).toList(),
+                                            onChanged: (String? newValue) {
+                                              profileProvider.updateTierSelectedValue(newValue);
+                                            },
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                  profileProvider.filteredActions==null||profileProvider.filteredActions!.isEmpty?
+                                      SizedBox.shrink():
+                                  Container(
+                                    margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: profileProvider.filteredActions!.length,
+                                      itemBuilder: (context, index) {
+                                        return Slidable(
+                                          startActionPane: ActionPane(
+                                            motion: const DrawerMotion(),
+                                            children: [
+                                              SlidableAction(
+                                                onPressed: (_) {
+                                                  routePush(context, ProfileAddActionsScreen());
+                                                },
+                                                backgroundColor: ColorResources.mainColor,
+                                                foregroundColor: Colors.white,
+                                                icon: Icons.edit,
+                                                label: getTranslated("edit", context)!,
+                                              ),
+                                            ],
+                                          ),
+                                          endActionPane: ActionPane(
+                                            motion: const DrawerMotion(),
+                                            children: [
+                                              SlidableAction(
+                                                onPressed: (_) {
+                                                  customShowDialog(context, ActionDeleteDialog());
+                                                },
+                                                backgroundColor: ColorResources.mainColor,
+                                                foregroundColor: ColorResources.white,
+                                                icon: Icons.delete,
+                                                label: getTranslated("delete", context)!,
+                                              ),
+                                            ],
+                                          ),
+                                          child: Container(
+                                            width: MediaQuery.sizeOf(context).width,
+                                            decoration: BoxDecoration(
+                                              color: ColorResources.white,
+                                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: ColorResources.colorAAADC4,
+                                                  blurRadius: 1.0,
+                                                ),
+                                              ],
+                                            ),
+                                            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 20,
+                                                      height: 20,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(color: ColorResources.mainColor, width: 1),
+                                                        image: DecorationImage(
+                                                          image: AssetImage(Images.imgUserCircleGray),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Text(
+                                                        "Alex",
+                                                        style: TextStyle(
+                                                          fontSize: Dimensions.sp14,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: ColorResources.color9a9a9a,
+                                                          fontFamily: 'Roboto',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    InkWell(
+                                                      onTap: () {
+                                                        routePush(context, ProfileActionsCommentsScreen());
+                                                      },
+                                                      child: Image.asset(
+                                                        Images.imgCommentRed,
+                                                        width: 24,
+                                                        height: 24,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Text("Test",
+                                                    style: TextStyle(
+                                                      fontSize: Dimensions.sp12,
+                                                      fontWeight: FontWeight.w500,
+                                                      color: ColorResources.color9a9a9a,
+                                                      fontFamily: 'Roboto',
+                                                    )),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Container(
+                                                  width: MediaQuery.sizeOf(context).width,
+                                                  height: 0.5,
+                                                  color: ColorResources.color9a9a9a,
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 30,
+                                                      child: Text(
+                                                        "${getTranslated("start_date", context)!}:",
+                                                        style: TextStyle(
+                                                          fontSize: Dimensions.sp13,
+                                                          fontWeight: FontWeight.w500,
+                                                          color: ColorResources.color9a9a9a,
+                                                          fontFamily: 'Roboto',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 70,
+                                                      child: Text(
+                                                        "05-06-2025",
+                                                        style: TextStyle(
+                                                          fontSize: Dimensions.sp14,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: ColorResources.color9a9a9a,
+                                                          fontFamily: 'Roboto',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 30,
+                                                      child: Text(
+                                                        "${getTranslated("due_date", context)!}:",
+                                                        style: TextStyle(
+                                                          fontSize: Dimensions.sp13,
+                                                          fontWeight: FontWeight.w500,
+                                                          color: ColorResources.color9a9a9a,
+                                                          fontFamily: 'Roboto',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 70,
+                                                      child: Text(
+                                                        "30-09-2025",
+                                                        style: TextStyle(
+                                                          fontSize: Dimensions.sp14,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: ColorResources.color9a9a9a,
+                                                          fontFamily: 'Roboto',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 30,
+                                                      child: Text(
+                                                        "${getTranslated("status", context)!}:",
+                                                        style: TextStyle(
+                                                          fontSize: Dimensions.sp13,
+                                                          fontWeight: FontWeight.w500,
+                                                          color: ColorResources.color9a9a9a,
+                                                          fontFamily: 'Roboto',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 70,
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Container(
+                                                            width: 14,
+                                                            height: 14,
+                                                            decoration: BoxDecoration(
+                                                              shape: BoxShape.circle,
+                                                              color: ColorResources.mainColor,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          Text(
+                                                            "not started",
+                                                            textAlign: TextAlign.center,
+                                                            style: TextStyle(
+                                                              fontSize: Dimensions.sp12,
+                                                              fontWeight: FontWeight.w500,
+                                                              color: ColorResources.mainColor,
+                                                              fontFamily: 'Roboto',
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          InkWell(
+                                                              onTap: () {
+                                                                showBottomMenuSheet(context);
+                                                              },
+                                                              child: Image.asset(
+                                                                Images.imgEditRed,
+                                                                width: 20,
+                                                                height: 20,
+                                                              )),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 30,
+                                                      child: Text(
+                                                        "${getTranslated("responsible", context)!}:",
+                                                        style: TextStyle(
+                                                          fontSize: Dimensions.sp13,
+                                                          fontWeight: FontWeight.w500,
+                                                          color: ColorResources.color9a9a9a,
+                                                          fontFamily: 'Roboto',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 70,
+                                                      child: Text(
+                                                        "yogesh",
+                                                        style: TextStyle(
+                                                          fontSize: Dimensions.sp14,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: ColorResources.color9a9a9a,
+                                                          fontFamily: 'Roboto',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ],
                                             ),
                                           ),
-
-                                        ],
-                                      ),
-                                      SizedBox(height: 10,),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 30,
-                                            child: Text(
-                                              "${getTranslated("responsible", context)!}:",
-                                              style: TextStyle(
-                                                fontSize: Dimensions.sp13,
-                                                fontWeight: FontWeight.w500,
-                                                color: ColorResources.color9a9a9a,
-                                                fontFamily: 'Roboto',
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 70,
-                                            child: Text(
-                                              "yogesh",
-                                              style: TextStyle(
-                                                fontSize: Dimensions.sp14,
-                                                fontWeight: FontWeight.w600,
-                                                color: ColorResources.color9a9a9a,
-                                                fontFamily: 'Roboto',
-                                              ),
-                                            ),
-                                          ),
-
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                 ),
               ],
             ),
           );
         }),
       ),
-      floatingActionButton: RawMaterialButton (
+      floatingActionButton: RawMaterialButton(
         onPressed: () {
           routePush(context, ProfileAddActionsScreen());
         },
@@ -375,6 +422,7 @@ class ProfileActionsScreenState extends State<ProfileActionsScreen> {
       ),
     );
   }
+
   void showBottomMenuSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -487,7 +535,11 @@ class ProfileActionsScreenState extends State<ProfileActionsScreen> {
                           padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
                           decoration: BoxDecoration(
                             color: ColorResources.mainColor,
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                                bottomRight: Radius.circular(10)),
                           ),
                           child: Text(
                             getTranslated("submit", context)!,
@@ -503,7 +555,6 @@ class ProfileActionsScreenState extends State<ProfileActionsScreen> {
                       ),
                     ],
                   )
-
                 ],
               ),
             ),
@@ -513,7 +564,3 @@ class ProfileActionsScreenState extends State<ProfileActionsScreen> {
     );
   }
 }
-
-
-
-

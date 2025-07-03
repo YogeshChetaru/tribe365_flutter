@@ -23,6 +23,18 @@ class ProfileService implements ProfileServiceInterface {
   Future<ApiResponse> updateProfile(Map<String, dynamic> body) {
     return profileRepositoryInterface.updateProfile(body);
   }
+
+  @override
+  Future<ApiResponse> viewPersonalityTypeReport(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewPersonalityTypeReport(body);
+  }
+
+  @override
+  Future<ApiResponse> viewCOTFunctionalLensDetail(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewCOTFunctionalLensDetail(body);
+  }
+
+
   @override
   Future<ApiResponse> viewQuestionsList() {
     return profileRepositoryInterface.viewQuestionsList();
@@ -37,6 +49,11 @@ class ProfileService implements ProfileServiceInterface {
   Future<ApiResponse> viewPersonalityTypeQuestionList() {
     return profileRepositoryInterface.viewPersonalityTypeQuestionList();
   }
+  @override
+  Future<ApiResponse> viewPersonalityTypeCompletedQuestionList() {
+    return profileRepositoryInterface.viewPersonalityTypeCompletedQuestionList();
+  }
+
 
   @override
   Future<ApiResponse> viewMotivationCompletedAnswerList() {
@@ -83,6 +100,12 @@ class ProfileService implements ProfileServiceInterface {
   Future<ApiResponse> sendTeamRoleData(Map<String, dynamic> body) {
     return profileRepositoryInterface.sendTeamRoleData(body);
   }
+
+  @override
+  Future<ApiResponse> sendPersonalityCompletedData(Map<String, dynamic> body) {
+    return profileRepositoryInterface.sendPersonalityCompletedData(body);
+  }
+
 
   @override
   Future<ApiResponse> sendPersonalityTypeData(Map<String, dynamic> body) {
@@ -138,5 +161,10 @@ class ProfileService implements ProfileServiceInterface {
   @override
   Future<void> viewCOTindividualSummary() {
     return profileRepositoryInterface.viewCOTindividualSummary();
+  }
+
+  @override
+  Future<ApiResponse> viewActionList(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewActionList(body);
   }
 }

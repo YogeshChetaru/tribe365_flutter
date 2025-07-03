@@ -27,6 +27,33 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<ApiResponse> viewPersonalityTypeReport(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getPersonalityTypeReportUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> viewCOTFunctionalLensDetail(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getCOTFunctionalLensDetailUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
   Future<ApiResponse> viewUserProfileData() async {
     try {
       Response response = await dioClient!.get(
@@ -55,6 +82,18 @@ class ProfileRepository implements ProfileRepositoryInterface {
     try {
       Response response = await dioClient!.get(
         AppConstants.getPersonalityTypeQuestionListUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewPersonalityTypeCompletedQuestionList() async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getPersonalityTypeCompletedAnswersUri,
       );
       return ApiResponse.withSuccess(response);
     } catch (e) {
@@ -225,6 +264,19 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<ApiResponse> sendPersonalityCompletedData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.updatePersonalityTypeAnswersUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
   Future<ApiResponse> sendMotivationData(Map<String, dynamic> loginBody) async {
     try {
       Response response = await dioClient!.post(
@@ -262,6 +314,22 @@ class ProfileRepository implements ProfileRepositoryInterface {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
+
+
+  @override
+  Future<ApiResponse> viewActionList(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getActionListUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
 
   @override
   Future add(value) {

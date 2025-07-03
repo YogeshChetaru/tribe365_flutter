@@ -203,5 +203,9 @@
   "do_you_want_to_save_the_answers": "Do you want to save the answers?",
   "yes": "Yes",
   "no": "No",
-  "please_agree_with_a_statement_for_question": "Please agree with a statement for Question"
+  "please_agree_with_a_statement_for_question": "Please agree with a statement for Question",
+  "personality_type_result": "Personality Type Result",
+  "DICHOTOMIES": "DICHOTOMIES",
+  "view_full_result": "View Full Result",
+  "update_personality_questions": "Update Personality Questions"
 }
