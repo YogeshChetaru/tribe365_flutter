@@ -1,16 +1,19 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:tribe365_new/utill/color_resources.dart';
 import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
 import '../../../../data/model/api_response.dart';
 import '../../../../helper/api_checker.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../main.dart';
+import '../../home/domain/models/view_department_user_list_response.dart';
 import '../domain/models/cotquestiondata.dart';
 import '../domain/models/get_motivation_list_response.dart';
 import '../domain/models/get_question_list_response.dart';
 import '../domain/models/get_update_question_list_response.dart';
 import '../domain/models/view_action_list_response.dart';
+import '../domain/models/view_action_tier_list_response.dart';
 import '../domain/models/view_cot_functional_lens_response.dart';
 import '../domain/models/view_cot_individual_summary_response.dart';
 import '../domain/models/view_cot_mapper_summary_response.dart';
@@ -19,6 +22,8 @@ import '../domain/models/view_personality_type_question_list_response.dart';
 import '../domain/models/view_personality_type_report_response.dart';
 import '../domain/models/view_sot_motivation_completed_answer_list_response.dart';
 import '../domain/models/view_sot_motivation_user_list_response.dart';
+import '../domain/models/view_theme_list_response.dart' hide ModelTheme;
+import '../domain/models/view_user_by_type_list_response.dart';
 import '../domain/models/viewuserprofileresponse.dart';
 import '../domain/services/profile_service_interface.dart';
 
@@ -244,7 +249,9 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateActionStatus(String s) {
+
+
+  void addActionStatus(String s) {
     actionStatus = s;
     notifyListeners();
   }
@@ -1463,6 +1470,116 @@ class ProfileController extends ChangeNotifier {
   //------------Action---------------
   List<ViewActionListData>? viewActionList;
   List<ViewActionListData>? filteredActions;
+  List<ViewActionTierListData>? viewActionTierList;
+  List<ViewActionTierListData>? filteredActionTierList;
+  ViewActionTierListData? selectedActionTierListData;
+  ViewUserByTypeListData? selectedUserListData;
+  ModelTheme? selectedThemeData;
+  TextEditingController searchController = TextEditingController();
+  FocusNode searchFocus = FocusNode();
+  bool showDepartment = false;
+  String departmentLabel = "";
+  String departmentId = "";
+  String officeId = "";
+  List<ViewDepartmentDepartment>? departmentsList;
+  List<ViewUserByTypeListData>? userList;
+  List<ViewUserByTypeListData>? filteredUserList;
+  List<ModelTheme>? themeList;
+  List<ModelTheme>? filteredThemeList;
+String selectedStartData = "";
+String selectedDueData = "";
+  intiData(bool isNotify) {
+    searchController = TextEditingController();
+    searchFocus = FocusNode();
+    if (isNotify) {
+      notifyListeners();
+    }
+  }
+
+  void filterActionTier() {
+    final query = searchController.text.toLowerCase();
+    filteredActionTierList = viewActionTierList!.where((user) => user.name!.toLowerCase().contains(query)).toList();
+    notifyListeners();
+  }
+
+  void filterUser() {
+    final query = searchController.text.toLowerCase();
+    filteredUserList = userList!.where((user) => user.name!.toLowerCase().contains(query)).toList();
+    notifyListeners();
+  }
+
+  void filterTheme() {
+    final query = searchController.text.toLowerCase();
+    filteredThemeList = themeList!.where((user) => user.title!.toLowerCase().contains(query)).toList();
+    notifyListeners();
+  }
+
+  void updateFilteredActionTierList(ViewActionTierListData data) {
+    selectedActionTierListData = data;
+    if (selectedActionTierListData!.name!.contains("DEPARTMENT")) {
+      showDepartment = true;
+      departmentLabel = "RESPONSIBLE DEPARTMENT";
+      if (departmentsList!.isEmpty) {
+        viewDepartmentUserListApi(userProfileData!.orgId!.toString());
+      }
+    } else if (selectedActionTierListData!.name!.toUpperCase() == "OFFICE") {
+      showDepartment = true;
+      departmentLabel = "RESPONSIBLE OFFICE";
+    } else {
+      showDepartment = false;
+      departmentLabel = "";
+      viewUserByTypeListApi(selectedActionTierListData!.name!);
+    }
+    notifyListeners();
+  }
+
+  void updateFilteredUserList(ViewUserByTypeListData data) {
+    selectedUserListData = data;
+    notifyListeners();
+  }
+
+  void updateFilteredThemeList(ModelTheme data) {
+    selectedThemeData = data;
+    notifyListeners();
+  }
+
+  Future<void> getDate(BuildContext context,String type) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(), // disables past dates
+      lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: ColorResources.mainColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: Colors.black, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: ColorResources.mainColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null) {
+      final formattedDate = "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+      if(type=="dueData"){
+        selectedDueData = formattedDate;
+      }
+      else{
+        selectedStartData = formattedDate;
+      }
+    }
+    notifyListeners();
+  }
+
 
   Future<void> viewActionListAPI() async {
     _isLoading = true;
@@ -1474,6 +1591,150 @@ class ProfileController extends ChangeNotifier {
       ViewActionListResponse response = ViewActionListResponse.fromJson(map);
       viewActionList = response.data;
       filteredActions = response.data;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateActionItemStatus(String actionId,String orgStatus) async {
+    _isLoadingBtn = true;
+    Map<String, dynamic> request = {
+      "actionId": actionId,
+      "orgStatus":orgStatus
+    };
+    ApiResponse apiResponse = await profileServiceInterface!.updateActionItemStatus(request);
+    _isLoadingBtn = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      showCustomSnackBar(map["message"], Get.context!, isError: false);
+
+      int index = filteredActions!.indexWhere((element) => element.id == actionId);
+      if (index != -1) {
+        filteredActions![index].orgStatus = orgStatus;
+      }
+
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteActionItemStatus(String actionId) async {
+    _isLoadingBtn = true;
+    Map<String, dynamic> request = {
+      "actionId": actionId,
+    };
+    ApiResponse apiResponse = await profileServiceInterface!.deleteActionItemStatus(request);
+    _isLoadingBtn = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      showCustomSnackBar(map["message"], Get.context!, isError: false);
+
+      int index = filteredActions!.indexWhere((element) => element.id == actionId);
+      filteredActions!.removeAt(index);
+
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewActionTierListApi() async {
+    ApiResponse apiResponse = await profileServiceInterface!.viewActionTierList();
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewActionTierListResponse response = ViewActionTierListResponse.fromJson(map);
+      viewActionTierList = response.data;
+      filteredActionTierList = viewActionTierList;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewDepartmentUserListApi(String orgId) async {
+    Map<String, dynamic> request = {
+      "orgId": orgId,
+    };
+    ApiResponse apiResponse = await profileServiceInterface!.viewDepartmentUserList(request);
+    
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewDepartmentUserListResponse response = ViewDepartmentUserListResponse.fromJson(map);
+      departmentsList = response.data!.departments;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewUserByTypeListApi(String name) async {
+// Determine type1 and typeid
+    String type1 = "";
+    String typeid = "";
+
+    final lowerType = name.toLowerCase();
+
+    if (["primary", "tertiary", "secondary", "individual"].contains(lowerType)) {
+      type1 = "organisation";
+      typeid = userProfileData!.orgId!.toString();
+    } else if (lowerType == "office") {
+      type1 = "office";
+      typeid = officeId;
+    } else {
+      type1 = "department";
+      typeid = departmentId;
+    }
+
+    final Map<String, dynamic> request = {
+      "type": type1,
+      "typeId": typeid,
+    };
+
+    ApiResponse apiResponse = await profileServiceInterface!.viewUserByTypeList(request);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewUserByTypeListResponse response = ViewUserByTypeListResponse.fromJson(map);
+      userList = response.data!;
+      filteredUserList = userList;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewThemeList(String orgId) async {
+    Map<String, dynamic> request = {
+      "orgId": orgId,
+    };
+    ApiResponse apiResponse = await profileServiceInterface!.viewThemeList(request);
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewThemeListResponse response = ViewThemeListResponse.fromJson(map);
+      themeList = response.data!.themeList;
+      filteredThemeList = response.data!.themeList;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> addActionData() async {
+    Map<String, dynamic> request = {};
+    ApiResponse apiResponse = await profileServiceInterface!.addActionData(request);
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);

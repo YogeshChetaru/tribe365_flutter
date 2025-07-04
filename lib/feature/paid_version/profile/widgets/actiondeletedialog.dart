@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribe365_new/feature/paid_version/profile/controllers/profile_controller.dart';
+import 'package:tribe365_new/feature/paid_version/profile/domain/models/view_action_list_response.dart';
 import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 
 class ActionDeleteDialog extends StatefulWidget {
-  const ActionDeleteDialog({super.key});
+  final ViewActionListData data;
+   const ActionDeleteDialog({super.key,required this.data});
 
   @override
   State<ActionDeleteDialog> createState() => _ActionDeleteDialogState();
@@ -83,7 +85,8 @@ class _ActionDeleteDialogState extends State<ActionDeleteDialog> {
                    SizedBox(width: 20,),
                    InkWell(
                      onTap: (){
-
+                       Navigator.pop(context);
+                       profileProvider.deleteActionItemStatus(widget.data.id!);
                      },child: Text(
                        textAlign: TextAlign.end,
                        getTranslated("ok", context)!,
@@ -99,8 +102,6 @@ class _ActionDeleteDialogState extends State<ActionDeleteDialog> {
                  ],
                ),
               ),
-
-
             ],
           ),
         ),

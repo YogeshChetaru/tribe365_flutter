@@ -32,4 +32,11 @@ abstract class ProfileRepositoryInterface implements RepositoryInterface {
   Future<void> clearSavedUserMotivationData();
   Future<void> clearSavedPersonalityTypeData();
   Future<ApiResponse> viewActionList(Map<String, dynamic> body);
+  Future<ApiResponse> updateActionItemStatus(Map<String, dynamic> body);
+  Future<ApiResponse> deleteActionItemStatus(Map<String, dynamic> body);
+  Future<ApiResponse> viewDepartmentUserList(Map<String, dynamic> body);
+  Future<ApiResponse> viewUserByTypeList(Map<String, dynamic> body);
+  Future<ApiResponse> viewThemeList(Map<String, dynamic> body);
+  Future<ApiResponse> addActionData(Map<String, dynamic> body);
+  Future<ApiResponse> viewActionTierList();
 }

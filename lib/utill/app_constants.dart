@@ -88,6 +88,11 @@ class AppConstants {
   static const String getPersonalityTypeCompletedAnswersUri = 'getPersonalityTypeCompletedAnswers';
   static const String updatePersonalityTypeAnswersUri = 'updatePersonalityTypeAnswers';
   static const String getActionListUri = 'getActionList';
+  static const String updateStatusUri = 'updateStatus';
+  static const String deleteActionUri = 'deleteAction';
+  static const String actionTierListUri = 'actionTierList';
+  static const String getThemeListUri = 'getThemeList';
+  static const String addActionUri = 'addAction';
 
 
 

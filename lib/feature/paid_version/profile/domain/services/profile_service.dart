@@ -167,4 +167,43 @@ class ProfileService implements ProfileServiceInterface {
   Future<ApiResponse> viewActionList(Map<String, dynamic> body) {
     return profileRepositoryInterface.viewActionList(body);
   }
+
+  @override
+  Future<ApiResponse> updateActionItemStatus(Map<String, dynamic> body) {
+    return profileRepositoryInterface.updateActionItemStatus(body);
+  }
+
+  @override
+  Future<ApiResponse> deleteActionItemStatus(Map<String, dynamic> body) {
+    return profileRepositoryInterface.deleteActionItemStatus(body);
+  }
+
+  @override
+  Future<ApiResponse> viewActionTierList() {
+    return profileRepositoryInterface.viewActionTierList();
+  }
+
+  @override
+  Future<ApiResponse> viewDepartmentUserList(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewDepartmentUserList(body);
+  }
+
+  @override
+  Future<ApiResponse> viewUserByTypeList(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewUserByTypeList(body);
+  }
+
+  @override
+  Future<ApiResponse> viewThemeList(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewThemeList(body);
+  }
+
+  @override
+  Future<ApiResponse> addActionData(Map<String, dynamic> body) {
+    return profileRepositoryInterface.addActionData(body);
+  }
+
+
+
+
 }

@@ -207,5 +207,12 @@
   "personality_type_result": "Personality Type Result",
   "DICHOTOMIES": "DICHOTOMIES",
   "view_full_result": "View Full Result",
-  "update_personality_questions": "Update Personality Questions"
+  "update_personality_questions": "Update Personality Questions",
+  "linked_risks": "Linked Risks",
+  "linked_offloads": "Linked Offloads",
+  "completed": "Completed",
+  "responsible_department": "Responsible Department",
+  "no_staff_found": "No Staff Found",
+  "staff": "Staff",
+  "select_risks": "Select Risks"
 }
