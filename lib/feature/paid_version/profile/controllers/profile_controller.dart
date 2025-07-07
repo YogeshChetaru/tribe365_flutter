@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:tribe365_new/feature/paid_version/profile/domain/models/view_comment_list_response.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
 import '../../../../data/model/api_response.dart';
@@ -22,7 +22,7 @@ import '../domain/models/view_personality_type_question_list_response.dart';
 import '../domain/models/view_personality_type_report_response.dart';
 import '../domain/models/view_sot_motivation_completed_answer_list_response.dart';
 import '../domain/models/view_sot_motivation_user_list_response.dart';
-import '../domain/models/view_theme_list_response.dart' hide ModelTheme;
+import '../domain/models/view_theme_list_response.dart';
 import '../domain/models/view_user_by_type_list_response.dart';
 import '../domain/models/viewuserprofileresponse.dart';
 import '../domain/services/profile_service_interface.dart';
@@ -249,8 +249,6 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
   void addActionStatus(String s) {
     actionStatus = s;
     notifyListeners();
@@ -261,9 +259,7 @@ class ProfileController extends ChangeNotifier {
     if (newValue == "All Tier") {
       filteredActions = List.from(viewActionList!);
     } else {
-      filteredActions = viewActionList!
-          .where((item) => item.tier?.toLowerCase() == newValue.toLowerCase())
-          .toList();
+      filteredActions = viewActionList!.where((item) => item.tier?.toLowerCase() == newValue.toLowerCase()).toList();
     }
 
     notifyListeners();
@@ -1272,8 +1268,7 @@ class ProfileController extends ChangeNotifier {
 
   Future<void> viewPersonalityTypeQuestionList(
     String? savedJsonList,
-  ) async
-  {
+  ) async {
     _isLoading = true;
 
     ApiResponse apiResponse = await profileServiceInterface!.viewPersonalityTypeQuestionList();
@@ -1486,8 +1481,9 @@ class ProfileController extends ChangeNotifier {
   List<ViewUserByTypeListData>? filteredUserList;
   List<ModelTheme>? themeList;
   List<ModelTheme>? filteredThemeList;
-String selectedStartData = "";
-String selectedDueData = "";
+  String selectedStartData = "";
+  String selectedDueData = "";
+
   intiData(bool isNotify) {
     searchController = TextEditingController();
     searchFocus = FocusNode();
@@ -1543,11 +1539,12 @@ String selectedDueData = "";
     notifyListeners();
   }
 
-  Future<void> getDate(BuildContext context,String type) async {
+  Future<void> getDate(BuildContext context, String type) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now(), // disables past dates
+      firstDate: DateTime.now(),
+      // disables past dates
       lastDate: DateTime(2100),
       builder: (context, child) {
         return Theme(
@@ -1570,16 +1567,22 @@ String selectedDueData = "";
 
     if (pickedDate != null) {
       final formattedDate = "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
-      if(type=="dueData"){
+      if (type == "dueData") {
         selectedDueData = formattedDate;
-      }
-      else{
+      } else {
         selectedStartData = formattedDate;
       }
     }
     notifyListeners();
   }
 
+  void updateSelectedData(String type,String date){
+    if (type == "dueData") {
+      selectedDueData = date;
+    } else {
+      selectedStartData = date;
+    }
+  }
 
   Future<void> viewActionListAPI() async {
     _isLoading = true;
@@ -1598,12 +1601,9 @@ String selectedDueData = "";
     notifyListeners();
   }
 
-  Future<void> updateActionItemStatus(String actionId,String orgStatus) async {
+  Future<void> updateActionItemStatus(String actionId, String orgStatus) async {
     _isLoadingBtn = true;
-    Map<String, dynamic> request = {
-      "actionId": actionId,
-      "orgStatus":orgStatus
-    };
+    Map<String, dynamic> request = {"actionId": actionId, "orgStatus": orgStatus};
     ApiResponse apiResponse = await profileServiceInterface!.updateActionItemStatus(request);
     _isLoadingBtn = false;
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
@@ -1614,7 +1614,6 @@ String selectedDueData = "";
       if (index != -1) {
         filteredActions![index].orgStatus = orgStatus;
       }
-
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
@@ -1635,7 +1634,6 @@ String selectedDueData = "";
 
       int index = filteredActions!.indexWhere((element) => element.id == actionId);
       filteredActions!.removeAt(index);
-
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
@@ -1662,7 +1660,7 @@ String selectedDueData = "";
       "orgId": orgId,
     };
     ApiResponse apiResponse = await profileServiceInterface!.viewDepartmentUserList(request);
-    
+
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
       ViewDepartmentUserListResponse response = ViewDepartmentUserListResponse.fromJson(map);
@@ -1728,14 +1726,142 @@ String selectedDueData = "";
     notifyListeners();
   }
 
-  Future<void> addActionData() async {
-    Map<String, dynamic> request = {};
-    ApiResponse apiResponse = await profileServiceInterface!.addActionData(request);
+  Future<void> addActionData(ViewActionTierListData tier, ViewUserByTypeListData responsiblePerson, List<String> risks, String sDate, String dDate,
+      String aStatus, String desc) async {
+    _isLoading = true;
+    notifyListeners();
+    String orgId = userProfileData!.orgId.toString();
+    if (tier.name!.toLowerCase() == "primary" ||
+        tier.name!.toLowerCase() == "secondary" ||
+        tier.name!.toLowerCase() == "tertiary" ||
+        tier.name!.toLowerCase() == "individual") {
+      officeId = "";
+      departmentId = "";
+    }
+    Map<String, dynamic> mainObject = {
+      "userId": userProfileData!.id,
+      "startedDate": sDate,
+      "dueDate": dDate,
+      "tierId": tier.id,
+      "departmentId": departmentId,
+      "officeId": officeId,
+      "IndividualUserId": "",
+      "orgStatus": aStatus,
+      "orgId": orgId,
+      "description": desc,
+      "responsibleUserId": responsiblePerson.id,
+      "themeId": risks,
+    };
 
+    ApiResponse apiResponse = await profileServiceInterface!.addActionData(mainObject);
+    _isLoading = false;
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
-
+      showCustomSnackBar(map["message"], Get.context!, isError: false);
+      selectedDueData = "";
+      selectedStartData = "";
+      actionStatus = "";
+      selectedActionTierListData = null;
+      selectedUserListData = null;
+      Navigator.of(Get.context!).pop(true);
     } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> updateActionData(String actionId,ViewActionTierListData tier, ViewUserByTypeListData responsiblePerson, List<String> risks, String sDate, String dDate,
+      String aStatus, String desc) async {
+    _isLoading = true;
+    notifyListeners();
+    String orgId = userProfileData!.orgId.toString();
+    if (tier.name!.toLowerCase() == "primary" ||
+        tier.name!.toLowerCase() == "secondary" ||
+        tier.name!.toLowerCase() == "tertiary" ||
+        tier.name!.toLowerCase() == "individual") {
+      officeId = "";
+      departmentId = "";
+    }
+    Map<String, dynamic> mainObject = {
+      "userId": userProfileData!.id,
+      "actionId":actionId,
+      "startedDate": sDate,
+      "dueDate": dDate,
+      "tierId": tier.id,
+      "departmentId": departmentId,
+      "officeId": officeId,
+      "IndividualUserId": "",
+      "orgStatus": aStatus,
+      "orgId": orgId,
+      "description": desc,
+      "responsibleUserId": responsiblePerson.id,
+      "themeId": risks,
+    };
+
+    ApiResponse apiResponse = await profileServiceInterface!.updateActionData(mainObject);
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      showCustomSnackBar(map["message"], Get.context!, isError: false);
+      selectedDueData = "";
+      selectedStartData = "";
+      actionStatus = "";
+      selectedActionTierListData = null;
+      selectedUserListData = null;
+      Navigator.of(Get.context!).pop(true);
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  //-------------------comments--------------
+
+  List<ViewCommentListData>? viewActionCommentList;
+  TextEditingController commentController = TextEditingController();
+  Future<void> viewActionComments(String actionId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    Map<String, dynamic> mainObject = {
+      "actionId":actionId,
+    };
+
+    ApiResponse apiResponse = await profileServiceInterface!.viewCommentList(mainObject);
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewCommentListResponse response = ViewCommentListResponse.fromJson(map);
+      viewActionCommentList = response.data;
+      debugPrint("viewActionComments>>>>>${viewActionCommentList!.length}");
+    }
+    else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> addActionComments(String actionId,String comment) async {
+    _isLoadingBtn = true;
+    notifyListeners();
+
+    Map<String, dynamic> mainObject = {
+      "actionId":actionId,
+      "comment":comment
+    };
+
+    ApiResponse apiResponse = await profileServiceInterface!.addCommentList(mainObject);
+    _isLoadingBtn = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      final newComment = ViewCommentListData.fromJson(map['data']);
+      viewActionCommentList!.insert(0, newComment);
+      commentController.clear();
+    }
+    else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
     }

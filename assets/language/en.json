@@ -214,5 +214,13 @@
   "responsible_department": "Responsible Department",
   "no_staff_found": "No Staff Found",
   "staff": "Staff",
-  "select_risks": "Select Risks"
+  "select_risks": "Select Risks",
+  "please_select_one_tier": "Please select one tier",
+  "please_select_responsible": "Please select responsible",
+  "please_enter_start_date": "Please enter start date",
+  "please_enter_due_date": "Please enter due date",
+  "please_select_status": "Please select status",
+  "edit_actions": "Edit Action",
+  "no_comments_found": "No comments found",
+  "please_enter_comment": "Please enter comment"
 }

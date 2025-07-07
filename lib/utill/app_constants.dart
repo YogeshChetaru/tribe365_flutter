@@ -93,6 +93,9 @@ class AppConstants {
   static const String actionTierListUri = 'actionTierList';
   static const String getThemeListUri = 'getThemeList';
   static const String addActionUri = 'addAction';
+  static const String updateActionUri = 'updateAction';
+  static const String listCommentUri = 'listComment';
+  static const String addCommentUri = 'addComment';
 
 
 

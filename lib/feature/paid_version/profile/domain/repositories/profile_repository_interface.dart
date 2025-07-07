@@ -38,5 +38,8 @@ abstract class ProfileRepositoryInterface implements RepositoryInterface {
   Future<ApiResponse> viewUserByTypeList(Map<String, dynamic> body);
   Future<ApiResponse> viewThemeList(Map<String, dynamic> body);
   Future<ApiResponse> addActionData(Map<String, dynamic> body);
+  Future<ApiResponse> updateActionData(Map<String, dynamic> body);
+  Future<ApiResponse> viewCommentList(Map<String, dynamic> body);
+  Future<ApiResponse> addCommentList(Map<String, dynamic> body);
   Future<ApiResponse> viewActionTierList();
 }

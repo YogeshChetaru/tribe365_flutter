@@ -40,14 +40,21 @@ Widget buildActionItem(BuildContext context, ViewActionListData item, String ses
   if (item.themes != null && item.themes!.isNotEmpty) {
     themesText = item.themes!.map((e) => e.title).join(", ");
   }
+  bool isEditStatus = false;
+  if(item.userId==sessionUserId){
+    isEditStatus = true;
+  }
+  else{
+    isEditStatus = false;
+  }
 
   return Slidable(
-    startActionPane: ActionPane(
+    startActionPane: isEditStatus==true? ActionPane(
       motion: const DrawerMotion(),
       children: [
         SlidableAction(
           onPressed: (_) {
-            routePush(context, ProfileAddActionsScreen());
+            routePush(context, ProfileAddActionsScreen(wayFrom: "edit",actionListData: item,));
           },
           backgroundColor: ColorResources.mainColor,
           foregroundColor: Colors.white,
@@ -55,7 +62,7 @@ Widget buildActionItem(BuildContext context, ViewActionListData item, String ses
           label: getTranslated("edit", context)!,
         ),
       ],
-    ),
+    ):null,
     endActionPane: ActionPane(
       motion: const DrawerMotion(),
       children: [
@@ -122,7 +129,7 @@ Widget buildActionItem(BuildContext context, ViewActionListData item, String ses
               const SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
-                  routePush(context, ProfileActionsCommentsScreen());
+                  routePush(context, ProfileActionsCommentsScreen(item: item,));
                 },
                 child: Image.asset(
                   Images.imgCommentRed,

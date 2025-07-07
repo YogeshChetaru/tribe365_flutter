@@ -19,6 +19,7 @@ class ResponsiblePersonDialog extends StatefulWidget {
 class _ResponsiblePersonDialogState extends State<ResponsiblePersonDialog> {
 
   ProfileController profileController = Provider.of<ProfileController>(Get.context!,listen: false);
+
   @override
   void initState() {
     super.initState();

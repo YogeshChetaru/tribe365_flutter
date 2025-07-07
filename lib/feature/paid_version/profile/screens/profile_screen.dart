@@ -398,7 +398,7 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                                   children: [
                                     Image.asset(Images.imgDemoStudiesProfile,width: 50,height: 50,),
                                     SizedBox(width: 10,),
-                                    Expanded(child: Text(getTranslated("demo_studies", context)!,style: TextStyle(
+                                    Expanded(child: Text("${profileProvider.userProfileData!.organisationName!} ${getTranslated("studies", context)}",style: TextStyle(
                                       fontSize: Dimensions.sp16,
                                       color: ColorResources.black,
                                       fontWeight: FontWeight.w600,

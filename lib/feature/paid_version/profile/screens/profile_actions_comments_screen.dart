@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tribe365_new/common/basewidget/show_custom_snakbar_widget.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
+import 'package:tribe365_new/utill/utility.dart';
 import '../../../../common/basewidget/custom_header_back_widget.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
 import '../controllers/profile_controller.dart';
+import '../domain/models/view_action_list_response.dart';
+import '../domain/models/view_comment_list_response.dart';
 
 class ProfileActionsCommentsScreen extends StatefulWidget {
-  const ProfileActionsCommentsScreen({super.key});
+  final ViewActionListData item;
+
+  const ProfileActionsCommentsScreen({super.key, required this.item});
 
   @override
   ProfileActionsCommentsScreenState createState() => ProfileActionsCommentsScreenState();
@@ -18,7 +24,27 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
 
   @override
+  void initState() {
+    loadAPI();
+    super.initState();
+  }
+
+  void loadAPI() {
+    ProfileController controller = Provider.of<ProfileController>(context, listen: false);
+    controller.viewActionComments(widget.item.id.toString());
+  }
+
+  @override
   Widget build(BuildContext context) {
+    String statusText = getTranslated("not_started", context)!;
+    Color statusColor = ColorResources.colorED1C24;
+    if (widget.item.orgStatus?.toLowerCase() == "started") {
+      statusText = getTranslated("started", context)!;
+      statusColor = ColorResources.colorF6941D;
+    } else if (widget.item.orgStatus?.toLowerCase() == "completed") {
+      statusText = getTranslated("completed", context)!;
+      statusColor = ColorResources.color39B54A;
+    }
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Theme.of(context).primaryColor,
@@ -77,7 +103,7 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                   Expanded(
                                     flex: 1,
                                     child: Text(
-                                      "Alex",
+                                      widget.item.name!,
                                       style: TextStyle(
                                         fontSize: Dimensions.sp14,
                                         fontWeight: FontWeight.w600,
@@ -86,26 +112,29 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                       ),
                                     ),
                                   ),
-
                                 ],
                               ),
                               SizedBox(
                                 height: 5,
                               ),
-                              Text("Test",
+                              Text(widget.item.description!,
                                   style: TextStyle(
                                     fontSize: Dimensions.sp12,
                                     fontWeight: FontWeight.w500,
                                     color: ColorResources.color9a9a9a,
                                     fontFamily: 'Roboto',
                                   )),
-                              SizedBox(height: 5,),
+                              SizedBox(
+                                height: 5,
+                              ),
                               Container(
                                 width: MediaQuery.sizeOf(context).width,
                                 height: 0.5,
                                 color: ColorResources.color9a9a9a,
                               ),
-                              SizedBox(height: 10,),
+                              SizedBox(
+                                height: 10,
+                              ),
                               Row(
                                 children: [
                                   Expanded(
@@ -123,7 +152,7 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                   Expanded(
                                     flex: 70,
                                     child: Text(
-                                      "05-06-2025",
+                                      widget.item.startedDate!,
                                       style: TextStyle(
                                         fontSize: Dimensions.sp14,
                                         fontWeight: FontWeight.w600,
@@ -132,10 +161,11 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                       ),
                                     ),
                                   ),
-
                                 ],
                               ),
-                              SizedBox(height: 10,),
+                              SizedBox(
+                                height: 10,
+                              ),
                               Row(
                                 children: [
                                   Expanded(
@@ -153,7 +183,7 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                   Expanded(
                                     flex: 70,
                                     child: Text(
-                                      "30-09-2025",
+                                      widget.item.dueDate!,
                                       style: TextStyle(
                                         fontSize: Dimensions.sp14,
                                         fontWeight: FontWeight.w600,
@@ -162,10 +192,11 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                       ),
                                     ),
                                   ),
-
                                 ],
                               ),
-                              SizedBox(height: 10,),
+                              SizedBox(
+                                height: 10,
+                              ),
                               Row(
                                 children: [
                                   Expanded(
@@ -191,24 +222,30 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                           height: 14,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
-                                            color: ColorResources.mainColor,
+                                            color: statusColor,
                                           ),
-
                                         ),
-                                        SizedBox(width: 5,),
-                                        Text("not started",textAlign: TextAlign.center,style: TextStyle(
-                                          fontSize: Dimensions.sp12,
-                                          fontWeight: FontWeight.w500,
-                                          color: ColorResources.mainColor,
-                                          fontFamily: 'Roboto',
-                                        ),),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          statusText,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: Dimensions.sp12,
+                                            fontWeight: FontWeight.w500,
+                                            color: statusColor,
+                                            fontFamily: 'Roboto',
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
-
                                 ],
                               ),
-                              SizedBox(height: 10,),
+                              SizedBox(
+                                height: 10,
+                              ),
                               Row(
                                 children: [
                                   Expanded(
@@ -226,7 +263,7 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                   Expanded(
                                     flex: 70,
                                     child: Text(
-                                      "yogesh",
+                                      widget.item.responsibleName!,
                                       style: TextStyle(
                                         fontSize: Dimensions.sp14,
                                         fontWeight: FontWeight.w600,
@@ -235,7 +272,6 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                       ),
                                     ),
                                   ),
-
                                 ],
                               ),
                             ],
@@ -256,62 +292,138 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                           ),
                           child: Row(
                             children: [
-                              SizedBox(width: 10,),
-                              Expanded(flex: 75,child:TextField(
-                                maxLines: 1,
-                                keyboardType: TextInputType.text,
-                                textInputAction: TextInputAction.next,
-                                style: const TextStyle(
-                                  fontSize: Dimensions.sp14,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'Roboto',
-                                ),
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                                  border: InputBorder.none,
-                                  hint: Text(getTranslated("type_your_comment", context)!,style: const TextStyle(
-                                    color: ColorResources.color9a9a9a,
-                                    fontSize: Dimensions.sp14,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'Roboto',
-                                  ),),
-                                ),
-                              ) ),
-                              SizedBox(width: 10,),
-                              Expanded(flex: 25,child:Container(
-                                alignment: Alignment.center,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                  color: ColorResources.mainColor,
-                                  borderRadius: BorderRadius.only(bottomRight: Radius.circular(10),topRight: Radius.circular(10)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: ColorResources.colorAAADC4,
-                                      blurRadius: 1.0,
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                  flex: 75,
+                                  child: TextField(
+                                    controller: profileProvider.commentController,
+                                    maxLines: 1,
+                                    keyboardType: TextInputType.text,
+                                    textInputAction: TextInputAction.done,
+                                    style: const TextStyle(
+                                      fontSize: Dimensions.sp14,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Roboto',
                                     ),
-                                  ],
-                                ),
-                                child: Text(getTranslated("send", context)!,style: TextStyle(
-                                  fontSize: Dimensions.sp16,
-                                  fontWeight: FontWeight.w700,
-                                  color: ColorResources.white,
-                                  fontFamily: 'Roboto',
-                                ),),
-                              ) ),
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                      border: InputBorder.none,
+                                      hint: Text(
+                                        getTranslated("type_your_comment", context)!,
+                                        style: const TextStyle(
+                                          color: ColorResources.color9a9a9a,
+                                          fontSize: Dimensions.sp14,
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: 'Roboto',
+                                        ),
+                                      ),
+                                    ),
+                                  )),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                  flex: 25,
+                                  child: InkWell(
+                                    onTap: (){
+                                      if(profileProvider.commentController.text.toString().trim().isEmpty){
+                                        showCustomSnackBar(getTranslated("please_enter_comment", context), context);
+                                      }
+                                      else{
+                                        profileProvider.addActionComments(widget.item.id!, profileProvider.commentController.text.toString().trim());
+                                      }
+                                    },
+                                    child: profileProvider.isLoadingBtn==true?
+                                    SizedBox(
+                                      height: 70,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                            Theme.of(context).primaryColor,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                        : Container(
+                                      alignment: Alignment.center,
+                                      height: 70,
+                                      decoration: BoxDecoration(
+                                        color: ColorResources.mainColor,
+                                        borderRadius: BorderRadius.only(bottomRight: Radius.circular(10), topRight: Radius.circular(10)),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: ColorResources.colorAAADC4,
+                                            blurRadius: 1.0,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        getTranslated("send", context)!,
+                                        style: TextStyle(
+                                          fontSize: Dimensions.sp16,
+                                          fontWeight: FontWeight.w700,
+                                          color: ColorResources.white,
+                                          fontFamily: 'Roboto',
+                                        ),
+                                      ),
+                                    ),
+                                  )),
                             ],
                           ),
                         ),
                         Container(
                           margin: EdgeInsets.fromLTRB(15, 15, 15, 0),
-                          child: Text(getTranslated("comments", context)!,style: TextStyle(
-                            fontSize: Dimensions.sp18,
-                            fontWeight: FontWeight.w700,
-                            color: ColorResources.color9a9a9a,
-                            fontFamily: 'Roboto',
-                          ),),
+                          child: Text(
+                            getTranslated("comments", context)!,
+                            style: TextStyle(
+                              fontSize: Dimensions.sp18,
+                              fontWeight: FontWeight.w700,
+                              color: ColorResources.color9a9a9a,
+                              fontFamily: 'Roboto',
+                            ),
+                          ),
                         ),
+                        profileProvider.isLoading?
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
+                        ):
+                            profileProvider.viewActionCommentList==null?
+                            Container(
+                              margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                getTranslated("no_comments_found", context)!,
+                                style: TextStyle(
+                                  color: ColorResources.color9a9a9a,
+                                  fontSize: Dimensions.sp14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ):
+                                profileProvider.viewActionCommentList!.isEmpty?
+                                Container(
+                                  margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    getTranslated("no_comments_found", context)!,
+                                    style: TextStyle(
+                                      color: ColorResources.color9a9a9a,
+                                      fontSize: Dimensions.sp14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ):
                         Container(
                           margin: EdgeInsets.fromLTRB(15, 10, 15, 0),
                           width: MediaQuery.sizeOf(context).width,
@@ -329,8 +441,9 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                           child: ListView.builder(
                             shrinkWrap: true,
                             physics: AlwaysScrollableScrollPhysics(),
-                            itemCount: 2,
+                            itemCount: profileProvider.viewActionCommentList!.length,
                             itemBuilder: (context, index) {
+                              ViewCommentListData commentData = profileProvider.viewActionCommentList![index];
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -354,7 +467,7 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                       Expanded(
                                         flex: 1,
                                         child: Text(
-                                          "Alex",
+                                          commentData.name!,
                                           style: TextStyle(
                                             fontSize: Dimensions.sp12,
                                             fontWeight: FontWeight.w600,
@@ -367,7 +480,7 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                         flex: 1,
                                         child: Text(
                                           textAlign: TextAlign.end,
-                                          "05 Jun 2025, 09:43 am",
+                                          Utility.convertDataIntoddMMMyyyyhhmma(commentData.createdAt!),
                                           style: TextStyle(
                                             fontSize: Dimensions.sp10,
                                             fontWeight: FontWeight.w400,
@@ -376,33 +489,34 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                                           ),
                                         ),
                                       ),
-
                                     ],
                                   ),
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  Text("Test",
+                                  Text(commentData.comment!,
                                       style: TextStyle(
                                         fontSize: Dimensions.sp12,
                                         fontWeight: FontWeight.w500,
                                         color: ColorResources.color9a9a9a,
                                         fontFamily: 'Roboto',
                                       )),
-                                  SizedBox(height: 5,),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
                                   Container(
                                     width: MediaQuery.sizeOf(context).width,
                                     height: 0.5,
                                     color: ColorResources.color9a9a9a,
                                   ),
-                                  SizedBox(height: 10,),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
                                 ],
                               );
                             },
                           ),
                         ),
-
-
                       ],
                     ),
                   ),
@@ -412,12 +526,6 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
           );
         }),
       ),
-
     );
   }
-
 }
-
-
-
-

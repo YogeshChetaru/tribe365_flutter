@@ -5,6 +5,9 @@ import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import '../../../../common/basewidget/custom_header_back_widget.dart';
 
+import '../../../../utill/dimensions.dart';
+import '../../../free_version/free_dashboard/domain/models/get_office_list_response.dart';
+import '../../../free_version/free_dashboard/domain/models/view_department_list_response.dart';
 import '../../know/controllers/know_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../widgets/build_chart_card.dart';
@@ -18,7 +21,22 @@ class ProfileDemoStudiesScreen extends StatefulWidget {
 
 class ProfileDemoStudiesScreenState extends State<ProfileDemoStudiesScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
-
+  void loadAPI() {
+    final ProfileController profileController = Provider.of<ProfileController>(context, listen: false);
+    final KnowController knowController = Provider.of<KnowController>(context, listen: false);
+    profileController.viewUserProfile().then((onValue) {
+      knowController.updateOrgID(profileController.userProfileData);
+      knowController.viewDepartmentList().then((value) {
+        knowController.viewOfficeList().then((onValue) {
+        });
+      });
+    });
+  }
+  @override
+  void initState() {
+    loadAPI();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +61,9 @@ class ProfileDemoStudiesScreenState extends State<ProfileDemoStudiesScreen> {
                     margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
                     child: Row(
                       children: [
-                        Expanded(
+                        knowProvider.officesList == null
+                            ? SizedBox.fromSize()
+                            : Expanded(
                           flex: 1,
                           child: Container(
                             padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -60,15 +80,15 @@ class ProfileDemoStudiesScreenState extends State<ProfileDemoStudiesScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                /*DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
+                                DropdownButtonHideUnderline(
+                                  child: DropdownButton<Offices>(
                                     isExpanded: true,
                                     value: knowProvider.officeSelectedValue,
-                                    items: knowProvider.officeList.map((String value) {
-                                      return DropdownMenuItem<String>(
+                                    items: knowProvider.officesList!.map((Offices value) {
+                                      return DropdownMenuItem<Offices>(
                                         value: value,
                                         child: Text(
-                                          value,
+                                          value.office!,
                                           style: const TextStyle(
                                             fontSize: Dimensions.sp14,
                                             color: ColorResources.black,
@@ -78,11 +98,11 @@ class ProfileDemoStudiesScreenState extends State<ProfileDemoStudiesScreen> {
                                         ),
                                       );
                                     }).toList(),
-                                    onChanged: (String? newValue) {
-                                      // knowProvider.updateOfficeSelectedValue(newValue);
+                                    onChanged: (Offices? newValue) {
+                                      knowProvider.updateOfficeSelectedValue(newValue);
                                     },
                                   ),
-                                ),*/
+                                ),
                               ],
                             ),
                           ),
@@ -90,7 +110,9 @@ class ProfileDemoStudiesScreenState extends State<ProfileDemoStudiesScreen> {
                         SizedBox(
                           width: 15,
                         ),
-                        Expanded(
+                        knowProvider.departmentList == null
+                            ? SizedBox.fromSize()
+                            :  Expanded(
                           flex: 1,
                           child: Container(
                             padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -107,15 +129,15 @@ class ProfileDemoStudiesScreenState extends State<ProfileDemoStudiesScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                /*DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
+                                DropdownButtonHideUnderline(
+                                  child: DropdownButton<ViewDepartmentListData>(
                                     isExpanded: true,
                                     value: knowProvider.departmentSelectedValue,
-                                    items: knowProvider.departmentList.map((String value) {
-                                      return DropdownMenuItem<String>(
+                                    items: knowProvider.departmentList!.map((ViewDepartmentListData value) {
+                                      return DropdownMenuItem<ViewDepartmentListData>(
                                         value: value,
                                         child: Text(
-                                          value,
+                                          value.department!,
                                           style: const TextStyle(
                                             fontSize: Dimensions.sp14,
                                             color: ColorResources.black,
@@ -125,11 +147,11 @@ class ProfileDemoStudiesScreenState extends State<ProfileDemoStudiesScreen> {
                                         ),
                                       );
                                     }).toList(),
-                                    onChanged: (String? newValue) {
+                                    onChanged: (ViewDepartmentListData? newValue) {
                                       knowProvider.updateDepartmentSelectedValue(newValue);
                                     },
                                   ),
-                                ),*/
+                                ),
                               ],
                             ),
                           ),

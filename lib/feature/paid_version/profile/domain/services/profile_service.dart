@@ -203,6 +203,21 @@ class ProfileService implements ProfileServiceInterface {
     return profileRepositoryInterface.addActionData(body);
   }
 
+  @override
+  Future<ApiResponse> updateActionData(Map<String, dynamic> body) {
+    return profileRepositoryInterface.updateActionData(body);
+  }
+
+  @override
+  Future<ApiResponse> viewCommentList(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewCommentList(body);
+  }
+
+  @override
+  Future<ApiResponse> addCommentList(Map<String, dynamic> body) {
+    return profileRepositoryInterface.addCommentList(body);
+  }
+
 
 
 
