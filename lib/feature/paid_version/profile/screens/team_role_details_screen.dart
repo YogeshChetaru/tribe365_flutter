@@ -61,7 +61,7 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
                     children: [
                       InkWell(
                           onTap: () {
-                            Navigator.of(context).pop();
+                            Navigator.of(context).pop(true);
                           },
                           child: Image.asset(
                             Images.imgCircleBackRed,

@@ -7,7 +7,6 @@ import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
 import '../controllers/profile_controller.dart';
-import '../widgets/motivation_build_question.dart';
 import '../widgets/motivation_build_question_update.dart';
 
 class MotivationQuestionsUpdateScreen extends StatefulWidget {

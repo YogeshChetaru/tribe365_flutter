@@ -1,12 +1,20 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tribe365_new/feature/paid_version/home/controllers/home_controller.dart';
 import 'package:tribe365_new/feature/paid_version/profile/domain/models/view_comment_list_response.dart';
+import 'package:tribe365_new/feature/paid_version/profile/domain/models/view_team_role_data.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
 import '../../../../data/model/api_response.dart';
 import '../../../../helper/api_checker.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../main.dart';
+import '../../../../utill/notification_utils.dart';
+import '../../../free_version/free_dashboard/domain/models/get_office_list_response.dart';
+import '../../../free_version/free_dashboard/domain/models/view_department_list_response.dart';
 import '../../home/domain/models/view_department_user_list_response.dart';
 import '../domain/models/cotquestiondata.dart';
 import '../domain/models/get_motivation_list_response.dart';
@@ -17,13 +25,22 @@ import '../domain/models/view_action_tier_list_response.dart';
 import '../domain/models/view_cot_functional_lens_response.dart';
 import '../domain/models/view_cot_individual_summary_response.dart';
 import '../domain/models/view_cot_mapper_summary_response.dart';
+import '../domain/models/view_diagnostic_completed_question_list_response.dart';
+import '../domain/models/view_diagnostic_question_list_response.dart';
 import '../domain/models/view_personality_completed_answers_response.dart';
 import '../domain/models/view_personality_type_question_list_response.dart';
 import '../domain/models/view_personality_type_report_response.dart';
 import '../domain/models/view_sot_motivation_completed_answer_list_response.dart';
 import '../domain/models/view_sot_motivation_user_list_response.dart';
+import '../domain/models/view_sot_question_answers_list_response.dart';
+import '../domain/models/view_sot_question_list_response.dart';
+import '../domain/models/view_studies_list_response.dart';
+import '../domain/models/view_support_history_list_response.dart';
 import '../domain/models/view_theme_list_response.dart';
+import '../domain/models/view_tribe_meter_completed_list_response.dart';
+import '../domain/models/view_tribeo_meter_question_list_response.dart';
 import '../domain/models/view_user_by_type_list_response.dart';
+import '../domain/models/view_user_chat_messages_response.dart';
 import '../domain/models/viewuserprofileresponse.dart';
 import '../domain/services/profile_service_interface.dart';
 
@@ -51,6 +68,10 @@ class ProfileController extends ChangeNotifier {
   bool _isLoadingBtn = false;
 
   bool get isLoadingBtn => _isLoadingBtn;
+  bool _isLoadingData = false;
+
+  bool get isLoadingData => _isLoadingData;
+
   CotQuestionData? _CotQuestiondata;
 
   CotQuestionData? get CotQuestiondata => _CotQuestiondata;
@@ -114,20 +135,6 @@ class ProfileController extends ChangeNotifier {
   String tierSelectedValue = 'All Tier';
   List<String> tierList = ["All Tier", "Primary", "Secondary", "Tertiary", "Office", "Department", "Individual"];
 
-  final List<Map<String, String>> statements = [
-    {'label': 'A', 'text': 'identifying improved ways of doing things'},
-    {'label': 'B', 'text': 'making sure everyone in the team is happy'},
-    {'label': 'C', 'text': 'being the best at what I do'},
-    {'label': 'D', 'text': 'assessing what is required against what we have and finding the best way forward'},
-    {'label': 'E', 'text': 'completing the activity'},
-  ];
-  final List<Map<String, String>> statementsUpdate = [
-    {'label': 'A', 'text': 'identifying improved ways of doing things'},
-    {'label': 'B', 'text': 'making sure everyone in the team is happy'},
-    {'label': 'C', 'text': 'being the best at what I do'},
-    {'label': 'D', 'text': 'assessing what is required against what we have and finding the best way forward'},
-    {'label': 'E', 'text': 'completing the activity'},
-  ];
 
   Map<int, int> counters = {};
   Map<int, int> countersUpdate = {};
@@ -193,13 +200,6 @@ class ProfileController extends ChangeNotifier {
   List<double> percentages = [69.3, 73.3, 67.8, 78.9, 62.7, 76.0, 78.7, 80.0];
   List<String> labels = ['Int', 'Ext', 'Innov', 'Lgc', 'Ppl', 'Tsk', 'Stru', 'Flxbl'];
 
-  final List<Map<String, String>> cultureItems = [
-    {'label': 'PERSON', 'value': '0'},
-    {'label': 'POWER', 'value': '0'},
-    {'label': 'ROLE', 'value': '0'},
-    {'label': 'COLLABORATIVE', 'value': '0'},
-  ];
-
   final List<double> motivationScores = [28.0, 28.0, 18.0, 20.0, 17.5, 21.0, 27.5, 18.5, 25.0, 21.5];
 
   final List<String> motivationLabels = [
@@ -239,9 +239,25 @@ class ProfileController extends ChangeNotifier {
 
   bool isPushNotification = false;
 
-  void updateIsPushNotification(bool value) {
+  Future<void> updateIsPushNotification(bool value,bool isNotify) async {
+    HomeController homeController = Provider.of(Get.context!,listen: false);
     isPushNotification = value;
-    notifyListeners();
+    bool deviceStatus=false;
+    try {
+      deviceStatus = await NotificationUtils.areNotificationsEnabled();
+    }catch (e){
+    deviceStatus=false;
+    }
+    if (value){
+      homeController.savePushNotificationStatus(true);
+      updatePushNotificationStatus(true, deviceStatus);
+    }else{
+      homeController.savePushNotificationStatus(false);
+      updatePushNotificationStatus(false, deviceStatus);
+    }
+    if(isNotify){
+      notifyListeners();
+    }
   }
 
   void updateUserDataPrivateStatus(bool value) {
@@ -272,18 +288,6 @@ class ProfileController extends ChangeNotifier {
 
   int get totalPoints {
     return counters.values.fold(0, (sum, value) => sum + value);
-  }
-
-  void initCounters() {
-    for (int i = 0; i < statements.length; i++) {
-      counters[i] = 0;
-    }
-  }
-
-  void initCountersUpdate() {
-    for (int i = 0; i < statementsUpdate.length; i++) {
-      countersUpdate[i] = 0;
-    }
   }
 
   void initMotivationQuestions() {
@@ -1361,6 +1365,11 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setAdapter(ViewCotFunctionalLensData? data) {
+
+  }
+
+
   Future<void> viewCOTFunctionalLensDetail() async {
     _isLoading = true;
     Map<String, dynamic> request = {"orgId": userProfileData!.orgId.toString(), "userId": userProfileData!.id.toString()};
@@ -1377,6 +1386,7 @@ class ProfileController extends ChangeNotifier {
       } else {
         userNameStatus = false;
       }
+      setAdapter(modelFutureLensDetails);
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
@@ -1576,7 +1586,7 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSelectedData(String type,String date){
+  void updateSelectedData(String type, String date) {
     if (type == "dueData") {
       selectedDueData = date;
     } else {
@@ -1771,8 +1781,8 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateActionData(String actionId,ViewActionTierListData tier, ViewUserByTypeListData responsiblePerson, List<String> risks, String sDate, String dDate,
-      String aStatus, String desc) async {
+  Future<void> updateActionData(String actionId, ViewActionTierListData tier, ViewUserByTypeListData responsiblePerson, List<String> risks,
+      String sDate, String dDate, String aStatus, String desc) async {
     _isLoading = true;
     notifyListeners();
     String orgId = userProfileData!.orgId.toString();
@@ -1785,7 +1795,7 @@ class ProfileController extends ChangeNotifier {
     }
     Map<String, dynamic> mainObject = {
       "userId": userProfileData!.id,
-      "actionId":actionId,
+      "actionId": actionId,
       "startedDate": sDate,
       "dueDate": dDate,
       "tierId": tier.id,
@@ -1821,12 +1831,13 @@ class ProfileController extends ChangeNotifier {
 
   List<ViewCommentListData>? viewActionCommentList;
   TextEditingController commentController = TextEditingController();
+
   Future<void> viewActionComments(String actionId) async {
     _isLoading = true;
     notifyListeners();
 
     Map<String, dynamic> mainObject = {
-      "actionId":actionId,
+      "actionId": actionId,
     };
 
     ApiResponse apiResponse = await profileServiceInterface!.viewCommentList(mainObject);
@@ -1835,23 +1846,18 @@ class ProfileController extends ChangeNotifier {
       Map<String, dynamic> map = apiResponse.response!.data;
       ViewCommentListResponse response = ViewCommentListResponse.fromJson(map);
       viewActionCommentList = response.data;
-      debugPrint("viewActionComments>>>>>${viewActionCommentList!.length}");
-    }
-    else {
+    } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
     }
     notifyListeners();
   }
 
-  Future<void> addActionComments(String actionId,String comment) async {
+  Future<void> addActionComments(String actionId, String comment) async {
     _isLoadingBtn = true;
     notifyListeners();
 
-    Map<String, dynamic> mainObject = {
-      "actionId":actionId,
-      "comment":comment
-    };
+    Map<String, dynamic> mainObject = {"actionId": actionId, "comment": comment};
 
     ApiResponse apiResponse = await profileServiceInterface!.addCommentList(mainObject);
     _isLoadingBtn = false;
@@ -1860,11 +1866,1264 @@ class ProfileController extends ChangeNotifier {
       final newComment = ViewCommentListData.fromJson(map['data']);
       viewActionCommentList!.insert(0, newComment);
       commentController.clear();
-    }
-    else {
+    } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
     }
     notifyListeners();
   }
+
+  //-----------------------------------
+  Offices? officeSelectedValue;
+  List<ViewDepartmentListData>? departmentList;
+  List<Offices>? officesList;
+  ViewDepartmentListData? departmentSelectedValue;
+  String orgId = "";
+  String userId = "";
+  List<CultureIndex>? cultureIndexList;
+  List<CultureIndex>? engagementIndexList;
+
+  List<double> get sortedUniqueScores {
+    final uniqueScores = cultureIndexList!.map((e) => e.data!).toSet().toList()..sort();
+    return uniqueScores;
+  }
+
+  List<double> get sortedUniqueScoresEngagement {
+    final uniqueScores = engagementIndexList!.map((e) => e.data!).toSet().toList()..sort();
+    return uniqueScores;
+  }
+
+  Map<int, String> get cultureIndexLabels {
+    return {
+      for (int i = 0; i < cultureIndexList!.length; i++) i: cultureIndexList![i].monthName!,
+    };
+  }
+
+  Map<int, String> get engagementIndexLabels {
+    return {
+      for (int i = 0; i < engagementIndexList!.length; i++) i: engagementIndexList![i].monthName!,
+    };
+  }
+
+  List<FlSpot> get cultureIndexSpots {
+    return cultureIndexList!
+        .asMap()
+        .entries
+        .map((e) => FlSpot(
+              e.key.toDouble(),
+              double.tryParse(e.value.data.toString()) ?? 0,
+            ))
+        .toList();
+  }
+
+  double get engagementIndexMinY {
+    final ys = engagementIndexSpots.map((e) => e.y);
+    final min = ys.isEmpty ? 0 : ys.reduce((a, b) => a < b ? a : b);
+    return min - 10; // add some padding
+  }
+
+  double get engagementIndexMaxY {
+    final ys = engagementIndexSpots.map((e) => e.y);
+    final max = ys.isEmpty ? 0 : ys.reduce((a, b) => a > b ? a : b);
+    return max + 10; // add some padding
+  }
+
+  List<FlSpot> get engagementIndexSpots {
+    return engagementIndexList!
+        .asMap()
+        .entries
+        .map((e) => FlSpot(
+              e.key.toDouble(),
+              double.tryParse(e.value.data.toString()) ?? 0,
+            ))
+        .toList();
+  }
+
+  bool isCultureVisible = false;
+  bool isEngagementVisible = false;
+  bool isValueVisible = false;
+  bool isTeamRoleVisible = false;
+  bool isPersonalityTypeVisible = false;
+  bool isCultureStructureVisible = false;
+  bool isMotivationVisible = false;
+  bool isDiagnosticsVisible = false;
+  bool isTribeMeterVisible = false;
+  bool isSentimentIndexVisible = false;
+  List<ViewTeamRoleData> _viewTeamRoles = [];
+
+  List<ViewTeamRoleData> get viewTeamRoles => _viewTeamRoles;
+  List<GetCOTpersonalityType> _personalityTypes = [];
+
+  List<GetCOTpersonalityType> get personalityTypes => _personalityTypes;
+
+  List<double> get personalityTypesPercentages => _personalityTypes.map((e) => e.percentage!).toList();
+  bool isQuestionnaireAnswerFilled = true;
+  bool isUserFilledAnswer = false;
+  List<Map<String, String>>? cultureStructureItems;
+  List<SotSummary> sotSummaries = [];
+  List<ModelMotivationGraph>? viewSOTMotivationReportList;
+  List<GetDiagnosticReportForGraph>? getDiagnosticReportList;
+  bool isDiagnosticAnsDone = false;
+  bool isTribeMeterAnsDone = false;
+  List<GetCOTpersonalityType>? getTribeMeterReportList;
+  List<GetHappyIndexMonthGraphCount>? viewHappyIndexMonthGraphList;
+
+  void updateCultureStatus() {
+    if (isCultureVisible == true) {
+      isCultureVisible = false;
+    } else {
+      isCultureVisible = true;
+    }
+    notifyListeners();
+  }
+
+  void updateEngagementStatus() {
+    if (isEngagementVisible == true) {
+      isEngagementVisible = false;
+    } else {
+      isEngagementVisible = true;
+    }
+    notifyListeners();
+  }
+
+  void updateValueStatus() {
+    if (isValueVisible == true) {
+      isValueVisible = false;
+    } else {
+      isValueVisible = true;
+    }
+    notifyListeners();
+  }
+
+  void updateTeamRoleStatus() {
+    if (isTeamRoleVisible == true) {
+      isTeamRoleVisible = false;
+    } else {
+      isTeamRoleVisible = true;
+    }
+    notifyListeners();
+  }
+
+  void updatePersonalityTypeVisibleStatus() {
+    if (isPersonalityTypeVisible == true) {
+      isPersonalityTypeVisible = false;
+    } else {
+      isPersonalityTypeVisible = true;
+    }
+    notifyListeners();
+  }
+
+  void updateCultureStructureVisibleStatus() {
+    if (isCultureStructureVisible == true) {
+      isCultureStructureVisible = false;
+    } else {
+      isCultureStructureVisible = true;
+    }
+    notifyListeners();
+  }
+
+  void updateMotivationVisibleStatus() {
+    if (isMotivationVisible == true) {
+      isMotivationVisible = false;
+    } else {
+      isMotivationVisible = true;
+    }
+    notifyListeners();
+  }
+
+  void updateDiagnosticsVisibleStatus() {
+    if (isDiagnosticsVisible == true) {
+      isDiagnosticsVisible = false;
+    } else {
+      isDiagnosticsVisible = true;
+    }
+    notifyListeners();
+  }
+
+  void updateTribeMeterVisibleStatus() {
+    if (isTribeMeterVisible == true) {
+      isTribeMeterVisible = false;
+    } else {
+      isTribeMeterVisible = true;
+    }
+    notifyListeners();
+  }
+
+  void updateSentimentIndexVisibleStatus() {
+    if (isSentimentIndexVisible == true) {
+      isSentimentIndexVisible = false;
+    } else {
+      isSentimentIndexVisible = true;
+    }
+    notifyListeners();
+  }
+
+  String getTeamRolePercentage(String roleKey) {
+    final role = _viewTeamRoles.firstWhere(
+      (r) => r.key.toLowerCase().contains(roleKey.toLowerCase()),
+      orElse: () => ViewTeamRoleData(key: '', percentage: '0', description: '0.00'),
+    );
+    return role.description;
+  }
+
+  void setTeamRoles(Map<String, dynamic> json) {
+    final mapers = json["getCOTteamRoleMapReport"] as Map<String, dynamic>;
+
+    _viewTeamRoles = [
+      ViewTeamRoleData(
+        key: "Shaper",
+        percentage: json["shaper"] ?? "0",
+        description: mapers["shaper"] ?? "",
+      ),
+      ViewTeamRoleData(
+        key: "Coordinator",
+        percentage: json["coordinator"] ?? "0",
+        description: mapers["coordinator"] ?? "",
+      ),
+      ViewTeamRoleData(
+        key: "Completer Finisher",
+        percentage: json["completerFinisher"] ?? "0",
+        description: mapers["completerFinisher"] ?? "",
+      ),
+      ViewTeamRoleData(
+        key: "Teamworker",
+        percentage: json["teamworker"] ?? "0",
+        description: mapers["teamworker"] ?? "",
+      ),
+      ViewTeamRoleData(
+        key: "Implementer",
+        percentage: json["implementer"] ?? "0",
+        description: mapers["implementer"] ?? "",
+      ),
+      ViewTeamRoleData(
+        key: "Monitor Evaluator",
+        percentage: json["monitorEvaluator"] ?? "0",
+        description: mapers["monitorEvaluator"] ?? "",
+      ),
+      ViewTeamRoleData(
+        key: "Plant",
+        percentage: json["plant"] ?? "0",
+        description: mapers["plant"] ?? "",
+      ),
+      ViewTeamRoleData(
+        key: "Resource Investigator",
+        percentage: json["resourceInvestigator"] ?? "0",
+        description: mapers["resourceInvestigator"] ?? "",
+      ),
+    ];
+
+    notifyListeners();
+  }
+
+  void setCultureStructureData(Map<String, dynamic> json) {
+    isQuestionnaireAnswerFilled = json['IsQuestionnaireAnswerFilled'] != false;
+    isUserFilledAnswer = json['IsUserFilledAnswer'] ?? false;
+
+    final rawItems = (json['sotDetailArray'] as List<dynamic>?) ?? [];
+    cultureStructureItems = List.generate(
+      4,
+      (index) {
+        if (index < rawItems.length) {
+          final item = rawItems[index];
+          return {
+            "label": item['title'] ?? "",
+            "value": item['SOTCount'] ?? "0",
+          };
+        }
+        return {"label": "", "value": "0"};
+      },
+    );
+
+    // Clear previous summaries
+    sotSummaries = [];
+
+    final rawSummaries = (json['sotSummaryDetailArray'] as List<dynamic>?) ?? [];
+    for (var s in rawSummaries) {
+      final summariesList = (s['summary'] as List<dynamic>?)?.map((e) => e['summary'].toString()).toList() ?? [];
+      sotSummaries.add(
+        SotSummary(
+          id: s['id'].toString(),
+          type: s['type'] ?? "",
+          title: s['title'] ?? "",
+          imgUrl: s['imgUrl'] ?? "",
+          sotCount: s['SOTCount'] ?? "",
+          summaries: summariesList,
+        ),
+      );
+    }
+    notifyListeners();
+  }
+
+  void updateOfficeSelectedValue(Offices? data) {
+    officeSelectedValue = data!;
+
+    departmentList = [];
+    departmentList!.add(ViewDepartmentListData(id: 0, department: 'All Departments'));
+
+    if (data.officeId == 0) {
+      // Load all departments from API
+      viewDepartmentList();
+    } else {
+      // Filter departments linked to selected office
+      for (var officeDept in officesList!) {
+        if (officeDept.officeId == data.officeId) {
+          departmentList!.addAll(officeDept.department!);
+        }
+      }
+    }
+    departmentSelectedValue = departmentList!.first;
+    viewOrgDashboardReportWithFilter(false);
+    notifyListeners();
+  }
+
+  void updateOrgID(ViewUserProfileData? data) {
+    orgId = data!.orgId.toString();
+    userId = data.id.toString();
+    notifyListeners();
+  }
+
+  void updateDepartmentSelectedValue(ViewDepartmentListData? data) {
+    if (departmentSelectedValue?.id != data!.id) {
+      departmentSelectedValue = data;
+      viewOrgDashboardReportWithFilter(false);
+    }
+    notifyListeners();
+  }
+
+  void updateLoaderStatus(bool status) {
+    _isLoading = status;
+    notifyListeners();
+  }
+
+  Future<void> viewDepartmentList() async {
+    ApiResponse apiResponse = await profileServiceInterface!.viewDepartmentList();
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewDepartmentListResponse response = ViewDepartmentListResponse.fromJson(map);
+
+      departmentList = [];
+      ViewDepartmentListData data0 = ViewDepartmentListData(id: 0, department: "All Departments");
+      departmentList!.add(data0);
+      for (var i = 0; i < response.data!.length; i++) {
+        departmentList!.add(response.data![i]);
+      }
+      departmentSelectedValue = departmentList![0];
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewOfficeList() async {
+    Map<String, dynamic> requestData = {
+      "orgId": orgId,
+    };
+    ApiResponse apiResponse = await profileServiceInterface!.viewOfficeList(requestData);
+    updateLoaderStatus(false);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewOfficeListResponse response = ViewOfficeListResponse.fromJson(map);
+
+      officesList = [];
+      Offices data0 = Offices(officeId: 0, department: departmentList, office: "All Offices");
+      officesList!.add(data0);
+      for (var i = 0; i < response.data!.offices!.length; i++) {
+        officesList!.add(response.data!.offices![i]);
+      }
+      officeSelectedValue = officesList![0];
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> viewOrgDashboardReportWithFilter(bool isFirstTime) async {
+    _isLoadingBtn = true;
+    notifyListeners();
+
+    Map<String, dynamic> mainObject = {"orgId": orgId, "officeId": officeSelectedValue!.officeId, "departmentId": departmentSelectedValue!.id};
+
+    ApiResponse apiResponse = await profileServiceInterface!.viewOrgDashboardReportWithFilter(mainObject);
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewStudiesListResponse response = ViewStudiesListResponse.fromJson(map);
+      ViewStudiesListData? mainData = response.data;
+      cultureIndexList = mainData!.cultureIndex;
+      engagementIndexList = mainData.engagementIndex;
+      _personalityTypes = mainData.getCOTpersonalityType!;
+      setTeamRoles(map["data"]);
+      setCultureStructureData(map["data"]["getSOTcultureStructureReport"]);
+      viewSOTMotivationReportList = mainData.getSOTmotivationReport;
+      getDiagnosticReportList = mainData.getDiagnosticReportForGraph;
+      isDiagnosticAnsDone = mainData.orgStatus!.isDiagnosticAnsDone!;
+      isTribeMeterAnsDone = mainData.orgStatus!.isTribeometerAnsDone!;
+      getTribeMeterReportList = mainData.getTribeometerReportForGraph;
+      viewHappyIndexMonthGraphList = mainData.getHappyIndexMonthGraphCount;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    _isLoadingBtn = false;
+    notifyListeners();
+  }
+
+  //--------------------------------------------
+  List<ViewSotQuestionListData>? viewSotQuestionList;
+  List<ViewSotQuestionAnswersListData>? viewSotQuestionCompletedList;
+
+  void selectOption(int questionIndex, int optionIndex) {
+    if (viewSotQuestionList == null || questionIndex < 0 || questionIndex >= viewSotQuestionList!.length) return;
+
+    final options = viewSotQuestionList![questionIndex].option ?? [];
+    if (optionIndex < 0 || optionIndex >= options.length) return;
+
+    for (var o in options) {
+      o.isChecked = false;
+    }
+    options[optionIndex].isChecked = true;
+    notifyListeners();
+  }
+
+  void selectOptionCompleted(int questionIndex, int optionIndex) {
+    if (viewSotQuestionCompletedList == null || questionIndex < 0 || questionIndex >= viewSotQuestionCompletedList!.length) {
+      return;
+    }
+
+    final options = viewSotQuestionCompletedList![questionIndex].option ?? [];
+    if (optionIndex < 0 || optionIndex >= options.length) return;
+
+    for (var o in options) {
+      o.isChecked = false;
+    }
+    options[optionIndex].isChecked = true;
+    notifyListeners();
+  }
+
+  String getSotQuestionListData() {
+    return profileServiceInterface!.getSotQuestionListData();
+  }
+
+  Future<void> saveSotQuestionListData() async {
+    final jsonList = viewSotQuestionList!.map((q) => q.toJson()).toList();
+    final jsonString = jsonEncode(jsonList);
+    profileServiceInterface!.saveSotQuestionListData(jsonString);
+  }
+
+  Future<void> validateAndSubmitSotAnswers(BuildContext context) async {
+    // Clear old answers
+    List<String> liAnswers = [];
+
+    if (viewSotQuestionList == null) {
+      showCustomSnackBar("No questions available.", context);
+      return;
+    }
+
+    for (int i = 0; i < viewSotQuestionList!.length; i++) {
+      int count = 0;
+      final options = viewSotQuestionList![i].option ?? [];
+
+      for (int j = 0; j < options.length; j++) {
+        if (options[j].isChecked) {
+          liAnswers.add(options[j].id.toString());
+        } else {
+          count++;
+        }
+      }
+
+      if (count >= 4) {
+        final qusNo = i + 1;
+        showCustomSnackBar(
+          "Please agree with a statement for Question $qusNo",
+          context,
+          isError: true,
+        );
+        return;
+      }
+    }
+
+    if (liAnswers.length != viewSotQuestionList!.length) {
+      showCustomSnackBar(
+        "Please complete all questions before submitting.",
+        context,
+        isError: true,
+      );
+      return;
+    } else {
+      await sendSotQuestionData(liAnswers, context);
+    }
+  }
+
+  Future<void> viewSotQuestionListAPI({String? savedJsonList}) async {
+    _isLoading = true;
+
+    ApiResponse apiResponse = await profileServiceInterface!.viewSotQuestionList();
+    _isLoading = false;
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      final response = ViewSotQuestionListResponse.fromJson(apiResponse.response!.data);
+      viewSotQuestionList = response.data ?? [];
+
+      if (savedJsonList != null && savedJsonList.isNotEmpty && savedJsonList != "[]") {
+        try {
+          List<dynamic> savedJson = jsonDecode(savedJsonList);
+
+          for (int i = 0; i < savedJson.length; i++) {
+            if (i >= viewSotQuestionList!.length) continue;
+
+            Map<String, dynamic> savedQuestion = savedJson[i];
+            List<dynamic>? savedOptions = savedQuestion['option'];
+
+            if (savedOptions == null || savedOptions.isEmpty) continue;
+
+            // Step 1: Clear all isChecked flags first
+            viewSotQuestionList![i].option?.forEach((o) => o.isChecked = false);
+
+            // Step 2: Set only saved checked option(s)
+            for (var savedOpt in savedOptions) {
+              if (savedOpt['isChecked'] == true) {
+                final savedId = savedOpt['id'];
+                final savedSection = savedOpt['section'];
+                final savedType = savedOpt['type'];
+
+                viewSotQuestionList![i].option?.forEach((opt) {
+                  if (opt.id == savedId && opt.section == savedSection && opt.type == savedType) {
+                    opt.isChecked = true;
+                  }
+                });
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Error merging saved answers: $e');
+        }
+      }
+    } else {
+      showCustomSnackBar(
+        apiResponse.error ?? "Something went wrong",
+        Get.context!,
+        isError: true,
+      );
+      ApiChecker.checkApi(apiResponse);
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> sendSotQuestionData(List<String> liAnswers, BuildContext context) async {
+    _isLoadingBtn = true;
+    notifyListeners();
+
+    try {
+      // Build payload
+      final Map<String, dynamic> payload = {
+        "answer": liAnswers.map((id) => {"id": id}).toList(),
+      };
+
+      ApiResponse apiResponse = await profileServiceInterface!.sendSotQuestionListData(payload);
+
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+        String msg = apiResponse.response!.data['message'] ?? "Submission successful";
+        showCustomSnackBar(msg, Get.context!, isError: false);
+
+        profileServiceInterface!.clearSotQuestionListData();
+        viewSotQuestionList = null;
+
+        Navigator.of(Get.context!).pop(true);
+      } else {
+        showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+        ApiChecker.checkApi(apiResponse);
+      }
+    } catch (e) {
+      showCustomSnackBar("Error: $e", Get.context!, isError: true);
+    }
+
+    _isLoadingBtn = false;
+    notifyListeners();
+  }
+
+  Future<void> validateAndSubmitSotAnswersCompleted(BuildContext context) async {
+    // Clear old answers
+    List<String> liAnswers = [];
+
+    if (viewSotQuestionCompletedList == null) {
+      showCustomSnackBar("No questions available.", context);
+      return;
+    }
+
+    for (int i = 0; i < viewSotQuestionCompletedList!.length; i++) {
+      int count = 0;
+      final options = viewSotQuestionCompletedList![i].option ?? [];
+
+      for (int j = 0; j < options.length; j++) {
+        if (options[j].isChecked!) {
+          liAnswers.add(options[j].id.toString());
+        } else {
+          count++;
+        }
+      }
+
+      if (count >= 4) {
+        final qusNo = i + 1;
+        showCustomSnackBar(
+          "Please agree with a statement for Question $qusNo",
+          context,
+          isError: true,
+        );
+        return;
+      }
+    }
+
+    if (liAnswers.length != viewSotQuestionCompletedList!.length) {
+      showCustomSnackBar(
+        "Please complete all questions before submitting.",
+        context,
+        isError: true,
+      );
+      return;
+    } else {
+      await sendSotQuestionCompletedData(liAnswers, context);
+    }
+  }
+
+  Future<void> sendSotQuestionCompletedData(List<String> liAnswers, BuildContext context) async {
+    _isLoadingBtn = true;
+    notifyListeners();
+
+    try {
+      // Build payload
+      final Map<String, dynamic> payload = {
+        "answer": liAnswers.map((id) => {"id": id}).toList(),
+      };
+
+      ApiResponse apiResponse = await profileServiceInterface!.sendSotQuestionListCompletedData(payload);
+
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+        String msg = apiResponse.response!.data['message'] ?? "Submission successful";
+        showCustomSnackBar(msg, Get.context!, isError: false);
+        Navigator.of(Get.context!).pop(true);
+      } else {
+        showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+        ApiChecker.checkApi(apiResponse);
+      }
+    } catch (e) {
+      showCustomSnackBar("Error: $e", Get.context!, isError: true);
+    }
+
+    _isLoadingBtn = false;
+    notifyListeners();
+  }
+
+  Future<void> viewCompletedSotQuestionListAPI() async {
+    _isLoading = true;
+
+    ApiResponse apiResponse = await profileServiceInterface!.viewSotQuestionCompletedList();
+    _isLoading = false;
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      final response = ViewSotQuestionAnswersListResponse.fromJson(apiResponse.response!.data);
+      viewSotQuestionCompletedList = response.data ?? [];
+    } else {
+      showCustomSnackBar(
+        apiResponse.error ?? "Something went wrong",
+        Get.context!,
+        isError: true,
+      );
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  //-------------------------------------------
+
+  List<ViewDiagnosticQuestionListData>? viewDiagnosticQuestionList;
+  List<ViewDiagnosticCompletedQuestionListData>? viewDiagnosticCompletedQuestionList;
+
+  String getDiagnosticListData() {
+    return profileServiceInterface!.getDiagnosticListData();
+  }
+
+  Future<void> saveDiagnosticQuestionListData() async {
+    final jsonList = viewDiagnosticQuestionList!.map((q) => q.toJson()).toList();
+    final jsonString = jsonEncode(jsonList);
+    profileServiceInterface!.saveDiagnosticQuestionListData(jsonString);
+  }
+
+  void selectDiagnosticOption(int questionIndex, int selectedOptionNumber) {
+    viewDiagnosticQuestionList![questionIndex].answer = selectedOptionNumber.toString();
+    notifyListeners();
+  }
+
+  void selectDiagnosticCompletedOption(int questionIndex, int selectedOptionId) {
+    final question = viewDiagnosticCompletedQuestionList![questionIndex];
+    for (final option in question.options!) {
+      option.isChecked = option.optionId == selectedOptionId;
+    }
+    notifyListeners();
+  }
+
+  void validateAndSubmitAnswersDiagnostic(BuildContext context) {
+    final questions = viewDiagnosticQuestionList ?? [];
+
+    int count = 0;
+    for (final question in questions) {
+      if (question.answer.trim().isEmpty) {
+        showCustomSnackBar("${getTranslated("please_agree_with_a_statement_for_question", context)} ${question.questionId}", context);
+        return; // Stop execution
+      } else {
+        count++;
+      }
+    }
+
+    if (count == questions.length) {
+      sendDiagnosticQuestionListData(context);
+    }
+  }
+
+  void validateAndSubmitAnswersCompletedDiagnostic(BuildContext context) {
+    final questions = viewDiagnosticCompletedQuestionList ?? [];
+
+    int count = 0;
+    for (final question in questions) {
+      if (question.answerId == null || question.answerId == 0) {
+        showCustomSnackBar(
+          "${getTranslated("please_agree_with_a_statement_for_question", context)} ${question.questionId}",
+          context,
+        );
+        return; // Stop execution if any unanswered
+      } else {
+        count++;
+      }
+    }
+
+    if (count == questions.length) {
+      sendDiagnosticQuestionCompletedListData(context);
+    }
+  }
+
+  Map<String, dynamic> buildAnswersJson(List<ViewDiagnosticQuestionListData> questions) {
+    final List<Map<String, dynamic>> answerList = [];
+
+    for (final q in questions) {
+      answerList.add({
+        "questionId": q.questionId?.toString() ?? "",
+        "optionId": q.answer,
+      });
+    }
+
+    return {
+      "answer": answerList,
+    };
+  }
+
+  Map<String, dynamic> buildCompletedDiagnosticAnswerPayload(List<ViewDiagnosticCompletedQuestionListData> diagnostics) {
+    final List<Map<String, dynamic>> answerList = [];
+
+    for (final diagnostic in diagnostics) {
+      // Find the option marked as selected
+      final selectedOption = diagnostic.options?.firstWhere(
+        (o) => o.isChecked == true,
+        orElse: () => ViewDiagnosticCompletedQuestionListOptions(),
+      );
+
+      answerList.add({
+        "answerId": diagnostic.answerId?.toString() ?? "",
+        "optionId": selectedOption?.optionId?.toString() ?? "",
+      });
+    }
+
+    return {
+      "answer": answerList,
+    };
+  }
+
+  Future<void> viewDiagnosticQuestionListAPI({String? savedJsonList}) async {
+    _isLoading = true;
+
+    ApiResponse apiResponse = await profileServiceInterface!.viewDiagnosticQuestionList();
+    _isLoading = false;
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      final response = ViewDiagnosticQuestionListResponse.fromJson(apiResponse.response!.data);
+      viewDiagnosticQuestionList = response.data ?? [];
+
+      if (savedJsonList != null && savedJsonList.isNotEmpty && savedJsonList != "[]") {
+        try {
+          List<dynamic> savedJson = jsonDecode(savedJsonList);
+
+          for (int i = 0; i < savedJson.length; i++) {
+            if (i >= viewDiagnosticQuestionList!.length) continue;
+
+            Map<String, dynamic> savedItem = savedJson[i];
+            String savedAnswer = savedItem['answer'] ?? "";
+
+            viewDiagnosticQuestionList![i].answer = savedAnswer;
+          }
+        } catch (e) {
+          debugPrint('Error merging saved answers: $e');
+        }
+      }
+    } else {
+      showCustomSnackBar(
+        apiResponse.error ?? "Something went wrong",
+        Get.context!,
+        isError: true,
+      );
+      ApiChecker.checkApi(apiResponse);
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> sendDiagnosticQuestionListData(BuildContext context) async {
+    _isLoadingBtn = true;
+    notifyListeners();
+
+    try {
+      final questions = viewDiagnosticQuestionList ?? [];
+      final jsonMap = buildAnswersJson(questions);
+
+      ApiResponse apiResponse = await profileServiceInterface!.sendDiagnosticQuestionListData(jsonMap);
+
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+        String msg = apiResponse.response!.data['message'] ?? "Submission successful";
+        showCustomSnackBar(msg, Get.context!, isError: false);
+
+        profileServiceInterface!.clearDiagnosticQuestionListData();
+
+        Navigator.of(Get.context!).pop(true);
+      } else {
+        showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+        ApiChecker.checkApi(apiResponse);
+      }
+    } catch (e) {
+      showCustomSnackBar("Error: $e", Get.context!, isError: true);
+    }
+
+    _isLoadingBtn = false;
+    notifyListeners();
+  }
+
+  Future<void> viewDiagnosticCompletedQuestionListAPI() async {
+    _isLoading = true;
+
+    ApiResponse apiResponse = await profileServiceInterface!.viewDiagnosticCompletedQuestionList();
+    _isLoading = false;
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      final response = ViewDiagnosticCompletedQuestionListResponse.fromJson(apiResponse.response!.data);
+      viewDiagnosticCompletedQuestionList = response.data ?? [];
+    } else {
+      showCustomSnackBar(
+        apiResponse.error ?? "Something went wrong",
+        Get.context!,
+        isError: true,
+      );
+      ApiChecker.checkApi(apiResponse);
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> sendDiagnosticQuestionCompletedListData(BuildContext context) async {
+    _isLoadingBtn = true;
+    notifyListeners();
+
+    try {
+      final questions = viewDiagnosticCompletedQuestionList ?? [];
+      final jsonMap = buildCompletedDiagnosticAnswerPayload(questions);
+      ApiResponse apiResponse = await profileServiceInterface!.sendDiagnosticCompletedQuestionListData(jsonMap);
+
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+        String msg = apiResponse.response!.data['message'] ?? "Submission successful";
+        showCustomSnackBar(msg, Get.context!, isError: false);
+        Navigator.of(Get.context!).pop(true);
+      } else {
+        showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+        ApiChecker.checkApi(apiResponse);
+      }
+    } catch (e) {
+      showCustomSnackBar("Error: $e", Get.context!, isError: true);
+    }
+    _isLoadingBtn = false;
+    notifyListeners();
+  }
+
+  //---------------------------------------------------------
+
+  List<ViewTribeMeterQuestionListData>? viewTribeMeterQuestionList;
+  List<ViewTribeMeterCompletedListData>? viewTribeMeterQuestionCompleteList;
+
+  String getTribeMeterListData() {
+    return profileServiceInterface!.getTribeMeterQuestionListData();
+  }
+
+  Future<void> saveTribeMeterQuestionListData() async {
+    final jsonList = viewTribeMeterQuestionList!.map((q) => q.toJson()).toList();
+    final jsonString = jsonEncode(jsonList);
+    profileServiceInterface!.saveTribeMeterQuestionListData(jsonString);
+  }
+
+  void selectAnswerForQuestion({
+    required int questionIndex,
+    required int optionIndex,
+  }) {
+    final question = viewTribeMeterQuestionList![questionIndex];
+    for (var opt in question.options!) {
+      opt.isSelected = false;
+    }
+    question.options![optionIndex].isSelected = true;
+    question.answer = question.options![optionIndex].optionId.toString();
+    notifyListeners();
+  }
+
+  void selectAnswerForQuestionComplete({
+    required int questionIndex,
+    required int optionIndex,
+  }) {
+    final question = viewTribeMeterQuestionCompleteList![questionIndex];
+    for (final opt in question.options!) {
+      opt.isChecked = false;
+    }
+    final selectedOption = question.options![optionIndex];
+    selectedOption.isChecked = true;
+    question.answerId = selectedOption.optionId;
+    notifyListeners();
+  }
+
+  void validateAndSubmitAnswersTribeMeter(BuildContext context) {
+    final questions = viewTribeMeterQuestionList ?? [];
+
+    for (final question in questions) {
+      if (question.answer == null || question.answer!.trim().isEmpty) {
+        showCustomSnackBar(
+          "${getTranslated("please_agree_with_a_statement_for_question", context)} ${question.questionId}",
+          context,
+        );
+        return; // stop execution
+      }
+    }
+    sendTribeMeterQuestionListData(context);
+  }
+
+  void validateAndSubmitAnswersCompleteTribeMeter(BuildContext context) {
+    final questions = viewTribeMeterQuestionCompleteList ?? [];
+
+    for (final question in questions) {
+      if (question.answerId == null) {
+        showCustomSnackBar(
+          "${getTranslated("please_agree_with_a_statement_for_question", context)} ${question.questionId}",
+          context,
+        );
+        return; // Stop execution if any unanswered
+      }
+    }
+    sendTribeMeterQuestionCompleteListData(context);
+  }
+
+  Map<String, dynamic> createTribeMeterAnswerJson(List<ViewTribeMeterQuestionListData> questions) {
+    List<Map<String, dynamic>> answerList = [];
+
+    for (var q in questions) {
+      if (q.questionId != null && q.answer != null && q.answer!.isNotEmpty) {
+        answerList.add({
+          "questionId": q.questionId.toString(),
+          "optionId": q.answer.toString(),
+        });
+      }
+    }
+
+    return {
+      "answer": answerList,
+    };
+  }
+
+  Map<String, dynamic> createTribeMeterCompleteAnswerJson(List<ViewTribeMeterCompletedListData> questions) {
+    List<Map<String, dynamic>> answerList = [];
+
+    for (var q in questions) {
+      int? finalOptionId;
+
+      // If any option is checked, get its optionId (1-4)
+      if (q.options != null && q.options!.isNotEmpty) {
+        final checkedOption = q.options!.firstWhere(
+          (opt) => opt.isChecked == true,
+          orElse: () => ViewTribeMeterCompletedListOptions(),
+        );
+
+        if (checkedOption.optionId != null) {
+          finalOptionId = checkedOption.optionId;
+        }
+      }
+
+      // Fallback: if no option was checked but answerId exists, try to match it to optionId
+      if (finalOptionId == null && q.answerId != null && q.options != null) {
+        for (final opt in q.options!) {
+          if (opt.answerId == q.answerId) {
+            finalOptionId = opt.optionId;
+            break;
+          }
+        }
+      }
+
+      if (q.questionId != null && finalOptionId != null) {
+        answerList.add({
+          "questionId": q.questionId.toString(),
+          "optionId": finalOptionId.toString(), // always 1,2,3,4
+        });
+      }
+    }
+
+    return {
+      "answer": answerList,
+    };
+  }
+
+  Future<void> viewTribeMeterQuestionListAPI({String? savedJsonList}) async {
+    _isLoading = true;
+    notifyListeners();
+
+    ApiResponse apiResponse = await profileServiceInterface!.viewTribeMeterQuestionList();
+    _isLoading = false;
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      final response = ViewTribeMeterQuestionListResponse.fromJson(apiResponse.response!.data);
+      viewTribeMeterQuestionList = response.data ?? [];
+
+      if (savedJsonList != null && savedJsonList.isNotEmpty && savedJsonList != "[]") {
+        try {
+          List<dynamic> savedJson = jsonDecode(savedJsonList);
+
+          for (var savedItem in savedJson) {
+            final savedQid = savedItem['questionId'];
+            final savedAnswer = savedItem['answer'] ?? "";
+
+            ViewTribeMeterQuestionListData? matchedQuestion;
+            try {
+              matchedQuestion = viewTribeMeterQuestionList!.firstWhere(
+                (q) => q.questionId == savedQid,
+              );
+            } catch (_) {
+              matchedQuestion = null;
+            }
+
+            if (matchedQuestion != null) {
+              matchedQuestion.answer = savedAnswer;
+
+              // ✅ Highlight the previously selected option
+              for (var opt in matchedQuestion.options ?? []) {
+                opt.isSelected = (opt.optionId.toString() == savedAnswer);
+              }
+            }
+          }
+        } catch (e) {
+          debugPrint('Error merging saved answers: $e');
+        }
+      }
+    } else {
+      showCustomSnackBar(
+        apiResponse.error ?? "Something went wrong",
+        Get.context!,
+        isError: true,
+      );
+      ApiChecker.checkApi(apiResponse);
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> sendTribeMeterQuestionListData(BuildContext context) async {
+    _isLoadingBtn = true;
+    notifyListeners();
+    try {
+      final jsonBody = createTribeMeterAnswerJson(viewTribeMeterQuestionList ?? []);
+      ApiResponse apiResponse = await profileServiceInterface!.sendTribeMeterQuestionListData(jsonBody);
+
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+        String msg = apiResponse.response!.data['message'] ?? "Submission successful";
+        showCustomSnackBar(msg, Get.context!, isError: false);
+
+        profileServiceInterface!.clearTribeMeterQuestionListData();
+
+        Navigator.of(Get.context!).pop(true);
+      } else {
+        showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+        ApiChecker.checkApi(apiResponse);
+      }
+    } catch (e) {
+      showCustomSnackBar("Error: $e", Get.context!, isError: true);
+    }
+
+    _isLoadingBtn = false;
+    notifyListeners();
+  }
+
+  Future<void> viewTribeMeterQuestionCompleteListAPI() async {
+    _isLoading = true;
+    ApiResponse apiResponse = await profileServiceInterface!.viewTribeMeterQuestionCompletedList();
+    _isLoading = false;
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      final response = ViewTribeMeterCompletedListResponse.fromJson(apiResponse.response!.data);
+      viewTribeMeterQuestionCompleteList = response.data ?? [];
+    } else {
+      showCustomSnackBar(
+        apiResponse.error ?? "Something went wrong",
+        Get.context!,
+        isError: true,
+      );
+      ApiChecker.checkApi(apiResponse);
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> sendTribeMeterQuestionCompleteListData(BuildContext context) async {
+    _isLoadingBtn = true;
+    notifyListeners();
+    try {
+      final jsonBody = createTribeMeterCompleteAnswerJson(viewTribeMeterQuestionCompleteList ?? []);
+      ApiResponse apiResponse = await profileServiceInterface!.sendTribeMeterQuestionCompleteListData(jsonBody);
+
+      if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+        String msg = apiResponse.response!.data['message'] ?? "Submission successful";
+        showCustomSnackBar(msg, Get.context!, isError: false);
+        Navigator.of(Get.context!).pop(true);
+      } else {
+        showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+        ApiChecker.checkApi(apiResponse);
+      }
+    } catch (e) {
+      showCustomSnackBar("Error: $e", Get.context!, isError: true);
+    }
+
+    _isLoadingBtn = false;
+    notifyListeners();
+  }
+
+//-----------------------------------------
+  TextEditingController tellUsController = TextEditingController();
+  FocusNode tellUsFocus = FocusNode();
+  File? file;
+  void updateFileData(File data) {
+    file = data;
+    notifyListeners();
+  }
+  void updateInitData() {
+    tellUsController.text = "";
+    file = null;
+    notifyListeners();
+  }
+  void initData() {
+    tellUsController = TextEditingController();
+    tellUsFocus = FocusNode();
+    file = null;
+  }
+
+  List<ViewSupportHistoryListData>? supportHistoryData;
+  List<ViewUserChatMessages>? messagesList;
+
+  Future<void> viewSupportHistoryListAPI() async {
+    _isLoading = true;
+
+    Map<String, dynamic> request = {"Page": 1, "userId": userProfileData!.id.toString()};
+
+    ApiResponse apiResponse = await profileServiceInterface!.viewSupportHistoryList(request);
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      final response = ViewSupportHistoryListResponse.fromJson(apiResponse.response!.data);
+      supportHistoryData = response.data ?? [];
+
+    } else {
+      showCustomSnackBar(
+        apiResponse.error ?? "Something went wrong",
+        Get.context!,
+        isError: true,
+      );
+      ApiChecker.checkApi(apiResponse);
+    }
+
+    notifyListeners();
+  }
+
+  Future<ApiResponse> sendOffloadingData(String message, String image) async {
+    _isLoadingBtn = true;
+    notifyListeners();
+    Map<String, dynamic> request = {
+      "message": message,
+      "userId": userProfileData!.id,
+      "orgId": userProfileData!.orgId,
+      "image": image
+    };
+    ApiResponse apiResponse = await profileServiceInterface!.addCustomerSupport(request);
+    _isLoadingBtn = false;
+    notifyListeners();
+    return apiResponse;
+  }
+
+  Future<ApiResponse> viewChatMessages(int feedbackId) async {
+    Map<String, dynamic> request = {"supportId": feedbackId};
+    ApiResponse apiResponse = await profileServiceInterface!.viewChatMessages(request);
+    Map<String, dynamic> map = apiResponse.response!.data;
+    ViewUserChatMessagesResponse response = ViewUserChatMessagesResponse.fromJson(map);
+    messagesList = [];
+    messagesList = response.data!.messages!;
+    notifyListeners();
+    return apiResponse;
+  }
+
+  Future<ApiResponse> sendChatMessages(String msgType, String message, String feedbackId) async {
+    _isLoadingData = true;
+    notifyListeners();
+    Map<String, dynamic> request = {
+      "sendFrom": userProfileData!.id,
+      "sendTo": "1",
+      "message": message,
+      "supportId": feedbackId,
+      "postType": msgType
+    };
+    ApiResponse apiResponse = await profileServiceInterface!.sendChatMessages(request);
+    _isLoadingData = false;
+    updateInitData();
+    viewChatMessages(int.parse(feedbackId.toString()));
+    notifyListeners();
+    return apiResponse;
+  }
+
+  Future<void> updatePushNotificationStatus(bool status,bool deviceValue) async {
+
+    int statusValue=0;
+    if (status){
+      statusValue=1;
+    }else {
+      statusValue=0;
+    }
+
+    //0: not enable , 1: enable
+
+    int deviceStatus=0;
+    if (deviceValue){
+      deviceStatus= 1;
+    }else{
+      deviceStatus=0;
+    }
+    Map<String, dynamic> requestData = {
+      "userId": userProfileData!.id!,
+      "appStatus":statusValue,
+      "deviceStatus":deviceStatus
+    };
+
+    ApiResponse apiResponse = await profileServiceInterface!.updatePushNotificationStatus(requestData);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+
 }

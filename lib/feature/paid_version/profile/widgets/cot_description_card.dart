@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:tribe365_new/localization/language_constrants.dart';
 
 import '../domain/models/view_cot_mapper_summary_response.dart';

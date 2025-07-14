@@ -34,7 +34,7 @@ class BeliefHorizontalList extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        belief.name! ?? '',
+                        belief.name!,
                         textAlign: TextAlign.center,
                         maxLines: 3,
                         style: const TextStyle(

@@ -120,6 +120,7 @@ class KnowController extends ChangeNotifier {
     viewKnowOrganisation(false);
     notifyListeners();
   }
+
   void updateOrgID(ViewUserProfileData? data) {
     orgId = data!.orgId.toString();
     userId = data.id.toString();

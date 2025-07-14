@@ -5,7 +5,7 @@ class ViewStudiesListResponse {
   bool? status;
   String? serviceName;
   String? message;
-  Data? data;
+  ViewStudiesListData? data;
 
   ViewStudiesListResponse(
       {this.code, this.status, this.serviceName, this.message, this.data});
@@ -15,7 +15,7 @@ class ViewStudiesListResponse {
     status = json['status'];
     serviceName = json['service_name'];
     message = json['message'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? ViewStudiesListData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -31,7 +31,7 @@ class ViewStudiesListResponse {
   }
 }
 
-class Data {
+class ViewStudiesListData {
   int? appPaymentVersion;
   List<ModelAdminReportDOT>? getDOTreportGraph;
   GetCOTteamRoleMapReport? getCOTteamRoleMapReport;
@@ -43,13 +43,13 @@ class Data {
   List<GetCOTpersonalityType>? getTribeometerReportForGraph;
   OrgStatus? orgStatus;
   List<GetHappyIndexMonthGraphCount>? getHappyIndexMonthGraphCount;
-  int? happyMaxCount;
-  int? avgMaxCount;
-  int? sadMaxCount;
+  String? happyMaxCount;
+  String? avgMaxCount;
+  String? sadMaxCount;
   List<CultureIndex>? cultureIndex;
   List<CultureIndex>? engagementIndex;
 
-  Data(
+  ViewStudiesListData(
       {this.appPaymentVersion,
         this.getDOTreportGraph,
         this.getCOTteamRoleMapReport,
@@ -67,7 +67,7 @@ class Data {
         this.cultureIndex,
         this.engagementIndex});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  ViewStudiesListData.fromJson(Map<String, dynamic> json) {
     appPaymentVersion = json['appPaymentVersion'];
     if (json['getDOTreportGraph'] != null) {
       getDOTreportGraph = <ModelAdminReportDOT>[];
@@ -123,9 +123,9 @@ class Data {
             .add(GetHappyIndexMonthGraphCount.fromJson(v));
       });
     }
-    happyMaxCount = json['happyMaxCount'];
-    avgMaxCount = json['avgMaxCount'];
-    sadMaxCount = json['sadMaxCount'];
+    happyMaxCount = json['happyMaxCount'].toString();
+    avgMaxCount = json['avgMaxCount'].toString();
+    sadMaxCount = json['sadMaxCount'].toString();
     if (json['cultureIndex'] != null) {
       cultureIndex = <CultureIndex>[];
       json['cultureIndex'].forEach((v) {
@@ -200,14 +200,14 @@ class GetCOTteamRoleMapReport {
   String? id;
   String? orgId;
   String? name;
-  int? shaper;
-  int? coordinator;
-  int? completerFinisher;
-  int? teamworker;
-  int? implementer;
-  int? monitorEvaluator;
-  int? plant;
-  int? resourceInvestigator;
+  String? shaper;
+  String? coordinator;
+  String? completerFinisher;
+  String? teamworker;
+  String? implementer;
+  String? monitorEvaluator;
+  String? plant;
+  String? resourceInvestigator;
   MapersArray? mapersArray;
 
   GetCOTteamRoleMapReport(
@@ -225,17 +225,17 @@ class GetCOTteamRoleMapReport {
         this.mapersArray});
 
   GetCOTteamRoleMapReport.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    orgId = json['orgId'];
+    id = json['id'].toString();
+    orgId = json['orgId'].toString();
     name = json['name'];
-    shaper = json['shaper'];
-    coordinator = json['coordinator'];
-    completerFinisher = json['completerFinisher'];
-    teamworker = json['teamworker'];
-    implementer = json['implementer'];
-    monitorEvaluator = json['monitorEvaluator'];
-    plant = json['plant'];
-    resourceInvestigator = json['resourceInvestigator'];
+    shaper = json['shaper'].toString();
+    coordinator = json['coordinator'].toString();
+    completerFinisher = json['completerFinisher'].toString();
+    teamworker = json['teamworker'].toString();
+    implementer = json['implementer'].toString();
+    monitorEvaluator = json['monitorEvaluator'].toString();
+    plant = json['plant'].toString();
+    resourceInvestigator = json['resourceInvestigator'].toString();
     mapersArray = json['mapersArray'] != null
         ? MapersArray.fromJson(json['mapersArray'])
         : null;
@@ -355,7 +355,7 @@ class GetCOTpersonalityType {
   String? title;
   int? categoryId;
   String? score;
-  String? percentage;
+  double? percentage;
 
   GetCOTpersonalityType(
       {this.title, this.categoryId, this.score, this.percentage});
@@ -363,8 +363,8 @@ class GetCOTpersonalityType {
   GetCOTpersonalityType.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     categoryId = json['categoryId'];
-    score = json['score'];
-    percentage = json['percentage'];
+    score = json['score'].toString();
+    percentage = double.parse(json['percentage'].toString());
   }
 
   Map<String, dynamic> toJson() {
@@ -381,13 +381,13 @@ class GetSOTcultureStructureReport {
   bool? isQuestionnaireAnswerFilled;
   bool? isUserFilledAnswer;
   // List<Null>? sotDetailArray;
-  // List<Null>? sotSummaryDetailArray;
+  List<SotSummary>? sotSummaryDetailArray;
 
   GetSOTcultureStructureReport(
       {this.isQuestionnaireAnswerFilled,
         this.isUserFilledAnswer,
         // this.sotDetailArray,
-       /* this.sotSummaryDetailArray*/});
+        this.sotSummaryDetailArray});
 
   GetSOTcultureStructureReport.fromJson(Map<String, dynamic> json) {
     isQuestionnaireAnswerFilled = json['IsQuestionnaireAnswerFilled'];
@@ -398,12 +398,12 @@ class GetSOTcultureStructureReport {
         sotDetailArray!.add(Null.fromJson(v));
       });
     }*/
-    /*if (json['sotSummaryDetailArray'] != null) {
-      sotSummaryDetailArray = <Null>[];
+    if (json['sotSummaryDetailArray'] != null) {
+      sotSummaryDetailArray = <SotSummary>[];
       json['sotSummaryDetailArray'].forEach((v) {
-        sotSummaryDetailArray!.add(Null.fromJson(v));
+        sotSummaryDetailArray!.add(SotSummary.fromJson(v));
       });
-    }*/
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -414,10 +414,10 @@ class GetSOTcultureStructureReport {
       data['sotDetailArray'] =
           sotDetailArray!.map((v) => v.toJson()).toList();
     }*/
-    /*if (sotSummaryDetailArray != null) {
+    if (sotSummaryDetailArray != null) {
       data['sotSummaryDetailArray'] =
           sotSummaryDetailArray!.map((v) => v.toJson()).toList();
-    }*/
+    }
     return data;
   }
 }
@@ -425,8 +425,8 @@ class GetSOTcultureStructureReport {
 class GetDiagnosticReportForGraph {
   int? categoryId;
   String? title;
-  int? score;
-  int? percentage;
+  String? score;
+  String? percentage;
 
   GetDiagnosticReportForGraph(
       {this.categoryId, this.title, this.score, this.percentage});
@@ -434,8 +434,8 @@ class GetDiagnosticReportForGraph {
   GetDiagnosticReportForGraph.fromJson(Map<String, dynamic> json) {
     categoryId = json['categoryId'];
     title = json['title'];
-    score = json['score'];
-    percentage = json['percentage'];
+    score = json['score'].toString();
+    percentage = json['percentage'].toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -487,9 +487,9 @@ class OrgStatus {
 
 class GetHappyIndexMonthGraphCount {
   String? monthName;
-  int? sad;
-  int? average;
-  int? happy;
+  String? sad;
+  String? average;
+  String? happy;
   String? year;
   String? month;
 
@@ -503,11 +503,11 @@ class GetHappyIndexMonthGraphCount {
 
   GetHappyIndexMonthGraphCount.fromJson(Map<String, dynamic> json) {
     monthName = json['monthName'];
-    sad = json['sad'];
-    average = json['average'];
-    happy = json['happy'];
-    year = json['year'];
-    month = json['month'];
+    sad = json['sad'].toString();
+    average = json['average'].toString();
+    happy = json['happy'].toString();
+    year = json['year'].toString();
+    month = json['month'].toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -523,13 +523,13 @@ class GetHappyIndexMonthGraphCount {
 }
 
 class CultureIndex {
-  String? data;
+  double? data;
   String? monthName;
 
   CultureIndex({this.data, this.monthName});
 
   CultureIndex.fromJson(Map<String, dynamic> json) {
-    data = json['data'];
+    data=double.tryParse(json['data'].toString()) ?? 0;
     monthName = json['monthName'];
   }
 
@@ -540,7 +540,6 @@ class CultureIndex {
     return data;
   }
 }
-
 
 class ModelAdminReportDOT {
   final int? beliefId;
@@ -602,3 +601,48 @@ class ModelMotivationGraph {
   }
 }
 
+class SotSummary {
+  final String id;
+  final String type;
+  final String title;
+  final String imgUrl;
+  final String sotCount;
+  final List<String> summaries;
+
+  SotSummary({
+    required this.id,
+    required this.type,
+    required this.title,
+    required this.imgUrl,
+    required this.sotCount,
+    required this.summaries,
+  });
+
+  factory SotSummary.fromJson(Map<String, dynamic> json) {
+    final List<String> summariesList = (json['summary'] as List<dynamic>?)
+        ?.map((e) => e['summary'].toString())
+        .toList() ??
+        [];
+
+    return SotSummary(
+      id: json['id'].toString(),
+      type: json['type'] ?? "",
+      title: json['title'] ?? "",
+      imgUrl: json['imgUrl'] ?? "",
+      sotCount: json['SOTCount'] ?? "",
+      summaries: summariesList,
+    );
+  }
+
+  // ✅ Add this
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "type": type,
+      "title": title,
+      "imgUrl": imgUrl,
+      "SOTCount": sotCount,
+      "summary": summaries.map((s) => {"summary": s}).toList(),
+    };
+  }
+}

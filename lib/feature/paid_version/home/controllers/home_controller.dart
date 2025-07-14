@@ -393,6 +393,13 @@ class HomeController extends ChangeNotifier {
     }
       notifyListeners();
   }
+  bool getPushNotificationStatus() {
+    return homeServiceInterface!.getPushNotificationStatus();
+  }
+  void savePushNotificationStatus(bool notificationValue){
+    homeServiceInterface!.savePushNotificationStatus(notificationValue);
+  }
+
   //API calling
   Future<void> getHomeData(String orgId) async {
     Map<String, dynamic> request = {
@@ -426,6 +433,14 @@ class HomeController extends ChangeNotifier {
       amazingValue=homeData!.kudoAwardValue!;
       awardName=homeData!.kudoAwardKey!;
 
+      int notificationStatus = homeData!.notificationPush!;
+      bool notificationValue;
+      if (notificationStatus == 1){
+        notificationValue = true;
+      }else {
+        notificationValue = false;
+      }
+      savePushNotificationStatus(notificationValue);
 
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);

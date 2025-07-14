@@ -82,6 +82,11 @@ class ProfileService implements ProfileServiceInterface {
   }
 
   @override
+  Future<void> saveSotQuestionListData(String userData) {
+    return profileRepositoryInterface.saveSotQuestionListData(userData);
+  }
+
+  @override
   String getUserTeamRoleData() {
     return profileRepositoryInterface.getUserTeamRoleData();
   }
@@ -94,6 +99,21 @@ class ProfileService implements ProfileServiceInterface {
   @override
   String getUserPersonalityTypeData() {
     return profileRepositoryInterface.getUserPersonalityTypeData();
+  }
+
+  @override
+  String getSotQuestionListData() {
+    return profileRepositoryInterface.getSotQuestionListData();
+  }
+
+  @override
+  String getDiagnosticListData() {
+    return profileRepositoryInterface.getDiagnosticListData();
+  }
+
+  @override
+  String getTribeMeterQuestionListData() {
+    return profileRepositoryInterface.getTribeMeterQuestionListData();
   }
 
   @override
@@ -119,11 +139,31 @@ class ProfileService implements ProfileServiceInterface {
   }
 
   @override
+  Future<ApiResponse> sendSotQuestionListData(Map<String, dynamic> body) {
+    return profileRepositoryInterface.sendSotQuestionListData(body);
+  }
+
+  @override
+  Future<ApiResponse> sendTribeMeterQuestionCompleteListData(Map<String, dynamic> body) {
+    return profileRepositoryInterface.sendTribeMeterQuestionCompleteListData(body);
+  }
+
+
+
+  @override
   Future<void> saveUserPersonalityTypeData(String userData) {
     return profileRepositoryInterface.saveUserPersonalityTypeData(userData);
   }
 
+  @override
+  Future<void> saveDiagnosticQuestionListData(String userData) {
+    return profileRepositoryInterface.saveDiagnosticQuestionListData(userData);
+  }
 
+  @override
+  Future<void> saveTribeMeterQuestionListData(String userData) {
+    return profileRepositoryInterface.saveTribeMeterQuestionListData(userData);
+  }
 
   @override
   Future<void> clearSavedUserTeamRoleData() {
@@ -140,6 +180,20 @@ class ProfileService implements ProfileServiceInterface {
     return profileRepositoryInterface.clearSavedPersonalityTypeData();
   }
 
+  @override
+  Future<void> clearSotQuestionListData() {
+    return profileRepositoryInterface.clearSotQuestionListData();
+  }
+
+  @override
+  Future<void> clearDiagnosticQuestionListData() {
+    return profileRepositoryInterface.clearDiagnosticQuestionListData();
+  }
+
+  @override
+  Future<void> clearTribeMeterQuestionListData() {
+    return profileRepositoryInterface.clearTribeMeterQuestionListData();
+  }
 
   @override
   Future<ApiResponse> sendMotivationData(Map<String, dynamic> body) {
@@ -151,12 +205,44 @@ class ProfileService implements ProfileServiceInterface {
     return profileRepositoryInterface.sendMotivationDataUpdate(body);
   }
 
+  @override
+  Future<ApiResponse> sendSotQuestionListCompletedData(Map<String, dynamic> body) {
+    return profileRepositoryInterface.sendSotQuestionListCompletedData(body);
+  }
+
+  @override
+  Future<ApiResponse> sendDiagnosticQuestionListData(Map<String, dynamic> body) {
+    return profileRepositoryInterface.sendDiagnosticQuestionListData(body);
+  }
+
+
+  @override
+  Future<ApiResponse> sendDiagnosticCompletedQuestionListData(Map<String, dynamic> body) {
+    return profileRepositoryInterface.sendDiagnosticCompletedQuestionListData(body);
+  }
+
+  @override
+  Future<ApiResponse> sendTribeMeterQuestionListData(Map<String, dynamic> body) {
+    return profileRepositoryInterface.sendTribeMeterQuestionListData(body);
+  }
+
 
 
   @override
   Future<void> viewSOTmotivationUserList(Map<String, dynamic> loginBody) {
     return profileRepositoryInterface.viewSOTmotivationUserList(loginBody);
   }
+
+  @override
+  Future<void> viewTribeMeterQuestionList() {
+    return profileRepositoryInterface.viewTribeMeterQuestionList();
+  }
+
+  @override
+  Future<void> viewTribeMeterQuestionCompletedList() {
+    return profileRepositoryInterface.viewTribeMeterQuestionCompletedList();
+  }
+
 
   @override
   Future<void> viewCOTindividualSummary() {
@@ -218,7 +304,60 @@ class ProfileService implements ProfileServiceInterface {
     return profileRepositoryInterface.addCommentList(body);
   }
 
+  @override
+  Future<ApiResponse> viewOrgDashboardReportWithFilter(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewOrgDashboardReportWithFilter(body);
+  }
+  @override
+  Future<ApiResponse> viewOfficeList(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewOfficeList(body);
+  }
+  @override
+  Future<ApiResponse> viewDepartmentList() {
+    return profileRepositoryInterface.viewDepartmentList();
+  }
 
+  @override
+  Future<ApiResponse> viewSotQuestionList() {
+    return profileRepositoryInterface.viewSotQuestionList();
+  }
 
+  @override
+  Future<ApiResponse> viewSotQuestionCompletedList() {
+    return profileRepositoryInterface.viewSotQuestionCompletedList();
+  }
+
+  @override
+  Future<ApiResponse> viewDiagnosticQuestionList() {
+    return profileRepositoryInterface.viewDiagnosticQuestionList();
+  }
+  @override
+  Future<ApiResponse> viewDiagnosticCompletedQuestionList() {
+    return profileRepositoryInterface.viewDiagnosticCompletedQuestionList();
+  }
+  @override
+  Future<ApiResponse> viewSupportHistoryList(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewSupportHistoryList(body);
+  }
+
+  @override
+  Future<ApiResponse> addCustomerSupport(Map<String, dynamic> body) {
+    return profileRepositoryInterface.addCustomerSupport(body);
+  }
+
+  @override
+  Future<ApiResponse> viewChatMessages(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewChatMessages(body);
+  }
+
+  @override
+  Future<ApiResponse> sendChatMessages(Map<String, dynamic> body) {
+    return profileRepositoryInterface.sendChatMessages(body);
+  }
+
+  @override
+  Future<ApiResponse> updatePushNotificationStatus(Map<String, dynamic> body) {
+    return profileRepositoryInterface.updatePushNotificationStatus(body);
+  }
 
 }

@@ -23,7 +23,7 @@ class TeamRoleUpdateScreenState extends State<TeamRoleUpdateScreen> {
   @override
   void initState() {
     super.initState();
-    profileController.initCountersUpdate();
+
     loadAPI();
 
   }

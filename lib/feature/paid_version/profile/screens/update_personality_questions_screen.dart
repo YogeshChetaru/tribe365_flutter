@@ -5,7 +5,6 @@ import '../../../../localization/language_constrants.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
 import '../controllers/profile_controller.dart';
-import '../widgets/buildquestion.dart';
 import '../widgets/personality_completed_question_item.dart';
 
 class PersonalityQuestionsUpdateScreen extends StatefulWidget {

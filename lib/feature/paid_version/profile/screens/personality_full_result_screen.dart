@@ -63,7 +63,7 @@ class PersonalityFullResultScreenState extends State<PersonalityFullResultScreen
                     children: [
                       InkWell(
                           onTap: () {
-                            Navigator.of(context).pop();
+                            Navigator.of(context).pop(true);
                           },
                           child: Image.asset(
                             Images.imgCircleBackRed,

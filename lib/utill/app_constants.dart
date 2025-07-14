@@ -23,6 +23,10 @@ class AppConstants {
   static const String userTeamRoleData = 'User_team_role_data';
   static const String userMotivationData = 'User_motivation_data';
   static const String userPersonalityTypeData = 'User_personality_type_data';
+  static const String userSotQuestionListData = 'User_Sot_Question_List_data';
+  static const String userDiagnosticQuestionListData = 'User_Diagnostic_Question_List_data';
+  static const String userTribeMeterQuestionListData = 'User_Tribe_Meter_Question_List_data';
+  static const String pushNotificationStatus = 'Push_Notification_Status';
 
   static const String user = 'user';
   static const String langKey = 'lang';
@@ -96,6 +100,23 @@ class AppConstants {
   static const String updateActionUri = 'updateAction';
   static const String listCommentUri = 'listComment';
   static const String addCommentUri = 'addComment';
+  static const String getOrgDashboardReportWithFilterUri = 'getOrgDashboardReportWithFilter';
+  static const String getSotQuestionListUri = 'getSotQuestionList';
+  static const String addSOTanswersUri = 'addSOTanswers';
+  static const String getSOTquestionAnswersUri = 'getSOTquestionAnswers';
+  static const String updateSOTquestionAnswerUri = 'updateSOTquestionAnswer';
+  static const String getDiagnosticQuestionListUri = 'getDiagnosticQuestionList';
+  static const String addDiagnosticAnswersUri = 'addDiagnosticAnswers';
+  static const String getDiagnosticCompletedAnswersUri = 'getDiagnosticCompletedAnswers';
+  static const String updateDiagnosticAnswersUri = 'updateDiagnosticAnswers';
+  static const String getTribeMeterQuestionListUri = 'getTribeometerQuestionList';
+  static const String addTribeMeterAnswersUri = 'addTribeometerAnswers';
+  static const String getTribeMeterCompletedAnswersUri = 'getTribeometerCompletedAnswers';
+  static const String updateTribeMeterAnswersUri = 'updateTribeometerAnswers';
+  static const String getSupportHistoryUri = 'getSupportHistory';
+  static const String addCustomerSupportUri = 'addCustomerSupport';
+  static const String getUserChatMessagesUri = 'getUserChatMessages';
+  static const String sendChatMessageUri = 'sendChatMessage';
 
 
 

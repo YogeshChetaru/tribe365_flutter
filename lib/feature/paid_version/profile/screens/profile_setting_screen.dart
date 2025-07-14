@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tribe365_new/feature/paid_version/home/controllers/home_controller.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 import '../../../../common/basewidget/custom_header_back_widget.dart';
 import '../../../../localization/language_constrants.dart';
-import '../../../../utill/images.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileSettingScreen extends StatefulWidget {
@@ -17,6 +17,16 @@ class ProfileSettingScreen extends StatefulWidget {
 class ProfileSettingScreenState extends State<ProfileSettingScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
 
+  @override
+  void initState() {
+    setData();
+    super.initState();
+  }
+  void setData() {
+    HomeController homeController = Provider.of<HomeController>(context,listen: false);
+    ProfileController profileController = Provider.of<ProfileController>(context,listen: false);
+    profileController.updateIsPushNotification(homeController.getPushNotificationStatus(),false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +85,7 @@ class ProfileSettingScreenState extends State<ProfileSettingScreen> {
                                   child: Switch(
                                     value:profileProvider.isPushNotification,
                                     onChanged: (value) {
-                                      profileProvider.updateIsPushNotification(value);
+                                      profileProvider.updateIsPushNotification(value,true);
                                     },
                                     activeColor: Colors.white,
                                     activeTrackColor: ColorResources.mainColor,
@@ -88,7 +98,7 @@ class ProfileSettingScreenState extends State<ProfileSettingScreen> {
                             ],
                           ),
                         ),
-                        Container(
+                       /* Container(
                           width: MediaQuery.sizeOf(context).width,
                           decoration: BoxDecoration(
                             color: ColorResources.white,
@@ -128,10 +138,11 @@ class ProfileSettingScreenState extends State<ProfileSettingScreen> {
                                   ],
                                 ),
                               )),
-                              Image.asset(Images.imgSettingRed,width: 24,height: 24,)
+                              InkWell(onTap: () async {
+                              },child: Image.asset(Images.imgSettingRed,width: 24,height: 24,))
                             ],
                           ),
-                        )
+                        )*/
                       ],
                     ),
                   ),
@@ -143,5 +154,6 @@ class ProfileSettingScreenState extends State<ProfileSettingScreen> {
       ),
     );
   }
+
 
 }

@@ -26,7 +26,7 @@ class CustomHeaderBack extends StatelessWidget {
         children: [
           InkWell(
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(context,true);
               },
               child: Image.asset(
                 Images.imgCircleBackRed,

@@ -25,7 +25,7 @@ class TeamRoleScreenState extends State<TeamRoleScreen> {
   @override
   void initState() {
     super.initState();
-    profileController.initCounters();
+
     loadAPI();
 
   }

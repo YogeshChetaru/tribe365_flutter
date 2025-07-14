@@ -30,12 +30,14 @@ class OffLoadingSubScreenState extends State<OffLoadingSubScreen> {
   getImageData(File? data) {
     offloadingController.updateFileData(data!);
   }
+
   void apiLoad() {
     profileController.viewUserProfile().then((onValue){
       offloadingController.updateData(profileController.userProfileData);
       offloadingController.viewOffloadingFirstData();
     });
   }
+
   @override
   void initState() {
     super.initState();

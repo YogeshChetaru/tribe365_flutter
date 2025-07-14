@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../utill/color_resources.dart';
-import '../../../../utill/dimensions.dart';
 import '../controllers/profile_controller.dart';
 
 class TeamRoleBuildStatement extends StatelessWidget {
@@ -13,7 +11,7 @@ class TeamRoleBuildStatement extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ProfileController>(builder: (context, profileProvider, _) {
       final option = profileProvider.currentOptions[index];
-      final counter = profileProvider.counters[index] ?? 0;
+
 
       return Card(
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),

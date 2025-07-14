@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../data/datasource/remote/dio/dio_client.dart';
 import '../../../../../data/datasource/remote/exception/api_error_handler.dart';
@@ -38,7 +37,6 @@ class ProfileRepository implements ProfileRepositoryInterface {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
-
 
   @override
   Future<ApiResponse> viewCOTFunctionalLensDetail(Map<String, dynamic> loginBody) async {
@@ -163,6 +161,55 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<ApiResponse> viewDiagnosticQuestionList() async {
+    try {
+      Response response = await dioClient!.get(
+          AppConstants.getDiagnosticQuestionListUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewDiagnosticCompletedQuestionList() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getDiagnosticCompletedAnswersUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewTribeMeterQuestionList() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getTribeMeterQuestionListUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewTribeMeterQuestionCompletedList() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getTribeMeterCompletedAnswersUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
   Future<ApiResponse> getCOTMapperSummary() async {
     try {
       Response response = await dioClient!.get(
@@ -208,6 +255,33 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  Future<void> saveSotQuestionListData(String userData) async {
+    try {
+      await sharedPreferences!.setString(AppConstants.userSotQuestionListData, userData);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> saveDiagnosticQuestionListData(String userData) async {
+    try {
+      await sharedPreferences!.setString(AppConstants.userDiagnosticQuestionListData, userData);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> saveTribeMeterQuestionListData(String userData) async {
+    try {
+      await sharedPreferences!.setString(AppConstants.userTribeMeterQuestionListData, userData);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
   String getUserTeamRoleData() {
     return sharedPreferences!.getString(AppConstants.userTeamRoleData) ?? "";
   }
@@ -223,6 +297,21 @@ class ProfileRepository implements ProfileRepositoryInterface {
   }
 
   @override
+  String getSotQuestionListData() {
+    return sharedPreferences!.getString(AppConstants.userSotQuestionListData) ?? "";
+  }
+
+  @override
+  String getTribeMeterQuestionListData() {
+    return sharedPreferences!.getString(AppConstants.userTribeMeterQuestionListData) ?? "";
+  }
+
+  @override
+  String getDiagnosticListData() {
+    return sharedPreferences!.getString(AppConstants.userDiagnosticQuestionListData) ?? "";
+  }
+
+  @override
   Future<void> clearSavedUserTeamRoleData() async {
     sharedPreferences!.remove(AppConstants.userTeamRoleData);
   }
@@ -235,6 +324,21 @@ class ProfileRepository implements ProfileRepositoryInterface {
   @override
   Future<void> clearSavedPersonalityTypeData() async {
     sharedPreferences!.remove(AppConstants.userPersonalityTypeData);
+  }
+
+  @override
+  Future<void> clearSotQuestionListData() async {
+    sharedPreferences!.remove(AppConstants.userSotQuestionListData);
+  }
+
+  @override
+  Future<void> clearDiagnosticQuestionListData() async {
+    sharedPreferences!.remove(AppConstants.userDiagnosticQuestionListData);
+  }
+
+  @override
+  Future<void> clearTribeMeterQuestionListData() async {
+    sharedPreferences!.remove(AppConstants.userTribeMeterQuestionListData);
   }
 
   @override
@@ -314,6 +418,86 @@ class ProfileRepository implements ProfileRepositoryInterface {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
+  @override
+  Future<ApiResponse> sendSotQuestionListData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.addSOTanswersUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> sendSotQuestionListCompletedData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.updateSOTquestionAnswerUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> sendDiagnosticQuestionListData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.addDiagnosticAnswersUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> sendDiagnosticCompletedQuestionListData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.updateDiagnosticAnswersUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> sendTribeMeterQuestionListData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.addTribeMeterAnswersUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> sendTribeMeterQuestionCompleteListData(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.updateTribeMeterAnswersUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
 
   @override
   Future<ApiResponse> viewActionList(Map<String, dynamic> loginBody) async {
@@ -405,7 +589,6 @@ class ProfileRepository implements ProfileRepositoryInterface {
     }
   }
 
-
   @override
   Future<ApiResponse> addActionData(Map<String, dynamic> loginBody) async {
     try {
@@ -419,7 +602,6 @@ class ProfileRepository implements ProfileRepositoryInterface {
     }
   }
 
-
   @override
   Future<ApiResponse> updateActionData(Map<String, dynamic> loginBody) async {
     try {
@@ -432,7 +614,6 @@ class ProfileRepository implements ProfileRepositoryInterface {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
-
 
   @override
   Future<ApiResponse> viewCommentList(Map<String, dynamic> loginBody) async {
@@ -460,6 +641,133 @@ class ProfileRepository implements ProfileRepositoryInterface {
     }
   }
 
+  @override
+  Future<ApiResponse> viewOrgDashboardReportWithFilter(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getOrgDashboardReportWithFilterUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewOfficeList(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getAllOfficeDepartmentsUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewDepartmentList() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getDepartmentListUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewSotQuestionList() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getSotQuestionListUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewSotQuestionCompletedList() async {
+    try {
+      Response response = await dioClient!.get(
+        AppConstants.getSOTquestionAnswersUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewSupportHistoryList(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getSupportHistoryUri,
+        data: loginBody
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> addCustomerSupport(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.addCustomerSupportUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> viewChatMessages(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getUserChatMessagesUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> sendChatMessages(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.sendChatMessageUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> updatePushNotificationStatus(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.updatePushNotificationStatusUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
 
 
   @override

@@ -195,7 +195,7 @@ class PersonalityTypeScreenState extends State<PersonalityTypeScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pop(context, false); // No
+                Navigator.pop(context, true); // No
               },
               child: Text(
                 getTranslated("no", context)!,
@@ -208,14 +208,14 @@ class PersonalityTypeScreenState extends State<PersonalityTypeScreen> {
 
       if (shouldSave == true) {
         await provider.saveUserPersonalityTypeData();
-        Navigator.of(Get.context!).pop();
+        Navigator.of(Get.context!).pop(true);
         return true; // allow back navigation
       } else {
-        Navigator.of(Get.context!).pop();
+        Navigator.of(Get.context!).pop(true);
         return true; // allow back navigation without saving
       }
     } else {
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
       return true; // nothing to save, allow back navigation
     }
   }

@@ -59,7 +59,7 @@ class PersonalityTypeResultScreenState extends State<PersonalityTypeResultScreen
                     children: [
                       InkWell(
                           onTap:() {
-                            Navigator.of(context).pop();
+                            Navigator.of(context).pop(true);
                           },
                           child: Image.asset(
                             Images.imgCircleBackRed,
@@ -116,6 +116,119 @@ class PersonalityTypeResultScreenState extends State<PersonalityTypeResultScreen
                                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                                 if(profileProvider.userNameStatus==false)
                                 SizedBox(height: 10),
+                                Card(
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(12),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 5),
+                                          child: Text(
+                                            getTranslated("DICHOTOMIES", context)!,
+                                            style: TextStyle(
+                                              fontFamily: "Roboto",
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Row(
+                                          children:profileProvider.modelFutureLensDetails!.initialValueList!.map((v) {
+                                            return Expanded(
+                                              child: Container(
+                                                height: 70,
+                                                margin: EdgeInsets.symmetric(horizontal: 4),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.grey.withOpacity(0.3),
+                                                      blurRadius: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  v.value!,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                        SizedBox(height: 15),
+                                        Text(
+                                          getTranslated("SCORE", context)!,
+                                          style: TextStyle(
+                                            fontFamily: "Roboto",
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Row(
+                                          children: profileProvider.modelFutureLensDetails!.initialValueList!.map((v) {
+                                            Color bgColor;
+                                            if (v.score == 0) {
+                                              bgColor = Colors.grey.shade300;
+                                            } else if (v.title!.toLowerCase().contains("very clear")) {
+                                              bgColor = Colors.red.shade200;
+                                            } else if (v.title!.toLowerCase().contains("clear")) {
+                                              bgColor = Colors.orange.shade200;
+                                            } else if (v.title!.toLowerCase().contains("moderate")) {
+                                              bgColor = Colors.lightGreen.shade200;
+                                            } else if (v.title!.toLowerCase().contains("slight")) {
+                                              bgColor = Colors.green.shade200;
+                                            } else {
+                                              bgColor = Colors.grey.shade200;
+                                            }
+                                            return Expanded(
+                                              child: Container(
+                                                height: 70,
+                                                margin: EdgeInsets.symmetric(horizontal: 4),
+                                                decoration: BoxDecoration(
+                                                  color: bgColor,
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  border: Border.all(color: Colors.black26),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.grey.withOpacity(0.3),
+                                                      blurRadius: 5,
+                                                    ),
+                                                  ],
+                                                ),
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  v.score.toString(),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+
+
                                 InkWell(
                                   onTap: () {
                                     routePush(context, PersonalityQuestionsUpdateScreen());
@@ -145,7 +258,6 @@ class PersonalityTypeResultScreenState extends State<PersonalityTypeResultScreen
                                     ),
                                   ),
                                 ),
-
                                 InkWell(
                                   onTap: () {
                                     routePush(context, PersonalityFullResultScreen());

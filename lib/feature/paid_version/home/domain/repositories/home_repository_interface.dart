@@ -13,4 +13,6 @@ abstract class HomeRepositoryInterface implements RepositoryInterface {
   Future<ApiResponse> getCurrentVersionOfApp(Map<String, dynamic> body);
   Future<ApiResponse> getDotDetail(Map<String, dynamic> body);
   Future<ApiResponse> getDepartmentUserList(Map<String, dynamic> body);
+  Future<void> savePushNotificationStatus(bool userData);
+  bool getPushNotificationStatus();
 }

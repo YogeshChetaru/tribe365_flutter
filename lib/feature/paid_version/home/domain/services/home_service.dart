@@ -47,4 +47,13 @@ class HomeService implements HomeServiceInterface {
     return homeRepositoryInterface.getDotDetail(body);
   }
 
+  @override
+  Future<void> savePushNotificationStatus(bool userData) {
+    return homeRepositoryInterface.savePushNotificationStatus(userData);
+  }
+
+  @override
+  bool getPushNotificationStatus() {
+    return homeRepositoryInterface.getPushNotificationStatus();
+  }
 }

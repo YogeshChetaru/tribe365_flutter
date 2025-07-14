@@ -131,6 +131,18 @@ class HomeRepository implements HomeRepositoryInterface {
     }
   }
 
+  @override
+    Future<void> savePushNotificationStatus(bool userData) async {
+    try {
+      await sharedPreferences!.setBool(AppConstants.pushNotificationStatus, userData);
+    } catch (e) {
+      rethrow;
+    }
+  }
+  @override
+  bool getPushNotificationStatus() {
+    return sharedPreferences!.getBool(AppConstants.pushNotificationStatus) ?? false;
+  }
 
   @override
   Future add(value) {

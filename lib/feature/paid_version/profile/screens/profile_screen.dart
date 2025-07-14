@@ -64,7 +64,7 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
   }
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this); // ✅ Remove on dispose
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
   @override
@@ -190,8 +190,28 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                               ),
                               profileProvider.userProfileData!.personalityTypeDetailsArr==null?
                               InkWell(
-                                onTap: (){
-                                  routePush(context, PersonalityTypeScreen());
+                                onTap: () async {
+                                bool status = await Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      transitionDuration: Duration(milliseconds: 500),
+                                      reverseTransitionDuration: Duration(milliseconds: 500),
+                                      pageBuilder: (context, animation, secondaryAnimation) => PersonalityTypeScreen(),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        const begin = Offset(1.0, 0.0); // from right
+                                        const end = Offset.zero;
+                                        const curve = Curves.easeInOut;
+                                        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                        final offsetAnimation = animation.drive(tween);
+                                        return SlideTransition(
+                                          position: offsetAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                if(status){
+                                  loadAPI();
+                                }
                                 },child: Container(
                                   margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                   child: Text(
@@ -243,8 +263,28 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                               ),
                               profileProvider.userProfileData!.cotTeamRoleMapArr!.isEmpty?
                               InkWell(
-                                onTap: (){
-                                  routePush(context,TeamRoleScreen());
+                                onTap: () async {
+                              bool status = await  Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      transitionDuration: Duration(milliseconds: 500),
+                                      reverseTransitionDuration: Duration(milliseconds: 500),
+                                      pageBuilder: (context, animation, secondaryAnimation) => TeamRoleScreen(),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        const begin = Offset(1.0, 0.0); // from right
+                                        const end = Offset.zero;
+                                        const curve = Curves.easeInOut;
+                                        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                        final offsetAnimation = animation.drive(tween);
+                                        return SlideTransition(
+                                          position: offsetAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                  if(status){
+                                    loadAPI();
+                                  }
                                 },child: Container(
                                   margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                   child: Text(
@@ -348,8 +388,28 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                           child: Column(
                             children: [
                               InkWell(
-                                onTap: (){
-                                  routePush(context, ProfileEditProfileScreen());
+                                onTap: () async {
+                                bool status = await  Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      transitionDuration: Duration(milliseconds: 500),
+                                      reverseTransitionDuration: Duration(milliseconds: 500),
+                                      pageBuilder: (context, animation, secondaryAnimation) => ProfileEditProfileScreen(),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        const begin = Offset(1.0, 0.0); // from right
+                                        const end = Offset.zero;
+                                        const curve = Curves.easeInOut;
+                                        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                        final offsetAnimation = animation.drive(tween);
+                                        return SlideTransition(
+                                          position: offsetAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                if(status){
+                                  loadAPI();
+                                }
                                 },child: Row(
                                   children: [
                                     Image.asset(Images.imgEditProfile,width: 50,height: 50,),

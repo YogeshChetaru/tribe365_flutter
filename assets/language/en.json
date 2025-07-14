@@ -222,5 +222,12 @@
   "please_select_status": "Please select status",
   "edit_actions": "Edit Action",
   "no_comments_found": "No comments found",
-  "please_enter_comment": "Please enter comment"
+  "please_enter_comment": "Please enter comment",
+  "no_data_available": "No data available",
+  "question": "Question",
+  "supercharging_questions": "Supercharging Questions",
+  "update_answers": "Update Answers",
+  "no_submission_yet": "No submission yet",
+  "SCORE": "SCORE"
+
 }
