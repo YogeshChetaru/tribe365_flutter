@@ -15,6 +15,7 @@ import '../../../../localization/language_constrants.dart';
 import '../../../../main.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
+import '../../../free_version/free_dashboard/controllers/free_dashboard_controller.dart';
 import '../../../free_version/free_dashboard/widgets/changepassworddialog.dart';
 import '../../../free_version/free_dashboard/widgets/logoutdialog.dart';
 import '../../../free_version/free_dashboard/widgets/worknotdialog.dart';
@@ -53,7 +54,9 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
   }
 
   void loadAPI() {
-    profileController.viewUserProfile();
+    profileController.viewUserProfile().then((onValue){
+      Provider.of<FreeDashboardController>(Get.context!,listen: false).updateUserID(profileController.userProfileData!.id);
+    });
   }
 
   void _loadVersion() async {

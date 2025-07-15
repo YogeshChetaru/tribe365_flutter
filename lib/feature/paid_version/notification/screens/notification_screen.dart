@@ -132,14 +132,18 @@ class NotificationScreenState extends State<NotificationScreen> {
                                 );
                               },
                             )
-                      : notificationProvider.archivedList==null?SizedBox():  ListView.builder(
-                          shrinkWrap: true,
-                          physics: ScrollPhysics(),
-                          itemCount: notificationProvider.archivedList!.length,
-                          itemBuilder: (context, index) {
-                            return NotificationItem(item: notificationProvider.archivedList![index],);
-                          },
-                        ),
+                      : notificationProvider.archivedList == null
+                          ? SizedBox()
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              physics: ScrollPhysics(),
+                              itemCount: notificationProvider.archivedList!.length,
+                              itemBuilder: (context, index) {
+                                return NotificationItem(
+                                  item: notificationProvider.archivedList![index],
+                                );
+                              },
+                            ),
                 )
               ],
             ),
@@ -158,7 +162,11 @@ class NotificationScreenState extends State<NotificationScreen> {
                       padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
                       decoration: BoxDecoration(
                         color: ColorResources.mainColor,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            bottomLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10)),
                       ),
                       child: Text(
                         getTranslated("archive_all", context)!,

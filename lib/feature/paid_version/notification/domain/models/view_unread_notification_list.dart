@@ -96,22 +96,31 @@ class ViewUnreadNotificationData {
   int? teamFeedbackId;
   bool? isRead;
 
+  // Champion fields
+  String? mUserName;
+  String? mUserEmail;
+  String? mUserImage;
+  bool? multiple;
 
-
-  ViewUnreadNotificationData(
-      {this.id,
-        this.title,
-        this.description,
-        this.feedbackId,
-        this.supportId,
-        this.reflectionId,
-        this.notificationType,
-        this.createdAt,
-        this.lastMessage,
-        this.file,
-        this.fromUserId,
-        this.teamFeedbackId,
-        this.isRead});
+  ViewUnreadNotificationData({
+    this.id,
+    this.title,
+    this.description,
+    this.feedbackId,
+    this.supportId,
+    this.reflectionId,
+    this.notificationType,
+    this.createdAt,
+    this.lastMessage,
+    this.file,
+    this.fromUserId,
+    this.teamFeedbackId,
+    this.isRead,
+    this.mUserName,
+    this.mUserEmail,
+    this.mUserImage,
+    this.multiple,
+  });
 
   ViewUnreadNotificationData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -127,6 +136,10 @@ class ViewUnreadNotificationData {
     fromUserId = json['fromUserId'];
     teamFeedbackId = json['teamFeedbackId'];
     isRead = json['isRead'];
+    mUserName = json['mUserName'];
+    mUserEmail = json['mUserEmail'];
+    mUserImage = json['mUserImage'];
+    multiple = json['multiple'];
   }
 
   Map<String, dynamic> toJson() {
@@ -144,9 +157,14 @@ class ViewUnreadNotificationData {
     data['fromUserId'] = fromUserId;
     data['teamFeedbackId'] = teamFeedbackId;
     data['isRead'] = isRead;
+    data['mUserName'] = mUserName;
+    data['mUserEmail'] = mUserEmail;
+    data['mUserImage'] = mUserImage;
+    data['multiple'] = multiple;
     return data;
   }
 }
+
 
 class AnsStatus {
   bool? tribeValue;

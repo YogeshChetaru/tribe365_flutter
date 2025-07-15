@@ -117,6 +117,8 @@ class AppConstants {
   static const String addCustomerSupportUri = 'addCustomerSupport';
   static const String getUserChatMessagesUri = 'getUserChatMessages';
   static const String sendChatMessageUri = 'sendChatMessage';
+  static const String riskRegisterListUri = 'riskRegisterList';
+  static const String riskDetailUri = 'riskDetail';
 
 
 

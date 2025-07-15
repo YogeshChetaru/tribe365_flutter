@@ -143,6 +143,9 @@ class LoginController extends ChangeNotifier {
         }else if (loginResponse.data!.appPaymentVersion==3){
           routePushAndRemoveUntil(Get.context!, PaidDashboardScreen());
         }
+        else{
+          routePushAndRemoveUntil(Get.context!, PaidDashboardScreen());
+        }
       }
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!,isError: true);

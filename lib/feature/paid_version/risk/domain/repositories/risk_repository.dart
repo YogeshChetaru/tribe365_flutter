@@ -1,5 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../data/datasource/remote/dio/dio_client.dart';
+import '../../../../../data/datasource/remote/exception/api_error_handler.dart';
+import '../../../../../data/model/api_response.dart';
+import '../../../../../utill/app_constants.dart';
 import 'risk_repository_interface.dart';
 
 class RiskRepository implements RiskRepositoryInterface {
@@ -7,6 +11,34 @@ class RiskRepository implements RiskRepositoryInterface {
   final SharedPreferences? sharedPreferences;
 
   RiskRepository({required this.dioClient, required this.sharedPreferences});
+
+  @override
+  Future<ApiResponse> viewRiskRegisterList(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.riskRegisterListUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> viewRiskDetail(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.riskDetailUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
 
   @override
   Future add(value) {

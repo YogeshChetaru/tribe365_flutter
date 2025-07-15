@@ -228,6 +228,10 @@
   "supercharging_questions": "Supercharging Questions",
   "update_answers": "Update Answers",
   "no_submission_yet": "No submission yet",
-  "SCORE": "SCORE"
+  "SCORE": "SCORE",
+  "no_new_risk": "No new risk",
+  "no_risk_closed_yet": "No risk closed yet",
+  "no_ongoing_risk": "No ongoing risk",
+  "date": "Date"
 
 }
