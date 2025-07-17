@@ -34,7 +34,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // IMPORTANT: Do NOT call FcmBroadcastReceiver.handleIncomingMessage() here,
   // because it uses Flutter plugins (e.g., notifications, toasts).
   // Firebase itself displays notification automatically if you use the 'notification' field.
-  print('Background message: ${message.messageId}');
+  debugPrint('Background message: ${message.messageId}');
 }
 
 Future<void> main() async {

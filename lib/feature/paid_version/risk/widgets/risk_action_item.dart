@@ -9,11 +9,11 @@ class RiskActionItem extends StatefulWidget {
   final String userRole;
 
   const RiskActionItem({
-    Key? key,
+    super.key,
     required this.action,
     required this.currentUserId,
     required this.userRole,
-  }) : super(key: key);
+  });
 
   @override
   State<RiskActionItem> createState() => _RiskActionItemState();

@@ -10,6 +10,7 @@ import '../controllers/home_controller.dart';
 import '../widgets/belief_horizontal_list.dart';
 
 class DotDetailsScreen extends StatefulWidget {
+
   const DotDetailsScreen({super.key});
 
   @override

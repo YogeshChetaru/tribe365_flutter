@@ -4,7 +4,6 @@ import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/utility.dart';
 
 import '../../../../utill/dimensions.dart';
-import '../../offloading/screens/offloading_chat_details_screen.dart';
 import '../domain/models/view_support_history_list_response.dart';
 import '../screens/support_chat_details_screen.dart';
 

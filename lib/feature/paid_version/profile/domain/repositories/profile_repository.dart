@@ -769,6 +769,19 @@ class ProfileRepository implements ProfileRepositoryInterface {
     }
   }
 
+  @override
+  Future<ApiResponse> viewActionDetail(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getActionDetailUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
 
   @override
   Future add(value) {

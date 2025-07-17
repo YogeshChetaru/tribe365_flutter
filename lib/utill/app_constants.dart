@@ -119,6 +119,13 @@ class AppConstants {
   static const String sendChatMessageUri = 'sendChatMessage';
   static const String riskRegisterListUri = 'riskRegisterList';
   static const String riskDetailUri = 'riskDetail';
+  static const String getHomePageKudosCountUri = 'getHomePageKudosCount';
+  static const String dotValueKudosAwardDetailUri = 'dotValuekudoAwardDetail';
+  static const String teamFeedbackUserAnswerStatusUri = 'teamFeedbackUserAnswerStatus';
+  static const String viewIndividualQuestionnaireListUri = 'getIndividualQuestionnaireList';
+  static const String addIndividualQuestionnaireAnswersUri = 'addIndividualQuestionnaireAnswers';
+  static const String kudosAwardDetailUri = 'kudoAwardDetail';
+  static const String getActionDetailUri = 'getActionDetail';
 
 
 

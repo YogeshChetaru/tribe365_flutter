@@ -574,7 +574,6 @@ class HomeController extends ChangeNotifier {
 
   Future<void> getDotDetails() async {
     _isPopupLoading = true;
-    notifyListeners();
     Map<String, dynamic> requestData = {
       "orgId": orgId,
     };

@@ -360,4 +360,10 @@ class ProfileService implements ProfileServiceInterface {
     return profileRepositoryInterface.updatePushNotificationStatus(body);
   }
 
+  @override
+  Future<ApiResponse> viewActionDetail(Map<String, dynamic> body) {
+    return profileRepositoryInterface.viewActionDetail(body);
+  }
+
+
 }

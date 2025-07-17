@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tribe365_new/feature/paid_version/profile/widgets/build_culture_structure_main.dart';
@@ -8,7 +7,6 @@ import 'package:tribe365_new/feature/paid_version/profile/widgets/build_sentimen
 import 'package:tribe365_new/feature/paid_version/profile/widgets/build_tribe_meter_main.dart';
 import 'package:tribe365_new/feature/paid_version/profile/widgets/culture_index_main.dart';
 import 'package:tribe365_new/feature/paid_version/profile/widgets/engagement_index_main.dart';
-import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import '../../../../common/basewidget/custom_header_back_widget.dart';
 import '../../../../utill/dimensions.dart';
@@ -17,7 +15,6 @@ import '../../../free_version/free_dashboard/domain/models/view_department_list_
 import '../controllers/profile_controller.dart';
 import '../widgets/build_personality_type_main.dart';
 import '../widgets/build_team_role_main.dart';
-import '../widgets/value_and_belief_main.dart';
 
 class ProfileDemoStudiesScreen extends StatefulWidget {
   const ProfileDemoStudiesScreen({super.key});

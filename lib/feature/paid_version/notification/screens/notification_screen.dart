@@ -117,34 +117,74 @@ class NotificationScreenState extends State<NotificationScreen> {
                 SizedBox(
                   height: 20,
                 ),
-                Expanded(
-                  flex: 1,
-                  child: notificationProvider.isNotificationType == true
-                      ? notificationProvider.listUnread.isEmpty
-                          ? SizedBox.shrink()
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              physics: ScrollPhysics(),
-                              itemCount: notificationProvider.listUnread.length,
-                              itemBuilder: (context, index) {
-                                return NotificationItem(
-                                  item: notificationProvider.listUnread[index],
-                                );
-                              },
-                            )
-                      : notificationProvider.archivedList == null
-                          ? SizedBox()
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              physics: ScrollPhysics(),
-                              itemCount: notificationProvider.archivedList!.length,
-                              itemBuilder: (context, index) {
-                                return NotificationItem(
-                                  item: notificationProvider.archivedList![index],
-                                );
-                              },
+                notificationProvider.isLoading
+                    ? Expanded(
+                        flex: 1,
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height / 2,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).primaryColor,
+                              ),
                             ),
-                )
+                          ),
+                        ),
+                      )
+                    : Expanded(
+                        flex: 1,
+                        child: notificationProvider.isNotificationType == true
+                            ? notificationProvider.listUnread.isEmpty
+                                ? Container(
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                                    child: Text(
+                                      getTranslated("no_data_found", context)!,
+                                      style: TextStyle(
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                        letterSpacing: 0,
+                                      ),
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: ScrollPhysics(),
+                                    itemCount: notificationProvider.listUnread.length,
+                                    itemBuilder: (context, index) {
+                                      return NotificationItem(
+                                        item: notificationProvider.listUnread[index],
+                                      );
+                                    },
+                                  )
+                            : notificationProvider.archivedList.isEmpty
+                                ? Container(
+                          alignment: Alignment.center,
+                          margin: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                          child: Text(
+                            getTranslated("no_data_found", context)!,
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: Colors.black,
+                              letterSpacing: 0,
+                            ),
+                          ),
+                        )
+                                : ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: ScrollPhysics(),
+                                    itemCount: notificationProvider.archivedList.length,
+                                    itemBuilder: (context, index) {
+                                      return NotificationItem(
+                                        item: notificationProvider.archivedList[index],
+                                      );
+                                    },
+                                  ),
+                      )
               ],
             ),
           );
@@ -190,5 +230,6 @@ class NotificationScreenState extends State<NotificationScreen> {
     NotificationController controller = Provider.of<NotificationController>(context, listen: false);
     controller.viewUnReadNotificationList(profileController.userProfileData!.id.toString(), 1);
     controller.viewNotificationList(profileController.userProfileData!.id.toString(), 1);
+    controller.viewHomeKudosCountAPI(profileController.userProfileData!.orgId.toString());
   }
 }

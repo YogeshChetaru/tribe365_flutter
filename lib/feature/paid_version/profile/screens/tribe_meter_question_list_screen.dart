@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tribe365_new/feature/paid_version/profile/widgets/build_diagnostic_question.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import '../../../../localization/language_constrants.dart';
 import '../../../../main.dart';

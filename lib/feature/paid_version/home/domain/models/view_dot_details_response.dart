@@ -171,7 +171,7 @@ class BeliefValue {
     beliefId = json['beliefId'];
     dotId = json['dotId'];
     ratings = json['ratings'];
-    isSelected = json['isSelected'];
+    isSelected = json['isSelected'].toString();
   }
 
   Map<String, dynamic> toJson() {

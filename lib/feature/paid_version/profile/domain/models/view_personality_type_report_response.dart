@@ -16,7 +16,7 @@ class ViewPersonalityTypeReportResponse {
     if (json['data'] != null) {
       data = <ViewPersonalityTypeReportData>[];
       json['data'].forEach((v) {
-        data!.add(new ViewPersonalityTypeReportData.fromJson(v));
+        data!.add(ViewPersonalityTypeReportData.fromJson(v));
       });
     }
   }

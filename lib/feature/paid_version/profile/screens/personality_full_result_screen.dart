@@ -99,7 +99,7 @@ class PersonalityFullResultScreenState extends State<PersonalityFullResultScreen
                             ),
                           ),
                         )
-                      : Container(
+                      : SizedBox(
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height,
                           child: SingleChildScrollView(

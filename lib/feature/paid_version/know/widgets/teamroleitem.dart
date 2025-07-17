@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:tribe365_new/feature/paid_version/profile/controllers/profile_controller.dart';
 import 'package:tribe365_new/feature/paid_version/profile/screens/team_role_details_screen.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
-import 'package:tribe365_new/utill/custom_route.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 
 import '../../../../main.dart';

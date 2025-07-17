@@ -73,4 +73,6 @@ class Images {
   static const String imgLikeHollowGreen = 'assets/images/img_like_hollow_green.png';
   static const String imgAppLogo = 'assets/images/img_app_icon.png';
   static const String imgCotDescriptionRed = 'assets/images/img_cot_description_red.png';
+  static const String imgAwardsCircleRed = 'assets/images/img_awards_circle_red.png';
+  static const String icCrown = 'assets/images/ic_crown.png';
 }

@@ -71,19 +71,19 @@ class ViewActionListData {
         this.linkedActionOffloads});
 
   ViewActionListData.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    userId = json['userId'];
-    tier = json['tier'];
-    tierId = json['tierId'];
+    id = json['id'].toString();
+    userId = json['userId'].toString();
+    tier = json['tier'].toString();
+    tierId = json['tierId'].toString();
     responsibleName = json['responsibleName'];
-    responsibleUserId = json['responsibleUserId'];
+    responsibleUserId = json['responsibleUserId'].toString();
     description = json['description'];
     startedDate = json['startedDate'];
     dueDate = json['dueDate'];
     orgStatus = json['orgStatus'];
-    orgId = json['orgId'];
+    orgId = json['orgId'].toString();
     offDeptName = json['offDeptName'];
-    offDeptId = json['offDeptId'];
+    offDeptId = json['offDeptId'].toString();
     name = json['name'];
     if (json['themes'] != null) {
       themes = <ModelTheme>[];

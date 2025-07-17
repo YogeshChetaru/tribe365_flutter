@@ -71,4 +71,5 @@ abstract class ProfileRepositoryInterface implements RepositoryInterface {
   Future<ApiResponse> viewDiagnosticCompletedQuestionList();
   Future<ApiResponse> viewTribeMeterQuestionCompletedList();
   Future<ApiResponse> updatePushNotificationStatus(Map<String, dynamic> body);
+  Future<ApiResponse> viewActionDetail(Map<String, dynamic> body);
 }

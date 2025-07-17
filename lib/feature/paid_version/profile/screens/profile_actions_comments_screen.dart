@@ -5,16 +5,18 @@ import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/utility.dart';
 import '../../../../common/basewidget/custom_header_back_widget.dart';
 import '../../../../localization/language_constrants.dart';
+import '../../../../main.dart';
 import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
 import '../controllers/profile_controller.dart';
-import '../domain/models/view_action_list_response.dart';
 import '../domain/models/view_comment_list_response.dart';
 
 class ProfileActionsCommentsScreen extends StatefulWidget {
-  final ViewActionListData item;
+  // final ViewActionListData item;
+  final String actionId;
 
-  const ProfileActionsCommentsScreen({super.key, required this.item});
+  const ProfileActionsCommentsScreen({super.key, required this.actionId /*required this.item*/
+      });
 
   @override
   ProfileActionsCommentsScreenState createState() => ProfileActionsCommentsScreenState();
@@ -22,6 +24,7 @@ class ProfileActionsCommentsScreen extends StatefulWidget {
 
 class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
+  ProfileController controller = Provider.of<ProfileController>(Get.context!, listen: false);
 
   @override
   void initState() {
@@ -30,20 +33,22 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
   }
 
   void loadAPI() {
-    ProfileController controller = Provider.of<ProfileController>(context, listen: false);
-    controller.viewActionComments(widget.item.id.toString());
+    controller.viewActionComments(widget.actionId.toString());
+    controller.viewActionDetail(widget.actionId.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     String statusText = getTranslated("not_started", context)!;
     Color statusColor = ColorResources.colorED1C24;
-    if (widget.item.orgStatus?.toLowerCase() == "started") {
-      statusText = getTranslated("started", context)!;
-      statusColor = ColorResources.colorF6941D;
-    } else if (widget.item.orgStatus?.toLowerCase() == "completed") {
-      statusText = getTranslated("completed", context)!;
-      statusColor = ColorResources.color39B54A;
+    if (controller.viewActionDetailsData != null) {
+      if (controller.viewActionDetailsData!.orgStatus?.toLowerCase() == "started") {
+        statusText = getTranslated("started", context)!;
+        statusColor = ColorResources.colorF6941D;
+      } else if (controller.viewActionDetailsData!.orgStatus?.toLowerCase() == "completed") {
+        statusText = getTranslated("completed", context)!;
+        statusColor = ColorResources.color39B54A;
+      }
     }
     return Scaffold(
       key: _scaffoldKey,
@@ -66,217 +71,218 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
-                          width: MediaQuery.sizeOf(context).width,
-                          decoration: BoxDecoration(
-                            color: ColorResources.white,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: ColorResources.colorAAADC4,
-                                blurRadius: 1.0,
-                              ),
-                            ],
-                          ),
-                          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 20,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(color: ColorResources.mainColor, width: 1),
-                                      image: DecorationImage(
-                                        image: AssetImage(Images.imgUserCircleGray),
+                        if (profileProvider.viewActionDetailsData != null)
+                          Container(
+                            margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                            width: MediaQuery.sizeOf(context).width,
+                            decoration: BoxDecoration(
+                              color: ColorResources.white,
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: ColorResources.colorAAADC4,
+                                  blurRadius: 1.0,
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 20,
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: ColorResources.mainColor, width: 1),
+                                        image: DecorationImage(
+                                          image: AssetImage(Images.imgUserCircleGray),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      widget.item.name!,
-                                      style: TextStyle(
-                                        fontSize: Dimensions.sp14,
-                                        fontWeight: FontWeight.w600,
-                                        color: ColorResources.color9a9a9a,
-                                        fontFamily: 'Roboto',
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        profileProvider.viewActionDetailsData!.name!,
+                                        style: TextStyle(
+                                          fontSize: Dimensions.sp14,
+                                          fontWeight: FontWeight.w600,
+                                          color: ColorResources.color9a9a9a,
+                                          fontFamily: 'Roboto',
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(widget.item.description!,
-                                  style: TextStyle(
-                                    fontSize: Dimensions.sp12,
-                                    fontWeight: FontWeight.w500,
-                                    color: ColorResources.color9a9a9a,
-                                    fontFamily: 'Roboto',
-                                  )),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Container(
-                                width: MediaQuery.sizeOf(context).width,
-                                height: 0.5,
-                                color: ColorResources.color9a9a9a,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 30,
-                                    child: Text(
-                                      "${getTranslated("start_date", context)!}:",
-                                      style: TextStyle(
-                                        fontSize: Dimensions.sp13,
-                                        fontWeight: FontWeight.w500,
-                                        color: ColorResources.color9a9a9a,
-                                        fontFamily: 'Roboto',
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(profileProvider.viewActionDetailsData!.description!,
+                                    style: TextStyle(
+                                      fontSize: Dimensions.sp12,
+                                      fontWeight: FontWeight.w500,
+                                      color: ColorResources.color9a9a9a,
+                                      fontFamily: 'Roboto',
+                                    )),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Container(
+                                  width: MediaQuery.sizeOf(context).width,
+                                  height: 0.5,
+                                  color: ColorResources.color9a9a9a,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 30,
+                                      child: Text(
+                                        "${getTranslated("start_date", context)!}:",
+                                        style: TextStyle(
+                                          fontSize: Dimensions.sp13,
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorResources.color9a9a9a,
+                                          fontFamily: 'Roboto',
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    flex: 70,
-                                    child: Text(
-                                      widget.item.startedDate!,
-                                      style: TextStyle(
-                                        fontSize: Dimensions.sp14,
-                                        fontWeight: FontWeight.w600,
-                                        color: ColorResources.color9a9a9a,
-                                        fontFamily: 'Roboto',
+                                    Expanded(
+                                      flex: 70,
+                                      child: Text(
+                                        profileProvider.viewActionDetailsData!.startedDate!,
+                                        style: TextStyle(
+                                          fontSize: Dimensions.sp14,
+                                          fontWeight: FontWeight.w600,
+                                          color: ColorResources.color9a9a9a,
+                                          fontFamily: 'Roboto',
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 30,
-                                    child: Text(
-                                      "${getTranslated("due_date", context)!}:",
-                                      style: TextStyle(
-                                        fontSize: Dimensions.sp13,
-                                        fontWeight: FontWeight.w500,
-                                        color: ColorResources.color9a9a9a,
-                                        fontFamily: 'Roboto',
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 30,
+                                      child: Text(
+                                        "${getTranslated("due_date", context)!}:",
+                                        style: TextStyle(
+                                          fontSize: Dimensions.sp13,
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorResources.color9a9a9a,
+                                          fontFamily: 'Roboto',
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    flex: 70,
-                                    child: Text(
-                                      widget.item.dueDate!,
-                                      style: TextStyle(
-                                        fontSize: Dimensions.sp14,
-                                        fontWeight: FontWeight.w600,
-                                        color: ColorResources.color9a9a9a,
-                                        fontFamily: 'Roboto',
+                                    Expanded(
+                                      flex: 70,
+                                      child: Text(
+                                        profileProvider.viewActionDetailsData!.dueDate!,
+                                        style: TextStyle(
+                                          fontSize: Dimensions.sp14,
+                                          fontWeight: FontWeight.w600,
+                                          color: ColorResources.color9a9a9a,
+                                          fontFamily: 'Roboto',
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 30,
-                                    child: Text(
-                                      "${getTranslated("status", context)!}:",
-                                      style: TextStyle(
-                                        fontSize: Dimensions.sp13,
-                                        fontWeight: FontWeight.w500,
-                                        color: ColorResources.color9a9a9a,
-                                        fontFamily: 'Roboto',
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 30,
+                                      child: Text(
+                                        "${getTranslated("status", context)!}:",
+                                        style: TextStyle(
+                                          fontSize: Dimensions.sp13,
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorResources.color9a9a9a,
+                                          fontFamily: 'Roboto',
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    flex: 70,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: 14,
-                                          height: 14,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: statusColor,
+                                    Expanded(
+                                      flex: 70,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 14,
+                                            height: 14,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: statusColor,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Text(
-                                          statusText,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: Dimensions.sp12,
-                                            fontWeight: FontWeight.w500,
-                                            color: statusColor,
-                                            fontFamily: 'Roboto',
+                                          SizedBox(
+                                            width: 5,
                                           ),
+                                          Text(
+                                            statusText,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: Dimensions.sp12,
+                                              fontWeight: FontWeight.w500,
+                                              color: statusColor,
+                                              fontFamily: 'Roboto',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 30,
+                                      child: Text(
+                                        "${getTranslated("responsible", context)!}:",
+                                        style: TextStyle(
+                                          fontSize: Dimensions.sp13,
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorResources.color9a9a9a,
+                                          fontFamily: 'Roboto',
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 30,
-                                    child: Text(
-                                      "${getTranslated("responsible", context)!}:",
-                                      style: TextStyle(
-                                        fontSize: Dimensions.sp13,
-                                        fontWeight: FontWeight.w500,
-                                        color: ColorResources.color9a9a9a,
-                                        fontFamily: 'Roboto',
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    flex: 70,
-                                    child: Text(
-                                      widget.item.responsibleName!,
-                                      style: TextStyle(
-                                        fontSize: Dimensions.sp14,
-                                        fontWeight: FontWeight.w600,
-                                        color: ColorResources.color9a9a9a,
-                                        fontFamily: 'Roboto',
+                                    Expanded(
+                                      flex: 70,
+                                      child: Text(
+                                        profileProvider.viewActionDetailsData!.responsibleName!,
+                                        style: TextStyle(
+                                          fontSize: Dimensions.sp14,
+                                          fontWeight: FontWeight.w600,
+                                          color: ColorResources.color9a9a9a,
+                                          fontFamily: 'Roboto',
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
                         Container(
                           margin: EdgeInsets.fromLTRB(15, 15, 15, 0),
                           width: MediaQuery.sizeOf(context).width,
@@ -329,48 +335,47 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                               Expanded(
                                   flex: 25,
                                   child: InkWell(
-                                    onTap: (){
-                                      if(profileProvider.commentController.text.toString().trim().isEmpty){
+                                    onTap: () {
+                                      if (profileProvider.commentController.text.toString().trim().isEmpty) {
                                         showCustomSnackBar(getTranslated("please_enter_comment", context), context);
-                                      }
-                                      else{
-                                        profileProvider.addActionComments(widget.item.id!, profileProvider.commentController.text.toString().trim());
+                                      } else {
+                                        profileProvider.addActionComments(widget.actionId, profileProvider.commentController.text.toString().trim());
                                       }
                                     },
-                                    child: profileProvider.isLoadingBtn==true?
-                                    SizedBox(
-                                      height: 70,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          valueColor: AlwaysStoppedAnimation<Color>(
-                                            Theme.of(context).primaryColor,
-                                          ),
-                                        ),
-                                      ),
-                                    )
+                                    child: profileProvider.isLoadingBtn == true
+                                        ? SizedBox(
+                                            height: 70,
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                valueColor: AlwaysStoppedAnimation<Color>(
+                                                  Theme.of(context).primaryColor,
+                                                ),
+                                              ),
+                                            ),
+                                          )
                                         : Container(
-                                      alignment: Alignment.center,
-                                      height: 70,
-                                      decoration: BoxDecoration(
-                                        color: ColorResources.mainColor,
-                                        borderRadius: BorderRadius.only(bottomRight: Radius.circular(10), topRight: Radius.circular(10)),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: ColorResources.colorAAADC4,
-                                            blurRadius: 1.0,
+                                            alignment: Alignment.center,
+                                            height: 70,
+                                            decoration: BoxDecoration(
+                                              color: ColorResources.mainColor,
+                                              borderRadius: BorderRadius.only(bottomRight: Radius.circular(10), topRight: Radius.circular(10)),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: ColorResources.colorAAADC4,
+                                                  blurRadius: 1.0,
+                                                ),
+                                              ],
+                                            ),
+                                            child: Text(
+                                              getTranslated("send", context)!,
+                                              style: TextStyle(
+                                                fontSize: Dimensions.sp16,
+                                                fontWeight: FontWeight.w700,
+                                                color: ColorResources.white,
+                                                fontFamily: 'Roboto',
+                                              ),
+                                            ),
                                           ),
-                                        ],
-                                      ),
-                                      child: Text(
-                                        getTranslated("send", context)!,
-                                        style: TextStyle(
-                                          fontSize: Dimensions.sp16,
-                                          fontWeight: FontWeight.w700,
-                                          color: ColorResources.white,
-                                          fontFamily: 'Roboto',
-                                        ),
-                                      ),
-                                    ),
                                   )),
                             ],
                           ),
@@ -387,136 +392,136 @@ class ProfileActionsCommentsScreenState extends State<ProfileActionsCommentsScre
                             ),
                           ),
                         ),
-                        profileProvider.isLoading?
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Theme.of(context).primaryColor,
-                              ),
-                            ),
-                          ),
-                        ):
-                            profileProvider.viewActionCommentList==null?
-                            Container(
-                              margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                getTranslated("no_comments_found", context)!,
-                                style: TextStyle(
-                                  color: ColorResources.color9a9a9a,
-                                  fontSize: Dimensions.sp14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ):
-                                profileProvider.viewActionCommentList!.isEmpty?
-                                Container(
-                                  margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    getTranslated("no_comments_found", context)!,
-                                    style: TextStyle(
-                                      color: ColorResources.color9a9a9a,
-                                      fontSize: Dimensions.sp14,
-                                      fontWeight: FontWeight.w500,
+                        profileProvider.isLoading
+                            ? Container(
+                                margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Theme.of(context).primaryColor,
                                     ),
                                   ),
-                                ):
-                        Container(
-                          margin: EdgeInsets.fromLTRB(15, 10, 15, 0),
-                          width: MediaQuery.sizeOf(context).width,
-                          decoration: BoxDecoration(
-                            color: ColorResources.white,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: ColorResources.colorAAADC4,
-                                blurRadius: 1.0,
-                              ),
-                            ],
-                          ),
-                          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            itemCount: profileProvider.viewActionCommentList!.length,
-                            itemBuilder: (context, index) {
-                              ViewCommentListData commentData = profileProvider.viewActionCommentList![index];
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 20,
-                                        height: 20,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(color: ColorResources.mainColor, width: 1),
-                                          image: DecorationImage(
-                                            image: AssetImage(Images.imgUserCircleGray),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          commentData.name!,
-                                          style: TextStyle(
-                                            fontSize: Dimensions.sp12,
-                                            fontWeight: FontWeight.w600,
-                                            color: ColorResources.color9a9a9a,
-                                            fontFamily: 'Roboto',
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          textAlign: TextAlign.end,
-                                          Utility.convertDataIntoddMMMyyyyhhmma(commentData.createdAt!),
-                                          style: TextStyle(
-                                            fontSize: Dimensions.sp10,
-                                            fontWeight: FontWeight.w400,
-                                            color: ColorResources.color9a9a9a,
-                                            fontFamily: 'Roboto',
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(commentData.comment!,
+                                ),
+                              )
+                            : profileProvider.viewActionCommentList == null
+                                ? Container(
+                                    margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      getTranslated("no_comments_found", context)!,
                                       style: TextStyle(
-                                        fontSize: Dimensions.sp12,
-                                        fontWeight: FontWeight.w500,
                                         color: ColorResources.color9a9a9a,
-                                        fontFamily: 'Roboto',
-                                      )),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Container(
-                                    width: MediaQuery.sizeOf(context).width,
-                                    height: 0.5,
-                                    color: ColorResources.color9a9a9a,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
+                                        fontSize: Dimensions.sp14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  )
+                                : profileProvider.viewActionCommentList!.isEmpty
+                                    ? Container(
+                                        margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          getTranslated("no_comments_found", context)!,
+                                          style: TextStyle(
+                                            color: ColorResources.color9a9a9a,
+                                            fontSize: Dimensions.sp14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      )
+                                    : Container(
+                                        margin: EdgeInsets.fromLTRB(15, 10, 15, 0),
+                                        width: MediaQuery.sizeOf(context).width,
+                                        decoration: BoxDecoration(
+                                          color: ColorResources.white,
+                                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: ColorResources.colorAAADC4,
+                                              blurRadius: 1.0,
+                                            ),
+                                          ],
+                                        ),
+                                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          physics: AlwaysScrollableScrollPhysics(),
+                                          itemCount: profileProvider.viewActionCommentList!.length,
+                                          itemBuilder: (context, index) {
+                                            ViewCommentListData commentData = profileProvider.viewActionCommentList![index];
+                                            return Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 20,
+                                                      height: 20,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(color: ColorResources.mainColor, width: 1),
+                                                        image: DecorationImage(
+                                                          image: AssetImage(Images.imgUserCircleGray),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Text(
+                                                        commentData.name!,
+                                                        style: TextStyle(
+                                                          fontSize: Dimensions.sp12,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: ColorResources.color9a9a9a,
+                                                          fontFamily: 'Roboto',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Text(
+                                                        textAlign: TextAlign.end,
+                                                        Utility.convertDataIntoddMMMyyyyhhmma(commentData.createdAt!),
+                                                        style: TextStyle(
+                                                          fontSize: Dimensions.sp10,
+                                                          fontWeight: FontWeight.w400,
+                                                          color: ColorResources.color9a9a9a,
+                                                          fontFamily: 'Roboto',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Text(commentData.comment!,
+                                                    style: TextStyle(
+                                                      fontSize: Dimensions.sp12,
+                                                      fontWeight: FontWeight.w500,
+                                                      color: ColorResources.color9a9a9a,
+                                                      fontFamily: 'Roboto',
+                                                    )),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Container(
+                                                  width: MediaQuery.sizeOf(context).width,
+                                                  height: 0.5,
+                                                  color: ColorResources.color9a9a9a,
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ),
                       ],
                     ),
                   ),

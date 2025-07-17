@@ -232,6 +232,21 @@
   "no_new_risk": "No new risk",
   "no_risk_closed_yet": "No risk closed yet",
   "no_ongoing_risk": "No ongoing risk",
-  "date": "Date"
+  "date": "Date",
+  "awards": "Awards",
+  "team_feedback": "Team Feedback",
+  "please_select_answer": "Please select answer",
+  "open_link": "Open Link",
+  "congratulations": "Congratulations",
+  "kudos_champion": "Kudos Champion",
+  "you_have_earned_the_highest_kudos_this_month_well_done":"You have earned the highest Kudos this month. Well Done",
+  "award_kudos_to_your_colleagues_daily": "Award Kudos to your colleagues(Daily)",
+  "complete_diagnostic_survey": "Complete Diagnostic Survey",
+  "complete_tribeometer_survey": "Complete Tribeometer Survey",
+  "complete_motivation_questionnaire": "Complete Motivation Questionnaire",
+  "complete_culture_structure_questionnaire": "Complete Culture Structure Questionnaire",
+  "complete_team_role_questionnaire": "Complete Team Role Questionnaire",
+  "complete_personality_type_questionnaire": "Complete Personality Type Questionnaire",
+  "evaluate_yourself_against_tribe_values":"Evaluate yourself against Tribe Values"
 
 }

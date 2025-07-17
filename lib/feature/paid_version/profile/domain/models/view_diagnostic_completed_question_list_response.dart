@@ -17,7 +17,7 @@ class ViewDiagnosticCompletedQuestionListResponse {
     if (json['data'] != null) {
       data = <ViewDiagnosticCompletedQuestionListData>[];
       json['data'].forEach((v) {
-        data!.add(new ViewDiagnosticCompletedQuestionListData.fromJson(v));
+        data!.add(ViewDiagnosticCompletedQuestionListData.fromJson(v));
       });
     }
   }
@@ -49,7 +49,7 @@ class ViewDiagnosticCompletedQuestionListData {
     if (json['options'] != null) {
       options = <ViewDiagnosticCompletedQuestionListOptions>[];
       json['options'].forEach((v) {
-        options!.add(new ViewDiagnosticCompletedQuestionListOptions.fromJson(v));
+        options!.add(ViewDiagnosticCompletedQuestionListOptions.fromJson(v));
       });
     }
     answerId = json['answerId'];

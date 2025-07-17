@@ -4,7 +4,6 @@ import 'package:tribe365_new/feature/paid_version/profile/controllers/profile_co
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 import '../../../../main.dart';
-import '../../../../utill/custom_route.dart';
 import '../../profile/domain/models/viewuserprofileresponse.dart';
 import '../../profile/screens/personality_type_result_screen.dart';
 

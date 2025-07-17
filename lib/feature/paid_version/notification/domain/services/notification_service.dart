@@ -25,4 +25,35 @@ class NotificationService implements NotificationServiceInterface {
   Future<ApiResponse> updateNotificationStatus(Map<String, dynamic> body) {
     return notificationRepositoryInterface.updateNotificationStatus(body);
   }
+
+  @override
+  Future<ApiResponse> viewHomeKudosCount(Map<String, dynamic> body) {
+    return notificationRepositoryInterface.viewHomeKudosCount(body);
+  }
+
+  @override
+  Future<ApiResponse> viewTeamFeedbackUserAnswerStatus(Map<String, dynamic> body) {
+    return notificationRepositoryInterface.viewTeamFeedbackUserAnswerStatus(body);
+  }
+
+  @override
+  Future<ApiResponse> viewKudosAwardDetail() {
+    return notificationRepositoryInterface.viewKudosAwardDetail();
+  }
+
+  @override
+  Future<ApiResponse> viewIndividualQuestionnaireList(Map<String, dynamic> body) {
+    return notificationRepositoryInterface.viewIndividualQuestionnaireList(body);
+  }
+
+  @override
+  Future<ApiResponse> sendIndividualQuestionnaireList(Map<String, dynamic> body) {
+    return notificationRepositoryInterface.sendIndividualQuestionnaireList(body);
+  }
+
+  @override
+  Future<ApiResponse> viewKudoAwardDetail(Map<String, dynamic> body) {
+    return notificationRepositoryInterface.viewKudoAwardDetail(body);
+  }
+
 }

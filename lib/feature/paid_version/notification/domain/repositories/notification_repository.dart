@@ -65,6 +65,88 @@ class NotificationRepository implements NotificationRepositoryInterface {
     }
   }
 
+  @override
+  Future<ApiResponse> viewHomeKudosCount(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getHomePageKudosCountUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> viewKudosAwardDetail() async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.dotValueKudosAwardDetailUri,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewTeamFeedbackUserAnswerStatus(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.teamFeedbackUserAnswerStatusUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> viewIndividualQuestionnaireList(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.viewIndividualQuestionnaireListUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> sendIndividualQuestionnaireList(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.addIndividualQuestionnaireAnswersUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> viewKudoAwardDetail(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.kudosAwardDetailUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
 
   @override
   Future add(value) {

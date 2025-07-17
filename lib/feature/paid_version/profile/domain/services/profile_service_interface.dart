@@ -72,4 +72,5 @@ abstract class ProfileServiceInterface {
   Future<dynamic> viewDiagnosticCompletedQuestionList();
   Future<dynamic> viewTribeMeterQuestionCompletedList();
   Future<dynamic> updatePushNotificationStatus(Map<String, dynamic> body);
+  Future<dynamic> viewActionDetail(Map<String, dynamic> body);
 }

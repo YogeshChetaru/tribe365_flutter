@@ -20,6 +20,7 @@ import '../domain/models/cotquestiondata.dart';
 import '../domain/models/get_motivation_list_response.dart';
 import '../domain/models/get_question_list_response.dart';
 import '../domain/models/get_update_question_list_response.dart';
+import '../domain/models/view_action_detail_response.dart';
 import '../domain/models/view_action_list_response.dart';
 import '../domain/models/view_action_tier_list_response.dart';
 import '../domain/models/view_cot_functional_lens_response.dart';
@@ -72,9 +73,9 @@ class ProfileController extends ChangeNotifier {
 
   bool get isLoadingData => _isLoadingData;
 
-  CotQuestionData? _CotQuestiondata;
+  CotQuestionData? cotQuestiondata;
 
-  CotQuestionData? get CotQuestiondata => _CotQuestiondata;
+  CotQuestionData? get CotQuestiondata => cotQuestiondata;
   final rolePairs = [
     ["shaper", "coordinator"],
     ["implementer", "completerFinisher"],
@@ -135,127 +136,34 @@ class ProfileController extends ChangeNotifier {
   String tierSelectedValue = 'All Tier';
   List<String> tierList = ["All Tier", "Primary", "Secondary", "Tertiary", "Office", "Department", "Individual"];
 
-
   Map<int, int> counters = {};
   Map<int, int> countersUpdate = {};
 
   Map<int, String> selectedAnswers = {};
 
-  final List<Map<String, dynamic>> motivationQuestions = [
-    {
-      'question': 'I enjoy work more when:',
-      'options': [
-        'I work as part of a team',
-        'I am not under pressure',
-      ]
-    },
-    {
-      'question': 'My biggest fears in relation to work are:',
-      'options': [
-        'My role being threatened in relation to my performance',
-        'Having conflict within my team',
-      ]
-    },
-    {
-      'question': 'I believe I work better when:',
-      'options': [
-        'I am given control to do my own work and manage myself',
-        'I know that my results will be given the credit they deserve',
-      ]
-    },
-  ];
 
-  Map<int, Map<int, int>> selectedScores = {}; // {questionIndex: {optionIndex: selectedScore}}
+  Map<int, Map<int, int>> selectedScores = {};
 
-  final List<double> cultureData = [671, 368, 15, -271, -554, -940, -510, 75, -62, 525, -1808, -1390];
-  final List<String> cultureLabels = [
-    'Jul24',
-    'Sep24',
-    'Nov24',
-    'Jan25',
-    'Mar25',
-    'May25',
-    'Jul24',
-    'Sep24',
-    'Nov24',
-    'Jan25',
-    'Mar25',
-    'May25',
-  ];
-
-  final List<double> engagementData = [79, -768, -1726, -2533, -3326, -4401, -2603, -1633, -1992, -3387, -6145];
-  final List<String> engagementLabels = [
-    'Jul24',
-    'Sep24',
-    'Nov24',
-    'Jan25',
-    'Mar25',
-    'May25',
-    'Jul24',
-    'Sep24',
-    'Nov24',
-    'Jan25',
-    'Mar25',
-  ];
-  List<double> percentages = [69.3, 73.3, 67.8, 78.9, 62.7, 76.0, 78.7, 80.0];
-  List<String> labels = ['Int', 'Ext', 'Innov', 'Lgc', 'Ppl', 'Tsk', 'Stru', 'Flxbl'];
-
-  final List<double> motivationScores = [28.0, 28.0, 18.0, 20.0, 17.5, 21.0, 27.5, 18.5, 25.0, 21.5];
-
-  final List<String> motivationLabels = [
-    'Financial Security',
-    'Stress Free',
-    'Risk Free',
-    'Job Structure',
-    'Teamwork',
-    'Relationships',
-    'Appreciation',
-    'Leadership',
-    'Freedom',
-    'Freedom'
-  ];
-  final List<double> diagnosticsScores = [50.0, 61.7, 56.94, 63.89, 64.58, 75.0];
-
-  final List<String> diagnosticsLabels = ['Personal Development', 'Teamwork', 'Leadership/Management', 'Communication', 'Stress', 'Performance'];
-  final List<double> tribeMeterScores = [11.9, 16.67, 22.22, 44.44, 0.0];
-
-  final List<String> tribeMeterLabels = ['Structure', 'Belief', 'Balance', 'Honesty', 'Inclusiveness'];
-  List<String> months = [
-    "Jul 2024",
-    "Aug 2024",
-    "Sep 2024",
-    "Oct 2024",
-    "Nov 2024",
-    "Dec 2024",
-    "Jan 2025",
-    "Feb 2025",
-    "Mar 2025",
-    "Apr 2025",
-    "May 2025",
-    "Jun 2025"
-  ];
-
-  List<double> sentimentValues = [16.3, 14.8, 3.3, 3.6, 0.0, 10.9, 33.3, 20.6, 16.7, 21.2, 25.0];
 
   bool isPushNotification = false;
 
-  Future<void> updateIsPushNotification(bool value,bool isNotify) async {
-    HomeController homeController = Provider.of(Get.context!,listen: false);
+  Future<void> updateIsPushNotification(bool value, bool isNotify) async {
+    HomeController homeController = Provider.of(Get.context!, listen: false);
     isPushNotification = value;
-    bool deviceStatus=false;
+    bool deviceStatus = false;
     try {
       deviceStatus = await NotificationUtils.areNotificationsEnabled();
-    }catch (e){
-    deviceStatus=false;
+    } catch (e) {
+      deviceStatus = false;
     }
-    if (value){
+    if (value) {
       homeController.savePushNotificationStatus(true);
       updatePushNotificationStatus(true, deviceStatus);
-    }else{
+    } else {
       homeController.savePushNotificationStatus(false);
       updatePushNotificationStatus(false, deviceStatus);
     }
-    if(isNotify){
+    if (isNotify) {
       notifyListeners();
     }
   }
@@ -290,14 +198,6 @@ class ProfileController extends ChangeNotifier {
     return counters.values.fold(0, (sum, value) => sum + value);
   }
 
-  void initMotivationQuestions() {
-    for (int q = 0; q < motivationQuestions.length; q++) {
-      selectedScores[q] = {};
-      for (int o = 0; o < motivationQuestions[q]['options'].length; o++) {
-        selectedScores[q]![o] = -1; // -1 means no selection yet
-      }
-    }
-  }
 
   void updateCountersSubtraction(int index) {
     counters[index] = counters[index]! - 1;
@@ -963,7 +863,7 @@ class ProfileController extends ChangeNotifier {
       ViewCotIndividualSummaryResponse response = ViewCotIndividualSummaryResponse.fromJson(map);
       cotIndividualSummaryData = response.data;
 
-      _CotQuestiondata = CotQuestionData.fromJson(map["data"]);
+      cotQuestiondata = CotQuestionData.fromJson(map["data"]);
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
@@ -1365,10 +1265,7 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setAdapter(ViewCotFunctionalLensData? data) {
-
-  }
-
+  void setAdapter(ViewCotFunctionalLensData? data) {}
 
   Future<void> viewCOTFunctionalLensDetail() async {
     _isLoading = true;
@@ -2930,7 +2827,6 @@ class ProfileController extends ChangeNotifier {
       );
       ApiChecker.checkApi(apiResponse);
     }
-
     notifyListeners();
   }
 
@@ -3007,15 +2903,18 @@ class ProfileController extends ChangeNotifier {
   TextEditingController tellUsController = TextEditingController();
   FocusNode tellUsFocus = FocusNode();
   File? file;
+
   void updateFileData(File data) {
     file = data;
     notifyListeners();
   }
+
   void updateInitData() {
     tellUsController.text = "";
     file = null;
     notifyListeners();
   }
+
   void initData() {
     tellUsController = TextEditingController();
     tellUsFocus = FocusNode();
@@ -3035,7 +2934,6 @@ class ProfileController extends ChangeNotifier {
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       final response = ViewSupportHistoryListResponse.fromJson(apiResponse.response!.data);
       supportHistoryData = response.data ?? [];
-
     } else {
       showCustomSnackBar(
         apiResponse.error ?? "Something went wrong",
@@ -3044,19 +2942,13 @@ class ProfileController extends ChangeNotifier {
       );
       ApiChecker.checkApi(apiResponse);
     }
-
     notifyListeners();
   }
 
   Future<ApiResponse> sendOffloadingData(String message, String image) async {
     _isLoadingBtn = true;
     notifyListeners();
-    Map<String, dynamic> request = {
-      "message": message,
-      "userId": userProfileData!.id,
-      "orgId": userProfileData!.orgId,
-      "image": image
-    };
+    Map<String, dynamic> request = {"message": message, "userId": userProfileData!.id, "orgId": userProfileData!.orgId, "image": image};
     ApiResponse apiResponse = await profileServiceInterface!.addCustomerSupport(request);
     _isLoadingBtn = false;
     notifyListeners();
@@ -3077,13 +2969,7 @@ class ProfileController extends ChangeNotifier {
   Future<ApiResponse> sendChatMessages(String msgType, String message, String feedbackId) async {
     _isLoadingData = true;
     notifyListeners();
-    Map<String, dynamic> request = {
-      "sendFrom": userProfileData!.id,
-      "sendTo": "1",
-      "message": message,
-      "supportId": feedbackId,
-      "postType": msgType
-    };
+    Map<String, dynamic> request = {"sendFrom": userProfileData!.id, "sendTo": "1", "message": message, "supportId": feedbackId, "postType": msgType};
     ApiResponse apiResponse = await profileServiceInterface!.sendChatMessages(request);
     _isLoadingData = false;
     updateInitData();
@@ -3092,32 +2978,26 @@ class ProfileController extends ChangeNotifier {
     return apiResponse;
   }
 
-  Future<void> updatePushNotificationStatus(bool status,bool deviceValue) async {
-
-    int statusValue=0;
-    if (status){
-      statusValue=1;
-    }else {
-      statusValue=0;
+  Future<void> updatePushNotificationStatus(bool status, bool deviceValue) async {
+    int statusValue = 0;
+    if (status) {
+      statusValue = 1;
+    } else {
+      statusValue = 0;
     }
 
     //0: not enable , 1: enable
 
-    int deviceStatus=0;
-    if (deviceValue){
-      deviceStatus= 1;
-    }else{
-      deviceStatus=0;
+    int deviceStatus = 0;
+    if (deviceValue) {
+      deviceStatus = 1;
+    } else {
+      deviceStatus = 0;
     }
-    Map<String, dynamic> requestData = {
-      "userId": userProfileData!.id!,
-      "appStatus":statusValue,
-      "deviceStatus":deviceStatus
-    };
+    Map<String, dynamic> requestData = {"userId": userProfileData!.id!, "appStatus": statusValue, "deviceStatus": deviceStatus};
 
     ApiResponse apiResponse = await profileServiceInterface!.updatePushNotificationStatus(requestData);
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
-      Map<String, dynamic> map = apiResponse.response!.data;
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
@@ -3125,5 +3005,28 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<ViewActionListData>? viewActionDetailsList;
+  ViewActionListData? viewActionDetailsData;
 
+  Future<ApiResponse> viewActionDetail(String actionId) async {
+    _isLoading = true;
+    notifyListeners();
+    Map<String, dynamic> request = {
+      "actionId": actionId,
+    };
+
+    ApiResponse apiResponse = await profileServiceInterface!.viewActionDetail(request);
+    _isLoading = false;
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewActionDetailResponse response = ViewActionDetailResponse.fromJson(map);
+      viewActionDetailsList = response.data;
+      viewActionDetailsData = viewActionDetailsList![0];
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+    return apiResponse;
+  }
 }

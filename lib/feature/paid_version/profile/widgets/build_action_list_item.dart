@@ -129,7 +129,7 @@ Widget buildActionItem(BuildContext context, ViewActionListData item, String ses
               const SizedBox(width: 8),
               GestureDetector(
                 onTap: () {
-                  routePush(context, ProfileActionsCommentsScreen(item: item,));
+                  routePush(context, ProfileActionsCommentsScreen(actionId: item.id.toString(),));
                 },
                 child: Image.asset(
                   Images.imgCommentRed,

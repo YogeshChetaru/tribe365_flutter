@@ -16,7 +16,7 @@ class GetUpdateQuestionListResponse {
     if (json['data'] != null) {
       data = <GetUpdateQuestionListData>[];
       json['data'].forEach((v) {
-        data!.add(new GetUpdateQuestionListData.fromJson(v));
+        data!.add(GetUpdateQuestionListData.fromJson(v));
       });
     }
   }
@@ -48,7 +48,7 @@ class GetUpdateQuestionListData {
     if (json['options'] != null) {
       options = <Options>[];
       json['options'].forEach((v) {
-        options!.add(new Options.fromJson(v));
+        options!.add(Options.fromJson(v));
       });
     }
     answerId = json['answerId'];
