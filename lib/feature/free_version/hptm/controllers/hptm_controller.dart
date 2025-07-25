@@ -4,7 +4,7 @@ import '../../../../data/model/api_response.dart';
 import '../../../../helper/api_checker.dart';
 import '../../../../main.dart';
 import '../domain/models/learningmainchecklistmodel.dart';
-import '../domain/models/viewhptmprinciplesList.dart';
+import '../domain/models/view_hptm_principles_list.dart';
 import '../domain/services/hptm_service_interface.dart';
 
 class HPTMController extends ChangeNotifier {

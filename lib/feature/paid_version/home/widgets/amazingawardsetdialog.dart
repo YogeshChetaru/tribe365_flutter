@@ -90,7 +90,7 @@ class _AmazingAwardSetDialogState extends State<AmazingAwardSetDialog> {
                   }
                   else{
                     Navigator.of(context).pop();
-                    showDialog(context, AmazingAwardSet2Dialog(name:widget.name));
+                    showDialog(context, AmazingAwardSet2Dialog(name:widget.name,msg: msg,));
                   }
 
                 },child: Container(

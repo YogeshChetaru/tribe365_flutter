@@ -111,7 +111,7 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
                                 margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
                                 child: preferenceGrid()),
 
-                            profileProvider.CotQuestiondata == null
+                            profileProvider.getCotQuestionData == null
                                 ? SizedBox()
                                 : ListView.separated(
                                     shrinkWrap: true,
@@ -127,18 +127,18 @@ class TeamRoleDetailsScreenState extends State<TeamRoleDetailsScreen> {
                                           profileProvider.rolePairs[index][1];
 
                                       final leftScore = profileProvider
-                                          .CotQuestiondata!.scores[leftKey]
+                                          .getCotQuestionData!.scores[leftKey]
                                           .toString();
                                       final rightScore = profileProvider
-                                          .CotQuestiondata!.scores[rightKey]
+                                          .getCotQuestionData!.scores[rightKey]
                                           .toString();
 
                                       final leftTitle = profileProvider
-                                              .CotQuestiondata!
+                                              .getCotQuestionData!
                                               .mappers[leftKey] ??
                                           leftKey;
                                       final rightTitle = profileProvider
-                                              .CotQuestiondata!
+                                              .getCotQuestionData!
                                               .mappers[rightKey] ??
                                           rightKey;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tribe365_new/common/basewidget/show_custom_snakbar_widget.dart';
 import 'package:tribe365_new/feature/paid_version/home/controllers/home_controller.dart';
 import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
@@ -12,7 +13,8 @@ import 'amazingawarduseritem.dart';
 
 class AmazingAwardSet2Dialog extends StatefulWidget {
   final String name;
-  const AmazingAwardSet2Dialog({super.key,required this.name});
+  final String msg;
+  const AmazingAwardSet2Dialog({super.key,required this.name,required this.msg});
 
   @override
   State<AmazingAwardSet2Dialog> createState() => _AmazingAwardSet2DialogState();
@@ -122,12 +124,20 @@ class _AmazingAwardSet2DialogState extends State<AmazingAwardSet2Dialog> {
               ),
               InkWell(
                 onTap: (){
-                  for(int i=0;i<homeProvider.filteredUsers.length;i++){
-                    if(homeProvider.filteredUsers[i].isSelected){
+                  bool userSelected = false;
+                  for (int i = 0; i < homeProvider.filteredUsers.length; i++) {
+                    if (homeProvider.filteredUsers[i].isSelected) {
+                      userSelected = true;
+                      break;
                     }
                   }
-                  // kudosSendApi();
-                  Navigator.of(context).pop();
+                  if (userSelected) {
+                    Navigator.of(context).pop();
+                    homeProvider.addKudosAward(widget.msg);
+                  }
+                  else {
+                    showCustomSnackBar(getTranslated("please_select_user_first", context), context);
+                  }
                 },child: Container(
                 width: MediaQuery.sizeOf(context).width,
                 padding: EdgeInsets.fromLTRB(0, 15, 0, 15),

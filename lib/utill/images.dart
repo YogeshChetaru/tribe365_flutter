@@ -75,4 +75,5 @@ class Images {
   static const String imgCotDescriptionRed = 'assets/images/img_cot_description_red.png';
   static const String imgAwardsCircleRed = 'assets/images/img_awards_circle_red.png';
   static const String icCrown = 'assets/images/ic_crown.png';
+  static const String imgKudosAwards = 'assets/images/img_kudos_awards.png';
 }

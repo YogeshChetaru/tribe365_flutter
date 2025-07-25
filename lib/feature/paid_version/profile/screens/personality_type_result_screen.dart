@@ -151,7 +151,7 @@ class PersonalityTypeResultScreenState extends State<PersonalityTypeResultScreen
                                                   borderRadius: BorderRadius.circular(10),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: Colors.grey.withOpacity(0.3),
+                                                      color: Colors.grey.withAlpha(77),
                                                       blurRadius: 5,
                                                     ),
                                                   ],
@@ -205,7 +205,7 @@ class PersonalityTypeResultScreenState extends State<PersonalityTypeResultScreen
                                                   border: Border.all(color: Colors.black26),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: Colors.grey.withOpacity(0.3),
+                                                      color: Colors.grey.withAlpha(77),
                                                       blurRadius: 5,
                                                     ),
                                                   ],

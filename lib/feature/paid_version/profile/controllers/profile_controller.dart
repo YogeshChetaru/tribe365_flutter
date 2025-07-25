@@ -41,7 +41,7 @@ import '../domain/models/view_theme_list_response.dart';
 import '../domain/models/view_tribe_meter_completed_list_response.dart';
 import '../domain/models/view_tribeo_meter_question_list_response.dart';
 import '../domain/models/view_user_by_type_list_response.dart';
-import '../domain/models/view_user_chat_messages_response.dart';
+import '../domain/models/view_user_chat_messages_response.dart' hide SupportMessage;
 import '../domain/models/viewuserprofileresponse.dart';
 import '../domain/services/profile_service_interface.dart';
 
@@ -73,9 +73,9 @@ class ProfileController extends ChangeNotifier {
 
   bool get isLoadingData => _isLoadingData;
 
-  CotQuestionData? cotQuestiondata;
+  CotQuestionData? cotQuestionData;
 
-  CotQuestionData? get CotQuestiondata => cotQuestiondata;
+  CotQuestionData? get getCotQuestionData => cotQuestionData;
   final rolePairs = [
     ["shaper", "coordinator"],
     ["implementer", "completerFinisher"],
@@ -863,7 +863,7 @@ class ProfileController extends ChangeNotifier {
       ViewCotIndividualSummaryResponse response = ViewCotIndividualSummaryResponse.fromJson(map);
       cotIndividualSummaryData = response.data;
 
-      cotQuestiondata = CotQuestionData.fromJson(map["data"]);
+      cotQuestionData = CotQuestionData.fromJson(map["data"]);
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
@@ -2923,6 +2923,7 @@ class ProfileController extends ChangeNotifier {
 
   List<ViewSupportHistoryListData>? supportHistoryData;
   List<ViewUserChatMessages>? messagesList;
+  ViewUserChatSupportMessage? supportMessage;
 
   Future<void> viewSupportHistoryListAPI() async {
     _isLoading = true;
@@ -2962,6 +2963,7 @@ class ProfileController extends ChangeNotifier {
     ViewUserChatMessagesResponse response = ViewUserChatMessagesResponse.fromJson(map);
     messagesList = [];
     messagesList = response.data!.messages!;
+    supportMessage = response.data!.supportMessage;
     notifyListeners();
     return apiResponse;
   }

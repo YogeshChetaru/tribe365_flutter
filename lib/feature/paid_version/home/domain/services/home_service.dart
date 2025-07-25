@@ -53,6 +53,26 @@ class HomeService implements HomeServiceInterface {
   }
 
   @override
+  Future<ApiResponse> addKudosAward(Map<String, dynamic> body) {
+    return homeRepositoryInterface.addKudosAward(body);
+  }
+
+  @override
+  Future<ApiResponse> viewHomeKudosCount(Map<String, dynamic> body) {
+    return homeRepositoryInterface.viewHomeKudosCount(body);
+  }
+
+  @override
+  Future<ApiResponse> addRatingsToDotValues(Map<String, dynamic> body) {
+    return homeRepositoryInterface.addRatingsToDotValues(body);
+  }
+
+  @override
+  Future<ApiResponse> addKudosAwardMultiUser(Map<String, dynamic> body) {
+    return homeRepositoryInterface.addKudosAwardMultiUser(body);
+  }
+
+  @override
   bool getPushNotificationStatus() {
     return homeRepositoryInterface.getPushNotificationStatus();
   }

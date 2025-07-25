@@ -1,8 +1,9 @@
-import 'dart:io';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:io' show HttpClient, HttpOverrides, Platform, SecurityContext, X509Certificate;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:tribe365_new/feature/free_version/free_dashboard/controllers/free_dashboard_controller.dart';
@@ -24,43 +25,45 @@ import 'feature/splash/screens/splash_screen.dart';
 import 'helper/custom_delegate.dart';
 import 'localization/app_localization.dart';
 
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-/// Must be top-level function for background isolate
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  // IMPORTANT: Do NOT call FcmBroadcastReceiver.handleIncomingMessage() here,
-  // because it uses Flutter plugins (e.g., notifications, toasts).
-  // Firebase itself displays notification automatically if you use the 'notification' field.
   debugPrint('Background message: ${message.messageId}');
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
+  // Firebase initialization
   await Firebase.initializeApp();
 
-  // Register background message handler
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  // Register FCM background handler for mobile
+  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  }
 
-  // Optional: override HTTP for self-signed certs
-  HttpOverrides.global = MyHttpOverrides();
+  // macOS-specific notification permission
+  if (!kIsWeb && Platform.isMacOS) {
+    var status = await Permission.notification.status;
+    if (!status.isGranted) {
+      await Permission.notification.request();
+    }
+  }
 
-  // Initialize your dependency injection
+  // Allow self-signed certs (mobile/desktop only)
+  if (!kIsWeb) {
+    HttpOverrides.global = MyHttpOverrides();
+  }
+
+  // Initialize Dependency Injection
   await di.init();
 
-  // Request notification permission
-  await Permission.notification.isDenied.then((value) {
-    if (value) {
-      Permission.notification.request();
-    }
-  });
-
-  // Initialize the local notifications plugin for foreground
-  FcmBroadcastReceiver.initLocalNotifications();
+  // Local notifications setup (non-web only)
+  if (!kIsWeb) {
+    FcmBroadcastReceiver.initLocalNotifications();
+  }
 
   runApp(
     MultiProvider(
@@ -77,7 +80,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => di.sl<RiskController>()),
         ChangeNotifierProvider(create: (context) => di.sl<ProfileController>()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -91,7 +94,7 @@ class MyApp extends StatelessWidget {
       title: AppConstants.appName,
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-      locale: Locale("en"),
+      locale: const Locale("en"),
       theme: light,
       localizationsDelegates: [
         AppLocalization.delegate,
@@ -102,16 +105,14 @@ class MyApp extends StatelessWidget {
       ],
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.noScaling,
-          ),
+          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
           child: child!,
         );
       },
       supportedLocales: AppConstants.languages
           .map((lang) => Locale(lang.languageCode!, lang.countryCode))
           .toList(),
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }
@@ -120,13 +121,11 @@ class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
 }
+
 class Get {
   static BuildContext? get context => navigatorKey.currentContext;
-
   static NavigatorState? get navigator => navigatorKey.currentState;
 }
-

@@ -9,33 +9,36 @@ import '../../../../main.dart';
 
 class TeamRoleItem extends StatelessWidget {
  final String name;
+ final String wayFrom;
 
-  const TeamRoleItem({super.key,required this.name});
+  const TeamRoleItem({super.key,required this.name,required this.wayFrom});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-       bool status = await Navigator.of(context).push(
-          PageRouteBuilder(
-            transitionDuration: Duration(milliseconds: 500),
-            reverseTransitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (context, animation, secondaryAnimation) => TeamRoleDetailsScreen(teamRoleName: name,),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0); // from right
-              const end = Offset.zero;
-              const curve = Curves.easeInOut;
-              final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              final offsetAnimation = animation.drive(tween);
-              return SlideTransition(
-                position: offsetAnimation,
-                child: child,
-              );
-            },
-          ),
-        );
-        if(status){
-          Provider.of<ProfileController>(Get.context!,listen: false).viewUserProfile();
+        if(wayFrom!="know") {
+          bool status = await Navigator.of(context).push(
+            PageRouteBuilder(
+              transitionDuration: Duration(milliseconds: 500),
+              reverseTransitionDuration: Duration(milliseconds: 500),
+              pageBuilder: (context, animation, secondaryAnimation) => TeamRoleDetailsScreen(teamRoleName: name,),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                const begin = Offset(1.0, 0.0); // from right
+                const end = Offset.zero;
+                const curve = Curves.easeInOut;
+                final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                final offsetAnimation = animation.drive(tween);
+                return SlideTransition(
+                  position: offsetAnimation,
+                  child: child,
+                );
+              },
+            ),
+          );
+          if (status) {
+            Provider.of<ProfileController>(Get.context!, listen: false).viewUserProfile();
+          }
         }
       },
       child: Container(

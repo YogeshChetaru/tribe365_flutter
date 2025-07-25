@@ -224,7 +224,6 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                               ),
                             ),
                           ),
-
                         ):
                         SizedBox.shrink(),
                         Container(
@@ -244,7 +243,18 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                 ),
                               ),
                               knowProvider.personalityTypeList==null?
-                              SizedBox.shrink():
+                              Container(
+                                margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                child: Text(
+                                  knowProvider.personalityTypeDetailsMsg!,
+                                  style: TextStyle(
+                                    fontSize: Dimensions.sp12,
+                                    color: ColorResources.black, // Replace with ColorResources.mainColor
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Roboto',
+                                  ),
+                                ),
+                              ):
                               knowProvider.personalityTypeList!.isEmpty?
                               Container(
                                 margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
@@ -271,7 +281,7 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return PersonalityTypeItem(personalityTypeDetails:knowProvider.personalityTypeList![index] ,);
+                                    return PersonalityTypeItem(personalityTypeDetails:knowProvider.personalityTypeList![index] ,wayFrom: "know",);
                                   },
                                 ),
                               ),
@@ -295,7 +305,18 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                 ),
                               ),
                               knowProvider.teamRoleList==null?
-                              SizedBox.shrink():
+                              Container(
+                                margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                child: Text(
+                                  knowProvider.teamRoleDetailsMsg!,
+                                  style: TextStyle(
+                                    fontSize: Dimensions.sp12,
+                                    color: ColorResources.black, // Replace with ColorResources.mainColor
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Roboto',
+                                  ),
+                                ),
+                              ):
                               knowProvider.teamRoleList!.isEmpty?
                               Container(
                                 margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
@@ -322,7 +343,7 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return TeamRoleItem(name:knowProvider.teamRoleList![index] ,);
+                                    return TeamRoleItem(name:knowProvider.teamRoleList![index] ,wayFrom: "know",);
                                   },
                                 ),
                               ),
@@ -346,7 +367,18 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                 ),
                               ),
                               knowProvider.motivationList==null?
-                              SizedBox.shrink():
+                              Container(
+                                margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                child: Text(
+                                  knowProvider.motivationDetails!,
+                                  style: TextStyle(
+                                    fontSize: Dimensions.sp12,
+                                    color: ColorResources.black, // Replace with ColorResources.mainColor
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Roboto',
+                                  ),
+                                ),
+                              ):
                               knowProvider.motivationList!.isEmpty?
                               Container(
                                 margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
@@ -373,7 +405,7 @@ class KnowMembersScreenState extends State<KnowMembersScreen> {
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return MotivationItem(name: knowProvider.motivationList![index],);
+                                    return MotivationItem(name: knowProvider.motivationList![index],wayFrom: "know",);
                                   },
                                 ),
                               ),

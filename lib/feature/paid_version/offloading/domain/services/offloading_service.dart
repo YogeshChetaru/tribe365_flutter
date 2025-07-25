@@ -34,5 +34,14 @@ class OffloadingService implements OffloadingServiceInterface {
     return offloadingRepositoryInterface.sendHPTMReflection(body);
   }
 
+  @override
+  Future<ApiResponse> reflectionSendChatMessages(Map<String, dynamic> body) {
+    return offloadingRepositoryInterface.reflectionSendChatMessages(body);
+  }
+
+  @override
+  Future<ApiResponse> viewReflectionChatMessages(Map<String, dynamic> body) {
+    return offloadingRepositoryInterface.viewReflectionChatMessages(body);
+  }
 
 }

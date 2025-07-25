@@ -128,7 +128,7 @@ Widget buildTitlesAndButton(ProfileController profileProvider, BuildContext cont
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: ColorResources.mainColor.withOpacity(0.3),
+                color: ColorResources.mainColor.withAlpha(77),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),

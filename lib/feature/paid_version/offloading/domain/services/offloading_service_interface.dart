@@ -4,5 +4,7 @@ abstract class OffloadingServiceInterface {
   Future<dynamic> sendHPTMReflection(Map<String, dynamic> body);
   Future<dynamic> viewHptmReflectionData(Map<String, dynamic> body);
   Future<dynamic> viewChatMessages(Map<String, dynamic> body);
+  Future<dynamic> viewReflectionChatMessages(Map<String, dynamic> body);
   Future<dynamic> sendChatMessages(Map<String, dynamic> body);
+  Future<dynamic> reflectionSendChatMessages(Map<String, dynamic> body);
 }

@@ -473,29 +473,24 @@ class KnowController extends ChangeNotifier {
   }
 
   void loadGroupedAwards(List<ViewKudosAwardData> allAwards, String userId) {
+
     groupKudosList.clear();
-
-    if (userId.isEmpty) {
-      final map = <String, List<ViewKudosAwardData>>{};
-
-      for (var award in allAwards) {
-        final key = '#${getDate(award.awardDate!)} # ${award.awardDescription}';
-        map.putIfAbsent(key, () => []);
-        map[key]!.add(award);
-      }
-
-      final sortedMap = Map.fromEntries(map.entries.toList()
-        ..sort((a, b) => b.key.compareTo(a.key)));
-
-      for (var entry in sortedMap.entries) {
-        groupKudosList.add(GroupKudosList(
-          keyDescription: entry.key,
-          kudosAwardLists: entry.value,
-        ));
-      }
-
-      notifyListeners();
+    final map = <String, List<ViewKudosAwardData>>{};
+    for (var award in allAwards) {
+      final key = '#${getDate(award.awardDate!)} # ${award.awardDescription}';
+      map.putIfAbsent(key, () => []);
+      map[key]!.add(award);
     }
+    final sortedMap = Map.fromEntries(map.entries.toList()
+      ..sort((a, b) => b.key.compareTo(a.key)));
+    for (var entry in sortedMap.entries) {
+      groupKudosList.add(GroupKudosList(
+        keyDescription: entry.key,
+        kudosAwardLists: entry.value,
+      ));
+    }
+
+    notifyListeners();
   }
 
   String getDate(String rawDate) {
@@ -676,6 +671,7 @@ class KnowController extends ChangeNotifier {
   }
 
   Future<void> viewKudosAward(String userId) async {
+    _isLoading = true;
     Map<String, dynamic> requestData = {
       "userId": userId
     };
@@ -689,6 +685,7 @@ class KnowController extends ChangeNotifier {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
     }
+    _isLoading = false;
     notifyListeners();
   }
 
@@ -739,11 +736,4 @@ class KnowController extends ChangeNotifier {
     }
     notifyListeners();
   }
-
-
-
-
-
-
-
 }

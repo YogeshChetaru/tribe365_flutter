@@ -1,29 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:tribe365_new/feature/paid_version/home/controllers/home_controller.dart';
+
+import '../../../../localization/language_constrants.dart';
 import '../domain/models/view_dot_details_response.dart';
+import 'belief_vertical_list.dart';
+import 'open_link_dialog.dart';
 
 class BeliefHorizontalList extends StatelessWidget {
   final List<Belief> beliefs;
+  final HomeController controller;
 
   const BeliefHorizontalList({
     required this.beliefs,
+    required this.controller,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 220,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: beliefs.length,
-        itemBuilder: (context, index) {
-          final belief = beliefs[index];
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start, // <-- optional, for Row children
+        children: beliefs.map((belief) {
           return Container(
             width: 100,
             margin: const EdgeInsets.only(right: 10),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
+                  onTap: () {
+                    openLinkDialog(
+                      context,
+                      title: getTranslated("belief", context)!,
+                      subTitle: belief.name ?? '',
+                      description: belief.beliefDesc ?? '',
+                      videoURL: belief.beliefUrl ?? '',
+                    );
+                  },
                   child: Container(
                     height: 60,
                     padding: const EdgeInsets.all(8),
@@ -34,52 +50,29 @@ class BeliefHorizontalList extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        belief.name!,
+                        belief.name ?? '',
                         textAlign: TextAlign.center,
                         maxLines: 3,
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 12,
                           color: Colors.black,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: "Roboto",
                         ),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 10),
-
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: belief.beliefValue?.length ?? 0,
-                    itemBuilder: (context, subIndex) {
-                      final value = belief.beliefValue![subIndex];
-                      return GestureDetector(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 4,
-                            horizontal: 6,
-                          ),
-                          margin: const EdgeInsets.symmetric(vertical: 2),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            color: value.isSelected == "t" ? Colors.red[100] : Colors.grey[200],
-                          ),
-                          child: Text(
-                            value.name ?? '',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                BeliefVerticalList(
+                  beliefValues: belief.beliefValue ?? [],
+                  role: "3",
+                  controller: controller,
                 ),
               ],
             ),
           );
-        },
+        }).toList(),
       ),
     );
   }

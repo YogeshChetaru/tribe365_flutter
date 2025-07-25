@@ -133,7 +133,7 @@ class PersonalityFullResultScreenState extends State<PersonalityFullResultScreen
                                                 drawVerticalLine: false,
                                                 getDrawingHorizontalLine: (value) {
                                                   return FlLine(
-                                                    color: Colors.grey.withOpacity(0.3),
+                                                    color: Colors.grey.withAlpha(77),
                                                     strokeWidth: 0.5,
                                                     dashArray: [4,4],
                                                   );

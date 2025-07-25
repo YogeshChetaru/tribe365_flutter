@@ -149,7 +149,20 @@ class NotificationScreenState extends State<NotificationScreen> {
                                       ),
                                     ),
                                   )
-                                : ListView.builder(
+                                : notificationProvider.listUnread==null?Container(
+                          alignment: Alignment.center,
+                          margin: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                          child: Text(
+                            getTranslated("no_data_found", context)!,
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: Colors.black,
+                              letterSpacing: 0,
+                            ),
+                          ),
+                        ): ListView.builder(
                                     shrinkWrap: true,
                                     physics: ScrollPhysics(),
                                     itemCount: notificationProvider.listUnread.length,

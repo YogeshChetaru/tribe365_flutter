@@ -77,7 +77,6 @@ class HomeRepository implements HomeRepositoryInterface {
     }
   }
 
-
   @override
   Future<ApiResponse> postFeedback(Map<String, dynamic> loginBody) async {
     try {
@@ -90,7 +89,6 @@ class HomeRepository implements HomeRepositoryInterface {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
-
 
   @override
   Future<ApiResponse> getCurrentVersionOfApp(Map<String, dynamic> loginBody) async {
@@ -132,13 +130,69 @@ class HomeRepository implements HomeRepositoryInterface {
   }
 
   @override
-    Future<void> savePushNotificationStatus(bool userData) async {
+  Future<ApiResponse> addKudosAward(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.addKudosAwardUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<void> savePushNotificationStatus(bool userData) async {
     try {
       await sharedPreferences!.setBool(AppConstants.pushNotificationStatus, userData);
     } catch (e) {
       rethrow;
     }
   }
+
+  @override
+  Future<ApiResponse> addRatingsToDotValues(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.ratingsToDotValuesUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+  @override
+  Future<ApiResponse> viewHomeKudosCount(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getHomePageKudosCountUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
+  Future<ApiResponse> addKudosAwardMultiUser(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.addDOTBubbleRatingsToMultiDepartmentUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+
   @override
   bool getPushNotificationStatus() {
     return sharedPreferences!.getBool(AppConstants.pushNotificationStatus) ?? false;

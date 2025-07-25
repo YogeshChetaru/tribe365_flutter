@@ -6,13 +6,17 @@ import 'package:tribe365_new/utill/dimensions.dart';
 
 class MotivationItem extends StatelessWidget {
   final String name;
-  const MotivationItem({super.key,required this.name});
+  final String wayFrom;
+
+  const MotivationItem({super.key, required this.name, required this.wayFrom});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
-        routePush(context, MotivationListDetailsScreen(motivationName: name));
+      onTap: () {
+        if (wayFrom != "know") {
+          routePush(context, MotivationListDetailsScreen(motivationName: name));
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -23,7 +27,8 @@ class MotivationItem extends StatelessWidget {
               blurRadius: 2.0,
             ),
           ],
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -41,7 +46,6 @@ class MotivationItem extends StatelessWidget {
                 ),
               ),
             ),
-
           ],
         ),
       ),

@@ -108,6 +108,7 @@ class ViewHomeKudosCountBelief {
   int? lastMonthDotValueKudoAwardCount;
   int? totalDotValueKudoAwardCount;
 
+
   ViewHomeKudosCountBelief(
       {this.id,
         this.name,

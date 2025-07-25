@@ -20,7 +20,7 @@ Widget buildMotivationBarChart(ProfileController profileProvider) {
           barTouchData: BarTouchData(
             enabled: true,
             touchTooltipData: BarTouchTooltipData(
-              tooltipBgColor: Color(0xFFEB1C24).withOpacity(0.7),
+              tooltipBgColor: Color(0xFFEB1C24).withAlpha(179),
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
                 return BarTooltipItem(
                   '${rod.toY.toStringAsFixed(1)}%',

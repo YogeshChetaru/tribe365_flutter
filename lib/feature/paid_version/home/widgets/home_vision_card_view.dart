@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tribe365_new/feature/paid_version/home/screens/dot_details_screen.dart';
-import 'package:tribe365_new/feature/paid_version/home/screens/link_click_screen.dart';
 import 'package:tribe365_new/localization/language_constrants.dart';
+import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/custom_route.dart';
+import 'package:tribe365_new/utill/images.dart';
+import '../controllers/home_controller.dart';
+import 'open_link_dialog.dart';
 
 class HomeVisionCardView extends StatelessWidget {
   final String visionText;
@@ -20,72 +24,80 @@ class HomeVisionCardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text(
-                visionText,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.blue,
+    return Consumer<HomeController>(builder: (context, homeProvider, _) {
+      return Card(
+        elevation: 3,
+        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: (){
+                  homeProvider.updateHomeVisionStatus();
+                },
+                child: Row(
+                  children: [
+                    Expanded(flex:  1,
+                      child: Text(
+                        visionText,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color:ColorResources.mainColor,
+                        ),
+                        textAlign: TextAlign.start,
+                      ),),
+                    Image.asset(homeProvider.homeVisionStatus==true?Images.imgUpArrowRed:Images.imgDownArrowRed,width: 20,height: 20,)
+                  ],
                 ),
-                textAlign: TextAlign.start,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: 12,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      routePush(context, LinkClickScreen(
-                        description: description,
-                        subTitleName: subTitleName,
-                        titleName: visionText,
-                        videoURL: videoURL,
-
-                      ));
-                    },
-                    child: Card(
-                      elevation: 5,
-                      margin: const EdgeInsets.all(6),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 6),
-                        child: Text(
-                          getTranslated("Vision", context)!,
-                          // Replace with localized string
-                          style: const TextStyle(fontSize: 12),
+              if(homeProvider.homeVisionStatus==true)
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 12,
+                  top: 10
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        openLinkDialog(
+                          context,
+                          title: getTranslated("vision", context)!,
+                          subTitle: subTitleName,
+                          description: description,
+                          videoURL: videoURL,
+                        );
+                      },
+                      child: Card(
+                        elevation: 5,
+                        margin: const EdgeInsets.all(6),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 6),
+                          child: Text(
+                            getTranslated("vision", context)!,
+                            style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400,fontFamily: "Roboto"),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 15),
-                  InkWell(
-                    onTap: (){
-                      routePush(context, DotDetailsScreen());
-                    },child: Card(
+                    const SizedBox(width: 15),
+                    InkWell(
+                      onTap: (){
+                        routePush(context, DotDetailsScreen());
+                      },child: Card(
                       elevation: 5,
                       margin: const EdgeInsets.all(6),
                       shape: RoundedRectangleBorder(
@@ -94,21 +106,23 @@ class HomeVisionCardView extends StatelessWidget {
                       color: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 6),
+                            horizontal: 15, vertical: 6),
                         child: Text(
                           getTranslated("vision_map", context)!,
-                          // Replace with localized string
-                          style: const TextStyle(fontSize: 12),
+                          style: const TextStyle(fontSize: 12,color: Colors.black,fontWeight: FontWeight.w400,fontFamily: "Roboto"),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
+
+

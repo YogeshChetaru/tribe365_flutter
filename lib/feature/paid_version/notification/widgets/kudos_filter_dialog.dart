@@ -52,7 +52,7 @@ class KudosFilterDialog extends StatelessWidget {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          color: ColorResources.color9a9a9a.withOpacity(0.2),
+                          color: ColorResources.color9a9a9a.withAlpha(51),
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(15),
                               topRight: Radius.circular(15),

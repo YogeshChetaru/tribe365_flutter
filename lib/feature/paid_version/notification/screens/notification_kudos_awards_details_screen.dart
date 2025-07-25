@@ -46,59 +46,74 @@ class NotificationKudosAwardsDetailsScreenState extends State<NotificationKudosA
                 CustomHeaderBack(
                   title: getTranslated("awards", context)!,
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                notificationProvider.notificationKudosAwardList == null
+                notificationProvider.isLoading
                     ? Expanded(
                         flex: 1,
-                        child: Container(
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                          child: Text(
-                            getTranslated("no_data_found", context)!,
-                            style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                              color: Colors.black,
-                              letterSpacing: 0,
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height / 2,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).primaryColor,
+                              ),
                             ),
                           ),
                         ),
                       )
-                    : Container(margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                      width: MediaQuery.sizeOf(context).width,
-                      padding: EdgeInsets.fromLTRB(15, 13, 15, 15),
-                      decoration: BoxDecoration(
-                        color: notificationProvider.isNotificationType == true ? ColorResources.mainColor : ColorResources.white,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: ColorResources.colorAAADC4,
-                            blurRadius: 3.0,
-                          ),
-                        ],
-                      ),
-                      child: Column(
+                    : Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8), // layout_marginStart/End
-                            child: Text(
-                              widget.kudosName,
-                              style: const TextStyle(
-                                fontSize: 16, // text_size_medium
-                                color: Colors.black,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w600
-                              ),
-                              textAlign: TextAlign.start,
-                            ),
+                          SizedBox(
+                            height: 20,
                           ),
-                          AdAwardDescriptionList(),
+                          notificationProvider.notificationKudosAwardList == null
+                              ? Expanded(
+                                  flex: 1,
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    margin: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                                    child: Text(
+                                      getTranslated("no_data_found", context)!,
+                                      style: TextStyle(
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                        letterSpacing: 0,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                                  width: MediaQuery.sizeOf(context).width,
+                                  padding: EdgeInsets.fromLTRB(15, 13, 15, 15),
+                                  decoration: BoxDecoration(
+                                    color: notificationProvider.isNotificationType == true ? ColorResources.mainColor : ColorResources.white,
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        bottomLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10),
+                                        bottomRight: Radius.circular(10)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: ColorResources.colorAAADC4,
+                                        blurRadius: 3.0,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        widget.kudosName,
+                                        style: const TextStyle(fontSize: 16, color: Colors.white, fontFamily: 'Roboto', fontWeight: FontWeight.w600),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      AdAwardDescriptionList(),
+                                    ],
+                                  ),
+                                ),
                         ],
                       ),
-                    ),
               ],
             ),
           );

@@ -195,7 +195,7 @@ class MapersArray {
     return data;
   }
 }
-class getcotindividualsummaryresponse {
+class GetCotIndividualSummaryResponse {
   int? code;
   bool? status;
   bool? cotAnswered;
@@ -203,7 +203,7 @@ class getcotindividualsummaryresponse {
   String? message;
   Data? data;
 
-  getcotindividualsummaryresponse(
+  GetCotIndividualSummaryResponse(
       {this.code,
         this.status,
         this.cotAnswered,
@@ -211,7 +211,7 @@ class getcotindividualsummaryresponse {
         this.message,
         this.data});
 
-  getcotindividualsummaryresponse.fromJson(Map<String, dynamic> json) {
+  GetCotIndividualSummaryResponse.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     status = json['status'];
     cotAnswered = json['cotAnswered'];

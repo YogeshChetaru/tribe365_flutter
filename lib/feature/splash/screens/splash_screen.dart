@@ -33,7 +33,10 @@ class SplashScreenState extends State<SplashScreen> {
       if(loginController.isLoggedIn()){
         if (loginController.userLoginType()=="1"){
           _route(const FreeDashboardScreen());
-        }else if (loginController.userLoginType()=="3"){
+        }else if (loginController.userLoginType()=="2"){
+          _route(const PaidDashboardScreen());
+        }
+        else if (loginController.userLoginType()=="3"){
           _route(const PaidDashboardScreen());
         }
       }

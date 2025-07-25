@@ -9,34 +9,36 @@ import '../../profile/screens/personality_type_result_screen.dart';
 
 class PersonalityTypeItem extends StatelessWidget {
   final PersonalityTypeDetailsArr? personalityTypeDetails;
-  const PersonalityTypeItem({super.key,required this.personalityTypeDetails});
+  final String wayFrom;
+  const PersonalityTypeItem({super.key,required this.personalityTypeDetails,required this.wayFrom});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-       bool status = await  Navigator.of(context).push(
-          PageRouteBuilder(
-            transitionDuration: Duration(milliseconds: 500),
-            reverseTransitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (context, animation, secondaryAnimation) => PersonalityTypeResultScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0); // from right
-              const end = Offset.zero;
-              const curve = Curves.easeInOut;
-              final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              final offsetAnimation = animation.drive(tween);
-              return SlideTransition(
-                position: offsetAnimation,
-                child: child,
-              );
-            },
-          ),
-        );
-       if(status){
-         Provider.of<ProfileController>(Get.context!,listen: false).viewUserProfile();
-       }
-
+        if(wayFrom!="know") {
+          bool status = await Navigator.of(context).push(
+            PageRouteBuilder(
+              transitionDuration: Duration(milliseconds: 500),
+              reverseTransitionDuration: Duration(milliseconds: 500),
+              pageBuilder: (context, animation, secondaryAnimation) => PersonalityTypeResultScreen(),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                const begin = Offset(1.0, 0.0); // from right
+                const end = Offset.zero;
+                const curve = Curves.easeInOut;
+                final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                final offsetAnimation = animation.drive(tween);
+                return SlideTransition(
+                  position: offsetAnimation,
+                  child: child,
+                );
+              },
+            ),
+          );
+          if (status) {
+            Provider.of<ProfileController>(Get.context!, listen: false).viewUserProfile();
+          }
+        }
       },
       child: Container(
         decoration: BoxDecoration(

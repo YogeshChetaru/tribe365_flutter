@@ -9,5 +9,7 @@ abstract class OffloadingRepositoryInterface implements RepositoryInterface {
   Future<ApiResponse> sendHPTMReflection(Map<String, dynamic> body);
   Future<ApiResponse> viewHptmReflectionData(Map<String, dynamic> body);
   Future<ApiResponse> viewChatMessages(Map<String, dynamic> body);
+  Future<ApiResponse> viewReflectionChatMessages(Map<String, dynamic> body);
   Future<ApiResponse> sendChatMessages(Map<String, dynamic> body);
+  Future<ApiResponse> reflectionSendChatMessages(Map<String, dynamic> body);
 }

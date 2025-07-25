@@ -39,7 +39,7 @@ class NotificationController extends ChangeNotifier {
 
   List<ViewUnreadNotificationData> listUnread = [];
   int currentPageUR = 1;
-  int UNREAD_TOTAL_PAGES = 1;
+  int unreadTotalPages = 1;
   bool isLastPageUR = false;
   bool archiveAll = false;
 
@@ -96,7 +96,7 @@ class NotificationController extends ChangeNotifier {
     final reminderList = response['reminderList'] ?? {};
     final joToDoList = response['toDoList'] ?? {};
 
-    UNREAD_TOTAL_PAGES = response1.totalPageCount!;
+    unreadTotalPages = response1.totalPageCount!;
     listUnread.clear();
 
     for (var action in response1.actions!) {
@@ -154,7 +154,7 @@ class NotificationController extends ChangeNotifier {
     }
     listUnread.addAll(listUnreadTemp);
 
-    if (currentPageUR >= UNREAD_TOTAL_PAGES) isLastPageUR = true;
+    if (currentPageUR >= unreadTotalPages) isLastPageUR = true;
     notifyListeners();
   }
 
@@ -332,7 +332,6 @@ class NotificationController extends ChangeNotifier {
       ViewHomeKudosCountResponse response = ViewHomeKudosCountResponse.fromJson(map);
       kudosResponse = response.data!;
       totalKudosList = response.data!.belief!;
-
       amazingValueKey = kudosResponse.kudoAwardKey!;
       todayAwardCount = kudosResponse.todayKudosAwardCount!;
       yesterdayAwardCount = kudosResponse.yesterdayKudosAwardCount!;
@@ -440,7 +439,6 @@ class NotificationController extends ChangeNotifier {
 
   Future<void> viewKudoAwardDetailAPI(String dotValueId, String page) async {
     _isLoading = true;
-
     Map<String, dynamic> payload = {"page": page.toString(), "dotValueId": dotValueId};
 
     ApiResponse apiResponse = await notificationServiceInterface!.viewKudoAwardDetail(payload);

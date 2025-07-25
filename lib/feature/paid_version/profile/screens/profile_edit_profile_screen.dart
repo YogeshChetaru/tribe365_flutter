@@ -420,7 +420,7 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
       context: context,
       barrierLabel: "Barrier",
       barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withAlpha(128),
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (_, __, ___) {
         return ClipRRect(
@@ -430,7 +430,7 @@ class ProfileEditProfileScreenState extends State<ProfileEditProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: ColorResources.white.withOpacity(0.01),
+                  color: ColorResources.white.withAlpha(3),
                 ),
                 height: 180,
                 child: PopupInfo(

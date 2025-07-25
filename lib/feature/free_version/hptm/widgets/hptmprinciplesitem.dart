@@ -3,7 +3,7 @@ import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
 import 'package:tribe365_new/utill/dimensions.dart';
 
-import '../domain/models/viewhptmprinciplesList.dart';
+import '../domain/models/view_hptm_principles_list.dart';
 
 class HptmPrinciplesItem extends StatelessWidget {
   final int indexMain;

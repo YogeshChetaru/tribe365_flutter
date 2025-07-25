@@ -16,7 +16,7 @@ class OffloadingHistoryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        routePush(context, OffLoadingChatDetailsScreen(offLoadingData: data,));
+        routePush(context, OffLoadingChatDetailsScreen(feedbackId: data.id.toString(),));
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 10),

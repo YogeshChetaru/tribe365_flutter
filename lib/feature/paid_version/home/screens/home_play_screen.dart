@@ -44,19 +44,7 @@ class _PlayScreenState extends State<PlayScreen> {
     super.dispose();
   }
 
-  void navigateBackToLinkClick() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => LinkClickScreen(
-          titleName: widget.title,
-          subTitleName: widget.subTitle,
-          description: widget.description,
-          videoURL: widget.videoURL,
-        ),
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +72,9 @@ class _PlayScreenState extends State<PlayScreen> {
                           children: [
                             IconButton(
                               icon: const Icon(Icons.arrow_back),
-                              onPressed: navigateBackToLinkClick,
+                              onPressed: (){
+                                Navigator.pop(context,true);
+                              },
                             ),
                             Expanded(
                               child: Text(

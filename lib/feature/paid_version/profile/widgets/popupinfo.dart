@@ -45,7 +45,7 @@ class _PopupInfoState extends State<PopupInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white.withOpacity(0.05),
+      backgroundColor: Colors.white.withAlpha(13),
       body: Center(
         child: Container(
           alignment: Alignment.center,

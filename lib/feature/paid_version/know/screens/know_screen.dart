@@ -660,6 +660,7 @@ class KnowScreenState extends State<KnowScreen> {
                                             ),
                                             child: Column(
                                               children: [
+                                                if(knowProvider.latestKudosAwardMainList!=null)
                                                 if (knowProvider.latestKudosAwardMainList!.isNotEmpty)
                                                   ListView.builder(
                                                     shrinkWrap: true,

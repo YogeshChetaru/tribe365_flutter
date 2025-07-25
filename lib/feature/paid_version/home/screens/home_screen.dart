@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tribe365_new/feature/paid_version/home/screens/amazing_award_your_list_screen.dart';
+import 'package:tribe365_new/feature/paid_version/home/widgets/home_award_card_bottom.dart';
 import 'package:tribe365_new/feature/paid_version/home/widgets/home_out_office_mode_dialog.dart';
 import 'package:tribe365_new/feature/paid_version/home/widgets/home_vision_card_view.dart';
 import 'package:tribe365_new/feature/paid_version/home/widgets/update_app_design.dart';
+import 'package:tribe365_new/feature/paid_version/notification/screens/notification_kudos_awards_details_screen.dart';
 import 'package:tribe365_new/feature/paid_version/profile/controllers/profile_controller.dart';
 import 'package:tribe365_new/main.dart';
 import 'package:tribe365_new/utill/color_resources.dart';
@@ -15,10 +16,15 @@ import '../../../../utill/images.dart';
 import '../../../free_version/free_dashboard/controllers/free_dashboard_controller.dart';
 import '../../../free_version/free_dashboard/widgets/showsentimentdialog.dart';
 import '../../../free_version/hptm/screens/hptm_screen.dart';
+import '../../know/screens/kudos_awards_screen.dart';
 import '../../notification/screens/notification_screen.dart';
+import '../../notification/widgets/kudos_filter_dialog.dart';
 import '../controllers/home_controller.dart';
 import '../widgets/amazingawardsetdialog.dart';
+import '../widgets/home_kudos_filter_dialog.dart';
+import '../widgets/home_kudos_list_widget.dart';
 import '../widgets/home_worknotdialog.dart';
+import '../widgets/kudos_individuals_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,15 +36,16 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
   ProfileController profileController = Provider.of<ProfileController>(Get.context!, listen: false);
-  HomeController homeController = Provider.of<HomeController>(Get.context!, listen: false);
+  HomeController controller = Provider.of<HomeController>(Get.context!, listen: false);
   FreeDashboardController freeDashController = Provider.of<FreeDashboardController>(Get.context!, listen: false);
 
   void apiLoad() {
     profileController.viewUserProfile().then((onValue) {
-      homeController.updateUserID(profileController.userProfileData!.id,profileController.userProfileData!.orgId);
-      homeController.getHomeData(profileController.userProfileData!.orgId.toString());
-      homeController.viewNotificationCount(profileController.userProfileData!.id.toString());
-      homeController.getDepartmentUserList();
+      controller.updateUserID(profileController.userProfileData!.id,profileController.userProfileData!.orgId);
+      controller.getHomeData(profileController.userProfileData!.orgId.toString());
+     controller.viewNotificationCount(profileController.userProfileData!.id.toString());
+      controller.getDepartmentUserList();
+      controller.viewHomeKudosCountAPI(profileController.userProfileData!.orgId.toString());
       updateApp();
     });
   }
@@ -162,7 +169,7 @@ class HomeScreenState extends State<HomeScreen> {
                                                       height: 24,
                                                     ),
                                                   ),
-                                                  if (homeController.notificationCount != null)
+                                                  if (homeProvider.notificationCount != null)
                                                     Positioned(
                                                       top: 0,
                                                       left: 3,
@@ -179,7 +186,7 @@ class HomeScreenState extends State<HomeScreen> {
                                                           ),
                                                         ),
                                                         child: Text(
-                                                          homeController.notificationCount!,
+                                                          homeProvider.notificationCount!,
                                                           style: TextStyle(
                                                             color: ColorResources.mainColor,
                                                             fontSize: 10,
@@ -206,10 +213,10 @@ class HomeScreenState extends State<HomeScreen> {
                           child: Column(
                             children: [
 
-                              if(homeController.updateLayoutStatus==true)
+                              if(homeProvider.updateLayoutStatus==true)
                               UpdateAppDesign(),
 
-                              homeController.isHappyIndexStatus==false ?
+                              homeProvider.isHappyIndexStatus==false ?
                               SizedBox.shrink():
                               Container(
                                 margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
@@ -245,7 +252,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           padding: const EdgeInsets.all(4.0),
                                           child: InkWell(
                                             onTap: (){
-                                              homeController.addHappyIndex("3");
+                                              homeProvider.addHappyIndex("3");
                                             },child: SizedBox(
                                             width: 55,
                                             height: 55,
@@ -263,7 +270,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           padding: const EdgeInsets.all(4.0),
                                           child: InkWell(
                                             onTap: (){
-                                              homeController.addHappyIndex("2");
+                                              homeProvider.addHappyIndex("2");
                                             },child: SizedBox(
                                             width: 55,
                                             height: 55,
@@ -281,7 +288,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           padding: const EdgeInsets.all(4.0),
                                           child: InkWell(
                                             onTap: (){
-                                              homeController.addHappyIndex("1");
+                                              homeProvider.addHappyIndex("1");
                                             },child: SizedBox(
                                             width: 55,
                                             height: 55,
@@ -299,7 +306,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        homeController.updateDate();
+                                        homeProvider.updateDate();
                                         customShowDialog(context, HomeWorkNotDialog());
                                       },
                                       child: Text(
@@ -319,7 +326,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
 
-                              if (homeController.isAbsentVisible)
+                              if (homeProvider.isAbsentVisible)
                                 InkWell(
                                   onTap: (){
                                     customShowDialog(context, HomeOutOfficeModeDialog());
@@ -347,97 +354,169 @@ class HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),),
 
-                              if(homeController.homeVisionStatus)
                                 homeProvider.vision==null?
                                 SizedBox.shrink():
                               HomeVisionCardView(
-                                visionText: "Vision" ,
+                                visionText: homeProvider.vision! ,
                                videoURL: homeProvider.visionUrl!,
                                 subTitleName: homeProvider.vision!,
                                 description: homeProvider.visionDesc!,
                               ),
 
-
-
-
-                              Container(
-                                height: 80,
-                                margin: EdgeInsets.fromLTRB(15, 5, 15, 0),
-                                decoration: BoxDecoration(
-                                  color: ColorResources.mainColor,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 4,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      top: 20,
-                                      child: InkWell(
-                                        onTap: () {
-                                          customShowDialog(context, AmazingAwardSetDialog(name: homeProvider.awardName,));
-                                        },
-                                        child: Container(
-                                          margin: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                                          child: Row(
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Image.asset(
-                                                Images.imgAwardsKudosWhite,
-                                                width: 30,
-                                                height: 40,
-                                              ),
-                                              const SizedBox(width: 10),
-                                              Text(
-                                                getTranslated("amazing", context)!,
-                                                style: TextStyle(
-                                                  fontSize: 24,
-                                                  fontFamily: 'roboto',
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.white,
-                                                  letterSpacing: 1.2,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                              if(homeProvider.kudosList!=null)
+                                homeProvider.kudosList!.isEmpty?
+                                    SizedBox.shrink():
+                                HomeKudosListWidget(
+                                  onLongPress: (index, item) {
+                                    customShowDialog(context, AmazingAwardSetDialog(name: item.name.toString(),));
+                                  },
+                                  onKudosTap: (index, item) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => HomeKudosFilterDialog(
+                                        kudosList: homeProvider.kudosList!,
+                                        amazingValueKey: homeProvider.amazingValueKey,
+                                        todayAwardCount: homeProvider.todayAwardCount,
+                                        yesterdayAwardCount: homeProvider.yesterdayAwardCount,
+                                        thisWeekAwardCount: homeProvider.thisWeekAwardCount,
+                                        lastWeekAwardCount: homeProvider.lastWeekAwardCount,
+                                        thisMonthAwardCount: homeProvider.thisMonthAwardCount,
+                                        lastMonthAwardCount: homeProvider.lastMonthAwardCount,
+                                        totalAwardCount: homeProvider.totalAwardCount,
                                       ),
+                                    );
+                                  },
+                                  onAmazingTap: (index, item) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => KudosFilterDialog(
+                                        kudosList: homeProvider.totalKudosList!,
+                                        amazingValueKey: homeProvider.amazingValueKey,
+                                        todayAwardCount: homeProvider.todayAwardCount,
+                                        yesterdayAwardCount: homeProvider.yesterdayAwardCount,
+                                        thisWeekAwardCount: homeProvider.thisWeekAwardCount,
+                                        lastWeekAwardCount: homeProvider.lastWeekAwardCount,
+                                        thisMonthAwardCount: homeProvider.thisMonthAwardCount,
+                                        lastMonthAwardCount: homeProvider.lastMonthAwardCount,
+                                        totalAwardCount: homeProvider.totalAwardCount,
+                                      ),
+                                    );
+                                  },
+                                ),
+
+                              if(homeProvider.amazingAwardStatus)
+                              InkWell(
+                                onTap: (){
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => KudosFilterDialog(
+                                      kudosList: homeProvider.totalKudosList!,
+                                      amazingValueKey: homeProvider.amazingValueKey,
+                                      todayAwardCount: homeProvider.todayAwardCount,
+                                      yesterdayAwardCount: homeProvider.yesterdayAwardCount,
+                                      thisWeekAwardCount: homeProvider.thisWeekAwardCount,
+                                      lastWeekAwardCount: homeProvider.lastWeekAwardCount,
+                                      thisMonthAwardCount: homeProvider.thisMonthAwardCount,
+                                      lastMonthAwardCount: homeProvider.lastMonthAwardCount,
+                                      totalAwardCount: homeProvider.totalAwardCount,
                                     ),
-                                    Positioned(
-                                      right: -30,
-                                      top: 15,
-                                      bottom: -10,
-                                      child: InkWell(
-                                        onTap: () {
-                                          routePush(context, AmazingAwardYourListScreen());
-                                        },
-                                        child: Container(
-                                          width: 100,
-                                          height: 100,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                           homeProvider.amazingValue.toString(),
-                                            style: TextStyle(
-                                              color: ColorResources.mainColor,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
+                                  );
+                                  // routePush(context, NotificationKudosAwardsDetailsScreen(kudosId: "0", kudosName: "Amazing Awards"));
+                                },
+                                child: Container(
+                                  height: 80,
+                                  margin: EdgeInsets.fromLTRB(15, 5, 15, 0),
+                                  decoration: BoxDecoration(
+                                    color: ColorResources.mainColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black12,
+                                        blurRadius: 4,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Positioned(
+                                        top: 20,
+                                        child: InkWell(
+                                          onTap: () {
+                                            customShowDialog(context, AmazingAwardSetDialog(name: homeProvider.awardName,));
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                                            child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Image.asset(
+                                                  Images.imgAwardsKudosWhite,
+                                                  width: 30,
+                                                  height: 40,
+                                                ),
+                                                const SizedBox(width: 10),
+                                                Text(
+                                                  getTranslated("amazing", context)!,
+                                                  style: TextStyle(
+                                                    fontSize: 24,
+                                                    fontFamily: 'roboto',
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.white,
+                                                    letterSpacing: 1.2,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      Positioned(
+                                        right: -30,
+                                        top: 15,
+                                        bottom: -10,
+                                        child: InkWell(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (_) => KudosFilterDialog(
+                                                kudosList: homeProvider.totalKudosList!,
+                                                amazingValueKey: homeProvider.amazingValueKey,
+                                                todayAwardCount: homeProvider.todayAwardCount,
+                                                yesterdayAwardCount: homeProvider.yesterdayAwardCount,
+                                                thisWeekAwardCount: homeProvider.thisWeekAwardCount,
+                                                lastWeekAwardCount: homeProvider.lastWeekAwardCount,
+                                                thisMonthAwardCount: homeProvider.thisMonthAwardCount,
+                                                lastMonthAwardCount: homeProvider.lastMonthAwardCount,
+                                                totalAwardCount: homeProvider.totalAwardCount,
+                                              ),
+                                            );
+                                            // routePush(context, NotificationKudosAwardsDetailsScreen(kudosId: "0", kudosName: "Amazing Awards"));
+                                          },
+                                          child: Container(
+                                            width: 100,
+                                            height: 100,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                             homeProvider.amazingValue.toString(),
+                                              style: TextStyle(
+                                                color: ColorResources.mainColor,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
+
                               Container(
                                 margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
                                 child: Column(
@@ -522,6 +601,7 @@ class HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     ),
+
                                   ],
                                 ),
                               ),
@@ -665,18 +745,56 @@ class HomeScreenState extends State<HomeScreen> {
           });
         }),
       ),
+      floatingActionButton: Consumer<HomeController>(
+        builder: (context, fabProvider, _) {
+          return fabProvider.isVisibleKudos
+              ? FloatingActionButton(
+            onPressed: () {
+              debugPrint("FAB clicked!");
+              customShowDialog(context, KudosIndividualsDialog());
+            },
+            backgroundColor: ColorResources.mainColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.arrow_right_alt_outlined, color: Colors.white,size: 40,),
+          )
+              : SizedBox.shrink(); // Hide FAB
+        },
+      ),
+      bottomNavigationBar: Consumer<HomeController>(builder: (context, homeProvider, _) {
+        return homeProvider.homeAwardBottomStatus==false?
+        SizedBox() :
+        Container(
+          width: MediaQuery.sizeOf(context).width,
+          height: 90,
+          color: Colors.white,
+          alignment: Alignment.center,
+          child: Column(
+
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              InkWell(
+                  onTap: (){
+                    routePush(context, KudosAwardsScreen());
+              },child: HomeAwardCardBottom(controller: homeProvider,)),
+            ],
+          ),
+        );
+      }),
     );
   }
 
   Future<void> updateApp() async {
-    if (!homeController.checkLater){
+    if (!controller.checkLater){
       final info = await Utility.getAppVersionInfo();
       debugPrint("Platform: ${info['platform']}");
       debugPrint("Version: ${info['version']}");
       debugPrint("Build Number: ${info['buildNumber']}");
       String newVersion = info['version']!;
       String platform = info['platform']!;
-      homeController.getCurrentVersionOfApp(newVersion,platform);
+      controller.getCurrentVersionOfApp(newVersion,platform);
     }
   }
 

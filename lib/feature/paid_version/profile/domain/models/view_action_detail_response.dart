@@ -18,7 +18,7 @@ class ViewActionDetailResponse {
     if (json['data'] != null) {
       data = <ViewActionListData>[];
       json['data'].forEach((v) {
-        data!.add(new ViewActionListData.fromJson(v));
+        data!.add(ViewActionListData.fromJson(v));
       });
     }
   }

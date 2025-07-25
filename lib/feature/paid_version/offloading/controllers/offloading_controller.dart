@@ -1,10 +1,11 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Feedback;
 import 'package:tribe365_new/feature/paid_version/profile/domain/models/viewuserprofileresponse.dart';
 import '../../../../data/model/api_response.dart';
 import '../domain/models/view_message_details_response.dart';
 import '../domain/models/view_offloading_list_response.dart';
+import '../domain/models/view_reflection_chat_messages_response.dart';
 import '../domain/models/view_reflection_list_response.dart';
 import '../domain/services/offloading_service_interface.dart';
 
@@ -28,6 +29,9 @@ class OffloadingController extends ChangeNotifier {
   List<ViewOffLoadingListData>? offLoadingList;
   List<ViewReflectionListData>? reflectionList;
   List<Messages>? messagesList;
+  List<ViewReflectionChatMessages>? reflectionMessagesList;
+  Reflection? reflectionData;
+  Feedback? feedbackData;
 
   TextEditingController tellUsController = TextEditingController();
   FocusNode tellUsFocus = FocusNode();
@@ -124,6 +128,7 @@ class OffloadingController extends ChangeNotifier {
     ViewMessageDetailsResponse response = ViewMessageDetailsResponse.fromJson(map);
     messagesList = [];
     messagesList = response.data!.messages!;
+    feedbackData = response.data!.feedback!;
     notifyListeners();
     return apiResponse;
   }
@@ -136,6 +141,30 @@ class OffloadingController extends ChangeNotifier {
     _isLoadingData = false;
     updateInitData();
     viewChatMessages(int.parse(feedbackId.toString()));
+    notifyListeners();
+    return apiResponse;
+  }
+
+  Future<ApiResponse> viewReflectionChatMessages(int feedbackId) async {
+    Map<String, dynamic> request = {"reflectionId": feedbackId};
+    ApiResponse apiResponse = await offloadingServiceInterface!.viewReflectionChatMessages(request);
+    Map<String, dynamic> map = apiResponse.response!.data;
+    ViewReflectionChatMessagesResponse response = ViewReflectionChatMessagesResponse.fromJson(map);
+    reflectionMessagesList = [];
+    reflectionMessagesList = response.data!.messages!;
+    reflectionData = response.data!.reflection;
+    notifyListeners();
+    return apiResponse;
+  }
+
+  Future<ApiResponse> reflectionSendChatMessages(String msgType, String message, String feedbackId) async {
+    _isLoadingData = true;
+    notifyListeners();
+    Map<String, dynamic> request = {"sendFrom": userId, "sendTo": "1", "message": message, "reflectionId": feedbackId, "postType": msgType};
+    ApiResponse apiResponse = await offloadingServiceInterface!.reflectionSendChatMessages(request);
+    _isLoadingData = false;
+    updateInitData();
+    viewReflectionChatMessages(int.parse(feedbackId.toString()));
     notifyListeners();
     return apiResponse;
   }

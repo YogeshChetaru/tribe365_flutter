@@ -19,7 +19,7 @@ class FreeDashboardController extends ChangeNotifier {
 
   FreeDashboardController({required this.freeDashboardServiceInterface});
 
-  bool _isLoading = true;
+  bool _isLoading = false;
   bool _isPopupLoading = false;
 
   bool get isLoading => _isLoading;

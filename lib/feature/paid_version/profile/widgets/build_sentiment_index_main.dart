@@ -63,7 +63,7 @@ class BuildSentimentIndexMain extends StatelessWidget {
                           barTouchData: BarTouchData(
                             enabled: true,
                             touchTooltipData: BarTouchTooltipData(
-                              tooltipBgColor: const Color(0xFFEB1C24).withOpacity(0.7),
+                              tooltipBgColor: const Color(0xFFEB1C24).withAlpha(179),
                               getTooltipItem: (group, groupIndex, rod, rodIndex) {
                                 return BarTooltipItem(
                                   rod.toY.toStringAsFixed(1),

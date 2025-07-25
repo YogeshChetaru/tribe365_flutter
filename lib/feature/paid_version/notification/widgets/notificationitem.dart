@@ -6,6 +6,8 @@ import 'package:tribe365_new/feature/paid_version/notification/screens/notificat
 import 'package:tribe365_new/feature/paid_version/notification/screens/notification_team_feedback_screen.dart';
 import 'package:tribe365_new/feature/paid_version/notification/screens/notification_webpage_screen.dart';
 import 'package:tribe365_new/feature/paid_version/notification/widgets/single_champion_dialog.dart';
+import 'package:tribe365_new/feature/paid_version/offloading/screens/offloading_chat_details_screen.dart';
+import 'package:tribe365_new/feature/paid_version/offloading/screens/reflection_chat_details_screen.dart';
 import 'package:tribe365_new/feature/paid_version/profile/controllers/profile_controller.dart';
 import 'package:tribe365_new/feature/paid_version/profile/screens/diagnostic_question_list_screen.dart';
 import 'package:tribe365_new/feature/paid_version/profile/screens/motivation_questions_screen.dart';
@@ -18,6 +20,7 @@ import 'package:tribe365_new/localization/language_constrants.dart';
 import 'package:tribe365_new/utill/custom_route.dart';
 import 'package:tribe365_new/utill/images.dart';
 import '../../../../utill/color_resources.dart';
+import '../../profile/screens/support_chat_details_screen.dart';
 import '../domain/models/view_unread_notification_list.dart';
 import 'dialog_desc_full.dart';
 import 'kudos_filter_dialog.dart';
@@ -94,6 +97,7 @@ class NotificationItem extends StatelessWidget {
                             ),
                           ),
                         ),
+                      item!.createdAt==null?SizedBox.shrink():
                       Expanded(
                         flex: 1,
                         child: Container(
@@ -139,17 +143,17 @@ class NotificationItem extends StatelessWidget {
   }
 
   void handleNotificationClick(BuildContext context, ViewUnreadNotificationData item) {
-    final nav = Navigator.of(context);
 
     if (item.notificationType == "actionList") {
       routePush(context, ProfileActionsCommentsScreen(actionId: item.id.toString()));
     } else if (item.notificationType == "chat") {
-      nav.pushNamed('/history-detail', arguments: item.feedbackId);
+      routePush(context, OffLoadingChatDetailsScreen(feedbackId: item.feedbackId.toString()));
     } else if (item.notificationType == "support") {
-      nav.pushNamed('/support-detail', arguments: item.supportId);
+      routePush(context, SupportChatDetailsScreen(supportId: item.supportId.toString(),));
     } else if (item.notificationType == "reflectionChat") {
-      nav.pushNamed('/reflection-detail', arguments: item.reflectionId);
-    } else if (item.notificationType == "teamFeedback") {
+      routePush(context, ReflectionChatDetailsScreen(reflectionId: item.reflectionId!));
+    }
+    else if (item.notificationType == "teamFeedback") {
       routePush(
           context,
           NotificationTeamFeedbackScreen(
@@ -157,25 +161,26 @@ class NotificationItem extends StatelessWidget {
             date: item.createdAt!,
             teamId: item.teamFeedbackId!,
           ));
-    } else if (item.title?.contains("Kudos Champion") == true) {
+    }
+    else if (item.title?.contains("Kudos Champion") == true) {
       if (item.multiple!) {
         showMultiChampionDialog(context, item);
       } else {
         showChampionDialog(context, item);
       }
-    } else if (item.notificationType == "kudoAward") {
+    }
+    else if (item.notificationType == "kudoAward") {
       ProfileController controller = Provider.of<ProfileController>(context, listen: false);
       NotificationController noController = Provider.of<NotificationController>(context, listen: false);
-
-      if (controller.userProfileData!.role == 3) {
+     /* if (controller.userProfileData!.role == 3) {
         routePush(
             context,
             NotificationKudosAwardsDetailsScreen(
               kudosId: "0",
               kudosName: "Amazing Awards",
             ));
-      } else {
-        //kudos popup open
+      }
+      else {
         showDialog(
           context: context,
           builder: (_) => KudosFilterDialog(
@@ -190,10 +195,26 @@ class NotificationItem extends StatelessWidget {
             totalAwardCount: noController.totalAwardCount,
           ),
         );
-      }
-    } else if (item.notificationType == "custom notification") {
+      }*/
+      showDialog(
+        context: context,
+        builder: (_) => KudosFilterDialog(
+          kudosList: noController.totalKudosList!,
+          amazingValueKey: noController.amazingValueKey,
+          todayAwardCount: noController.todayAwardCount,
+          yesterdayAwardCount: noController.yesterdayAwardCount,
+          thisWeekAwardCount: noController.thisWeekAwardCount,
+          lastWeekAwardCount: noController.lastWeekAwardCount,
+          thisMonthAwardCount: noController.thisMonthAwardCount,
+          lastMonthAwardCount: noController.lastMonthAwardCount,
+          totalAwardCount: noController.totalAwardCount,
+        ),
+      );
+    }
+    else if (item.notificationType == "custom notification") {
       showDiscDialog(context, item);
-    } else {
+    }
+    else {
       handleChecklistOrTodoClick(context, item);
     }
   }
@@ -240,6 +261,13 @@ class NotificationItem extends StatelessWidget {
     );
   }
 
+  void showMultiChampionDialog(BuildContext context, ViewUnreadNotificationData item) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => MultiChampionDialog(item: item),
+    );
+  }
   void showChampionDialog(BuildContext context, ViewUnreadNotificationData item) {
     showDialog(
       context: context,
@@ -249,52 +277,5 @@ class NotificationItem extends StatelessWidget {
   }
 }
 
-/*class MultipleChampionDialog extends StatelessWidget {
-  final ViewUnreadNotificationData item;
-  const MultipleChampionDialog(this.item, {super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final names = item.mUserName?.split(",") ?? [];
-    final emails = item.mUserEmail?.split(",") ?? [];
-    final images = item.mUserImage?.split(",") ?? [];
 
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: names.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              leading: ClipOval(
-                child: Image.network(
-                  images[index],
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              title: Text(names[index]),
-              subtitle: Text(emails[index]),
-              trailing: Text(item.description ?? ""),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}*/
-
-void showMultiChampionDialog(BuildContext context, ViewUnreadNotificationData item) {
-  showDialog(
-    context: context,
-    barrierDismissible: true,
-    builder: (_) => MultiChampionDialog(item: item),
-  );
-}

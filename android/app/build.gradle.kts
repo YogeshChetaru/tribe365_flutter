@@ -3,6 +3,7 @@ plugins {
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -33,9 +34,14 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true               // Enables code shrinking
+            isShrinkResources = true             // Removes unused resources
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("debug") // Replace with release key for production
+            manifestPlaceholders["flutterEmbedding"] = "2"
         }
     }
 }
@@ -50,6 +56,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-crashlytics")
 
 }
 

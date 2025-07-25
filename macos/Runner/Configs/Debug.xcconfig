@@ -1,2 +1,16 @@
+// ✅ Include CocoaPods base config
+#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
+
+// ✅ Include Flutter config (adjust path if needed)
 #include "../../Flutter/Flutter-Debug.xcconfig"
-#include "Warnings.xcconfig"
+
+// ✅ Optional: Include warning settings if the file exists
+#include "Runner/configs/Warnings.xcconfig"
+
+// ✅ Deployment target (important for compatibility)
+MACOSX_DEPLOYMENT_TARGET = 11.0
+
+// ✅ App-level settings
+PRODUCT_NAME = tribe365_new
+PRODUCT_BUNDLE_IDENTIFIER = com.chetaru.tribe365New
+PRODUCT_COPYRIGHT = Copyright © 2025 com.chetaru. All rights reserved.

@@ -30,14 +30,14 @@ class ViewUserChatMessagesResponse {
 }
 
 class ViewUserChatMessagesData {
-  SupportMessage? supportMessage;
+  ViewUserChatSupportMessage? supportMessage;
   List<ViewUserChatMessages>? messages;
 
   ViewUserChatMessagesData({this.supportMessage, this.messages});
 
   ViewUserChatMessagesData.fromJson(Map<String, dynamic> json) {
     supportMessage = json['supportMessage'] != null
-        ? SupportMessage.fromJson(json['supportMessage'])
+        ? ViewUserChatSupportMessage.fromJson(json['supportMessage'])
         : null;
     if (json['messages'] != null) {
       messages = <ViewUserChatMessages>[];
@@ -59,14 +59,14 @@ class ViewUserChatMessagesData {
   }
 }
 
-class SupportMessage {
+class ViewUserChatSupportMessage {
   String? initialMessage;
   String? initialMsgDate;
   String? msgImageUrl;
 
-  SupportMessage({this.initialMessage, this.initialMsgDate, this.msgImageUrl});
+  ViewUserChatSupportMessage({this.initialMessage, this.initialMsgDate, this.msgImageUrl});
 
-  SupportMessage.fromJson(Map<String, dynamic> json) {
+  ViewUserChatSupportMessage.fromJson(Map<String, dynamic> json) {
     initialMessage = json['initialMessage'];
     initialMsgDate = json['initialMsgDate'];
     msgImageUrl = json['msgImageUrl'];

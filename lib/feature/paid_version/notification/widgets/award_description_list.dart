@@ -29,31 +29,21 @@ class AdAwardDescriptionList extends StatelessWidget {
                   children: [
                     Text(
                       item.description ?? '',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        color: Colors.black,
-                      ),
+                      style: const TextStyle(fontSize: 14, fontFamily: 'Roboto', color: Colors.white, fontWeight: FontWeight.w500),
                     ),
-                    const SizedBox(height: 4),
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(
                         Utility.convertDataIntoddMMMyyyyhhmma(item.createdAt!),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'RobotoMedium',
-                          color: Color(0xFFBDBDBD), // border_color
-                        ),
+                        style: const TextStyle(fontSize: 12, fontFamily: 'Roboto', color: Colors.white, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
                 ),
                 if (!isSecondLast)
                   Container(
-                    height: 0.4,
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    color: const Color(0xFFBDBDBD), // border_color
+                    height: 0.8,
+                    color: Colors.white, // border_color
                   ),
               ],
             );

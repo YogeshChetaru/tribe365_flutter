@@ -9,7 +9,6 @@ import '../../../../utill/images.dart';
 import '../controllers/profile_controller.dart';
 
 class DiagnosticQuestionListScreen extends StatefulWidget {
-
   const DiagnosticQuestionListScreen({super.key});
 
   @override
@@ -33,22 +32,21 @@ class DiagnosticQuestionListScreenState extends State<DiagnosticQuestionListScre
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => _onBackPressed(context),
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          await _onBackPressed(context);
+        }
+      },
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: Theme
-            .of(context)
-            .primaryColor,
+        backgroundColor: Theme.of(context).primaryColor,
         body: SafeArea(
           child: Consumer<ProfileController>(builder: (context, profileProvider, _) {
             return Container(
-              width: MediaQuery
-                  .sizeOf(context)
-                  .width,
-              height: MediaQuery
-                  .sizeOf(context)
-                  .height,
+              width: MediaQuery.sizeOf(context).width,
+              height: MediaQuery.sizeOf(context).height,
               color: ColorResources.screenBg,
               child: Column(
                 children: [
@@ -62,9 +60,7 @@ class DiagnosticQuestionListScreenState extends State<DiagnosticQuestionListScre
                         ),
                       ],
                     ),
-                    width: MediaQuery
-                        .sizeOf(context)
-                        .width,
+                    width: MediaQuery.sizeOf(context).width,
                     padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
                     child: Row(
                       children: [
@@ -77,16 +73,16 @@ class DiagnosticQuestionListScreenState extends State<DiagnosticQuestionListScre
                             )),
                         Expanded(
                             child: Container(
-                              alignment: Alignment.center,
-                              child: Text(
-                                getTranslated("culture_structure", context)!,
-                                style: TextStyle(
-                                  fontSize: Dimensions.sp18,
-                                  fontWeight: FontWeight.w600,
-                                  color: ColorResources.black,
-                                ),
-                              ),
-                            )),
+                          alignment: Alignment.center,
+                          child: Text(
+                            getTranslated("culture_structure", context)!,
+                            style: TextStyle(
+                              fontSize: Dimensions.sp18,
+                              fontWeight: FontWeight.w600,
+                              color: ColorResources.black,
+                            ),
+                          ),
+                        )),
                         SizedBox(
                           width: 24,
                           height: 24,
@@ -96,110 +92,97 @@ class DiagnosticQuestionListScreenState extends State<DiagnosticQuestionListScre
                   ),
                   profileProvider.isLoading == true
                       ? Expanded(
-                    flex: 1,
-                    child: SizedBox(
-                      width: MediaQuery
-                          .sizeOf(context)
-                          .width,
-                      height: MediaQuery
-                          .sizeOf(context)
-                          .height,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Theme
-                                .of(context)
-                                .primaryColor,
+                          flex: 1,
+                          child: SizedBox(
+                            width: MediaQuery.sizeOf(context).width,
+                            height: MediaQuery.sizeOf(context).height,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  )
-                      :
-                  profileProvider.viewDiagnosticQuestionList == null ?
-                  SizedBox() :
-                  Expanded(
-                    flex: 1,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 16),
-                        Expanded(
-                          flex: 1, child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: AlwaysScrollableScrollPhysics(),
-                          itemCount: profileProvider.viewDiagnosticQuestionList!.length,
-                          itemBuilder: (context, index) {
-                            final question = profileProvider.viewDiagnosticQuestionList![index];
-                            return BuildDiagnosticQuestion(
-                              question: question,
-                              index: index,
-                            );
-                          },
-                        ),
-                        ),
-                      ],
-                    ),
-                  ),
+                        )
+                      : profileProvider.viewDiagnosticQuestionList == null
+                          ? SizedBox()
+                          : Expanded(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  const SizedBox(height: 16),
+                                  Expanded(
+                                    flex: 1,
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: AlwaysScrollableScrollPhysics(),
+                                      itemCount: profileProvider.viewDiagnosticQuestionList!.length,
+                                      itemBuilder: (context, index) {
+                                        final question = profileProvider.viewDiagnosticQuestionList![index];
+                                        return BuildDiagnosticQuestion(
+                                          question: question,
+                                          index: index,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                 ],
               ),
             );
           }),
         ),
-        bottomNavigationBar: SafeArea(child:
-        Consumer<ProfileController>(builder: (context, profileProvider, _) {
+        bottomNavigationBar: SafeArea(child: Consumer<ProfileController>(builder: (context, profileProvider, _) {
           return profileProvider.isLoading == true
               ? SizedBox()
-              : profileProvider.isLoadingBtn == true ?
-          Container(
-            height: 70,
-            color: ColorResources.white,
-            child: Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme
-                      .of(context)
-                      .primaryColor,
-                ),
-              ),
-            ),
-          ) :
-          Container(
-            width: MediaQuery
-                .sizeOf(context)
-                .width,
-            height: 70,
-            color: ColorResources.white,
-            child: InkWell(
-              onTap: () {
-                profileProvider.validateAndSubmitAnswersDiagnostic(context);
-              },
-              child: Container(
-                alignment: Alignment.center,
-                width: MediaQuery
-                    .sizeOf(context)
-                    .width,
-                margin: EdgeInsets.fromLTRB(15, 10, 15, 10),
-                decoration: BoxDecoration(
-                  color: ColorResources.mainColor,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                      bottomRight: Radius.circular(10)),
-                ),
-                child: Text(
-                  getTranslated("submit", context)!,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: Dimensions.sp16,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-              ),
-            ),
-          );
+              : profileProvider.isLoadingBtn == true
+                  ? Container(
+                      height: 70,
+                      color: ColorResources.white,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: MediaQuery.sizeOf(context).width,
+                      height: 70,
+                      color: ColorResources.white,
+                      child: InkWell(
+                        onTap: () {
+                          profileProvider.validateAndSubmitAnswersDiagnostic(context);
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.sizeOf(context).width,
+                          margin: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                          decoration: BoxDecoration(
+                            color: ColorResources.mainColor,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                                bottomRight: Radius.circular(10)),
+                          ),
+                          child: Text(
+                            getTranslated("submit", context)!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: Dimensions.sp16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Roboto',
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
         })),
       ),
     );
@@ -211,7 +194,8 @@ class DiagnosticQuestionListScreenState extends State<DiagnosticQuestionListScre
     // Check if any question has an answer selected
     final hasAnswers = provider.viewDiagnosticQuestionList?.any(
           (q) => q.answer.isNotEmpty,
-    ) ?? false;
+        ) ??
+        false;
 
     if (hasAnswers) {
       final shouldSave = await showDialog<bool>(
@@ -256,6 +240,4 @@ class DiagnosticQuestionListScreenState extends State<DiagnosticQuestionListScre
       return true;
     }
   }
-
 }
-

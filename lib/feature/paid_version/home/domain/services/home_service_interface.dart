@@ -8,6 +8,10 @@ abstract class HomeServiceInterface {
   Future<dynamic> getCurrentVersionOfApp(Map<String, dynamic> body);
   Future<dynamic> getDotDetail(Map<String, dynamic> body);
   Future<dynamic> getDepartmentUserList(Map<String, dynamic> body);
+  Future<dynamic> addKudosAward(Map<String, dynamic> body);
+  Future<dynamic> addRatingsToDotValues(Map<String, dynamic> body);
+  Future<dynamic> viewHomeKudosCount(Map<String, dynamic> body);
+  Future<dynamic> addKudosAwardMultiUser(Map<String, dynamic> body);
   Future<void> savePushNotificationStatus(bool userData);
   bool getPushNotificationStatus();
 }

@@ -11,13 +11,12 @@ import '../../../../utill/dimensions.dart';
 import '../../../../utill/images.dart';
 import '../../profile/controllers/profile_controller.dart';
 import '../../profile/widgets/popupinfo.dart';
-import '../domain/models/view_support_history_list_response.dart';
 import '../widgets/support_chat_item.dart';
 
 class SupportChatDetailsScreen extends StatefulWidget {
-  final ViewSupportHistoryListData? supportData;
+  final String supportId;
 
-  const SupportChatDetailsScreen({super.key, this.supportData});
+  const SupportChatDetailsScreen({super.key, required this.supportId});
 
   @override
   SupportChatDetailsScreenState createState() => SupportChatDetailsScreenState();
@@ -25,32 +24,31 @@ class SupportChatDetailsScreen extends StatefulWidget {
 
 class SupportChatDetailsScreenState extends State<SupportChatDetailsScreen> {
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
-  ProfileController profileController = Provider.of<ProfileController>(Get.context!, listen: false);
+  ProfileController controller = Provider.of<ProfileController>(Get.context!, listen: false);
 
   void apiLoad() {
-    profileController.viewUserProfile().then((onValue) {
-      profileController.viewChatMessages(widget.supportData!.id!);
+    controller.viewUserProfile().then((onValue) {
+      controller.viewChatMessages(int.parse(widget.supportId));
     });
   }
 
   @override
   void initState() {
     super.initState();
-    profileController.initData();
+    controller.initData();
     apiLoad();
   }
 
   getImageData(File? data) async {
     String? base64Image = "";
-    if(data!=null){
+    if (data != null) {
       base64Image = await Utility.imageToBase64(data.path);
-      profileController.sendChatMessages(
+      controller.sendChatMessages(
         "img",
         base64Image!,
-        widget.supportData!.id!.toString(),
+        widget.supportId.toString(),
       );
     }
-
   }
 
   @override
@@ -68,6 +66,7 @@ class SupportChatDetailsScreenState extends State<SupportChatDetailsScreen> {
             child: Column(
               children: [
                 CustomHeaderBack(title: ""),
+                if(profileProvider.supportMessage!=null)
                 Container(
                   margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
                   width: MediaQuery.of(context).size.width,
@@ -94,16 +93,26 @@ class SupportChatDetailsScreenState extends State<SupportChatDetailsScreen> {
                         height: 10,
                       ),
                       Text(
-                        Utility.convertDataIntoddMMMyyyyhhmma( widget.supportData!.createdAt!),
+                        Utility.convertDataIntoddMMMyyyyhhmma(profileProvider.supportMessage!.initialMsgDate!),
                         style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: ColorResources.mainColor, fontFamily: 'roboto'),
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       Text(
-                         widget.supportData!.message!,
+                        profileProvider.supportMessage!.initialMessage!,
                         style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: ColorResources.color333333, fontFamily: 'roboto'),
                       ),
+                      if (profileProvider.supportMessage!.msgImageUrl != "")
+                        Container(
+                            alignment: Alignment.centerLeft,
+                            margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Image.network(
+                              profileProvider.supportMessage!.msgImageUrl!,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.fill,
+                            )),
                     ],
                   ),
                 ),
@@ -143,8 +152,7 @@ class SupportChatDetailsScreenState extends State<SupportChatDetailsScreen> {
           );
         }),
       ),
-      bottomNavigationBar:
-      Consumer<ProfileController>(builder: (context, profileProvider, _) {
+      bottomNavigationBar: Consumer<ProfileController>(builder: (context, profileProvider, _) {
         return SafeArea(
           child: Padding(
             padding: EdgeInsets.only(
@@ -166,7 +174,7 @@ class SupportChatDetailsScreenState extends State<SupportChatDetailsScreen> {
               child: Row(
                 children: [
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       showImgPickerCustomDialog(context, getImageData);
                     },
                     child: Image.asset(
@@ -185,12 +193,16 @@ class SupportChatDetailsScreenState extends State<SupportChatDetailsScreen> {
                       decoration: BoxDecoration(
                         color: ColorResources.color808080.withAlpha(51),
                         border: Border.all(color: ColorResources.color808080.withAlpha(51), width: 0.5),
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10), bottomRight: Radius.circular(10)),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            bottomLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10)),
                       ),
                       padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
                       child: TextField(
-                        controller: profileController.tellUsController,
-                        focusNode: profileController.tellUsFocus,
+                        controller: profileProvider.tellUsController,
+                        focusNode: profileProvider.tellUsFocus,
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.done,
                         style: const TextStyle(
@@ -216,36 +228,37 @@ class SupportChatDetailsScreenState extends State<SupportChatDetailsScreen> {
                   SizedBox(
                     width: 10,
                   ),
-                  profileController.isLoadingData == true
+                  profileProvider.isLoadingData == true
                       ? Center(
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).primaryColor,
-                        ),
-                      ),
-                    ),
-                  )
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
+                        )
                       : InkWell(
-                    onTap: () {
-                      String msg = profileController.tellUsController.text.trim().toString();
-                      if (msg.isEmpty) {
-                        showCustomSnackBar(getTranslated('please_enter_massage', context), context, isError: true);
-                      } else {
-                        profileController.sendChatMessages(
-                          "msg",
-                          msg,
-                          widget.supportData!.id!.toString(),
-                        );
-                      }
-                    },
-                    child: Text(
-                      getTranslated("send", context)!,
-                      style: TextStyle(fontFamily: 'roboto', fontSize: Dimensions.sp18, color: ColorResources.black, fontWeight: FontWeight.w700),
-                    ),
-                  )
+                          onTap: () {
+                            String msg = profileProvider.tellUsController.text.trim().toString();
+                            if (msg.isEmpty) {
+                              showCustomSnackBar(getTranslated('please_enter_massage', context), context, isError: true);
+                            } else {
+                              profileProvider.sendChatMessages(
+                                "msg",
+                                msg,
+                                widget.supportId.toString(),
+                              );
+                            }
+                          },
+                          child: Text(
+                            getTranslated("send", context)!,
+                            style:
+                                TextStyle(fontFamily: 'roboto', fontSize: Dimensions.sp18, color: ColorResources.black, fontWeight: FontWeight.w700),
+                          ),
+                        )
                 ],
               ),
             ),
@@ -260,7 +273,7 @@ class SupportChatDetailsScreenState extends State<SupportChatDetailsScreen> {
       context: context,
       barrierLabel: "Barrier",
       barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withAlpha(128),
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (_, __, ___) {
         return ClipRRect(
@@ -270,7 +283,7 @@ class SupportChatDetailsScreenState extends State<SupportChatDetailsScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: ColorResources.white.withOpacity(0.01),
+                  color: ColorResources.white.withAlpha(3),
                 ),
                 height: 180,
                 child: PopupInfo(
@@ -297,5 +310,3 @@ class SupportChatDetailsScreenState extends State<SupportChatDetailsScreen> {
     );
   }
 }
-
-

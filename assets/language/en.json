@@ -190,6 +190,7 @@
   "LATER": "LATER",
   "UPDATE": "UPDATE",
   "vision_map": "Vision Map",
+  "vision": "Vision",
   "belief_and_values_are_not_available": "Belief and values are not available",
   "watch_video": "Watch Video",
   "please_enter_comment_first": "Please enter comment first",
@@ -247,6 +248,20 @@
   "complete_culture_structure_questionnaire": "Complete Culture Structure Questionnaire",
   "complete_team_role_questionnaire": "Complete Team Role Questionnaire",
   "complete_personality_type_questionnaire": "Complete Personality Type Questionnaire",
-  "evaluate_yourself_against_tribe_values":"Evaluate yourself against Tribe Values"
+  "evaluate_yourself_against_tribe_values":"Evaluate yourself against Tribe Values",
+  "please_select_user_first": "please select user first.",
+  "no_awards_yet": "No awards yet",
+  "mission": "Mission",
+  "focus": "Focus",
+  "belief": "Belief",
+  "i_do_not_understand_what_it_means_to_be": "I do not understand what it means to be",
+  "i_understand_what_it_means_to_be": "I understand what it means to be",
+  "i_am_never_rarely": "I am never/rarely",
+  "i_am": "I am",
+  "when_i_have_to_be": "when I have to be",
+  "every_day_at_work": "every day at work",
+  "every_day_at_work_colleagues_and_clients_would_describe_me_as": "every day at work, colleagues and clients would describe me as",
+  "i_help_others_become": "I help others become",
+  "done": "Done"
 
 }

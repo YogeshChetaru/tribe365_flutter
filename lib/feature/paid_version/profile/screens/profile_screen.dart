@@ -194,7 +194,8 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                               profileProvider.userProfileData!.personalityTypeDetailsArr==null?
                               InkWell(
                                 onTap: () async {
-                                bool status = await Navigator.of(context).push(
+                                  bool status = false;
+                                status = await Navigator.of(context).push(
                                     PageRouteBuilder(
                                       transitionDuration: Duration(milliseconds: 500),
                                       reverseTransitionDuration: Duration(milliseconds: 500),
@@ -215,7 +216,47 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                                 if(status){
                                   loadAPI();
                                 }
-                                },child: Container(
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                  child: Text(
+                                    profileProvider.userProfileData!.personalityTypeDetails!,
+                                    style: TextStyle(
+                                      fontSize: Dimensions.sp12,
+                                      color: ColorResources.black, // Replace with ColorResources.mainColor
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Roboto',
+                                    ),
+                                  ),
+                                ),
+                              ):
+                              profileProvider.userProfileData!.personalityTypeDetailsArr!.isEmpty?
+                              InkWell(
+                                onTap: () async {
+                                  bool status = false;
+                                  status = await Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      transitionDuration: Duration(milliseconds: 500),
+                                      reverseTransitionDuration: Duration(milliseconds: 500),
+                                      pageBuilder: (context, animation, secondaryAnimation) => PersonalityTypeScreen(),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        const begin = Offset(1.0, 0.0); // from right
+                                        const end = Offset.zero;
+                                        const curve = Curves.easeInOut;
+                                        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                        final offsetAnimation = animation.drive(tween);
+                                        return SlideTransition(
+                                          position: offsetAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                  if(status){
+                                    loadAPI();
+                                  }
+                                },
+                                child: Container(
                                   margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                   child: Text(
                                     profileProvider.userProfileData!.personalityTypeDetails!,
@@ -241,7 +282,7 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return PersonalityTypeItem(personalityTypeDetails: profileProvider.userProfileData!.personalityTypeDetailsArr![index]);
+                                    return PersonalityTypeItem(personalityTypeDetails: profileProvider.userProfileData!.personalityTypeDetailsArr![index],wayFrom: "profile",);
                                   },
                                 ),
                               ),
@@ -264,10 +305,11 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                                   fontFamily: 'Roboto',
                                 ),
                               ),
-                              profileProvider.userProfileData!.cotTeamRoleMapArr!.isEmpty?
+                              profileProvider.userProfileData!.cotTeamRoleMapArr==null?
                               InkWell(
                                 onTap: () async {
-                              bool status = await  Navigator.of(context).push(
+                                  bool status = false;
+                                  status = await  Navigator.of(context).push(
                                     PageRouteBuilder(
                                       transitionDuration: Duration(milliseconds: 500),
                                       reverseTransitionDuration: Duration(milliseconds: 500),
@@ -288,7 +330,47 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                                   if(status){
                                     loadAPI();
                                   }
-                                },child: Container(
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                  child: Text(
+                                    profileProvider.userProfileData!.cotTeamRoleMap!,
+                                    style: TextStyle(
+                                      fontSize: Dimensions.sp12,
+                                      color: ColorResources.black,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Roboto',
+                                    ),
+                                  ),
+                                ),
+                              ):
+                              profileProvider.userProfileData!.cotTeamRoleMapArr!.isEmpty?
+                              InkWell(
+                                onTap: () async {
+                                  bool status = false;
+                              status = await  Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      transitionDuration: Duration(milliseconds: 500),
+                                      reverseTransitionDuration: Duration(milliseconds: 500),
+                                      pageBuilder: (context, animation, secondaryAnimation) => TeamRoleScreen(),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        const begin = Offset(1.0, 0.0); // from right
+                                        const end = Offset.zero;
+                                        const curve = Curves.easeInOut;
+                                        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                        final offsetAnimation = animation.drive(tween);
+                                        return SlideTransition(
+                                          position: offsetAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                  if(status){
+                                    loadAPI();
+                                  }
+                                },
+                                child: Container(
                                   margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                   child: Text(
                                     profileProvider.userProfileData!.cotTeamRoleMap!,
@@ -314,7 +396,7 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return TeamRoleItem(name: profileProvider.userProfileData!.cotTeamRoleMapArr![index],);
+                                    return TeamRoleItem(name: profileProvider.userProfileData!.cotTeamRoleMapArr![index],wayFrom: "profile",);
                                   },
                                 ),
                               ),
@@ -337,6 +419,23 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                                   fontFamily: 'Roboto',
                                 ),
                               ),
+                              profileProvider.userProfileData!.sotMotivationDetailArr==null?
+                              InkWell(
+                                onTap: (){
+                                  routePush(context, MotivationQuestionsScreen());
+                                },child: Container(
+                                margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                child: Text(
+                                  profileProvider.userProfileData!.sotMotivationDetail!,
+                                  style: TextStyle(
+                                    fontSize: Dimensions.sp12,
+                                    color: ColorResources.black, // Replace with ColorResources.mainColor
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Roboto',
+                                  ),
+                                ),
+                              ),
+                              ):
                               profileProvider.userProfileData!.sotMotivationDetailArr!.isEmpty?
                               InkWell(
                                 onTap: (){
@@ -367,7 +466,7 @@ class ProfileScreenState extends State<ProfileScreen> with WidgetsBindingObserve
                                     childAspectRatio: 3 / 1,
                                   ),
                                   itemBuilder: (context, index) {
-                                    return MotivationItem(name: profileProvider.userProfileData!.sotMotivationDetailArr![index],);
+                                    return MotivationItem(name: profileProvider.userProfileData!.sotMotivationDetailArr![index],wayFrom: "profile",);
                                   },
                                 ),
                               ),

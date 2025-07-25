@@ -9,6 +9,7 @@ import '../../../../common/basewidget/show_custom_snakbar_widget.dart';
 import '../../../../data/model/api_response.dart';
 import '../../../../helper/api_checker.dart';
 import '../../../../main.dart';
+import '../../notification/domain/models/view_home_kudos_count_response.dart';
 import '../domain/models/daydata.dart';
 import '../domain/models/view_department_user_list_response.dart';
 import '../domain/models/view_dot_details_response.dart';
@@ -22,16 +23,17 @@ class HomeController extends ChangeNotifier {
   HomeController({required this.homeServiceInterface});
 
   bool _isPopupLoading = false;
+
   bool get isPopupLoading => _isPopupLoading;
 
   TextEditingController searchController = TextEditingController();
   FocusNode searchFocus = FocusNode();
   ViewHomeData? homeData;
- String? notificationCount;
+  String? notificationCount;
   ViewDotDetailsData? dotDetailsData;
   List<Belief>? beliefList;
 
- bool updateLayoutStatus = false;
+  bool updateLayoutStatus = false;
   bool checkLater = false;
   bool homeVisionStatus = false;
   String? vision;
@@ -42,8 +44,20 @@ class HomeController extends ChangeNotifier {
   bool isHappyIndexStatus = false;
   String orgId = "";
   String userId = "";
-  int amazingValue=0;
-  String awardName="";
+  int amazingValue = 0;
+  String awardName = "";
+  bool amazingAwardStatus = false;
+
+  String showEngValue = "";
+  String imagePath = Images.imgLowRed; // default
+  Color textColor = Colors.red; // default
+  double animatedValue = 150;
+  String selectedStartDate = DateFormat('dd-MMM-yyyy').format(DateTime.now());
+  String selectedEndDate = "";
+  final DateFormat dateDDMMMYYYYFormatter = DateFormat('dd-MMM-yyyy');
+  List<ViewDepartmentUsers>? resetUserList;
+  List<ViewDepartmentUsers>? userList;
+  List<ViewDepartmentDepartment>? resetDepartmentsList;
 
   final List<DayData> weekData = [
     DayData(day: 'Sun', date: '01'),
@@ -106,6 +120,7 @@ class HomeController extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   int getDeviceType() {
     if (kIsWeb) {
       return 0; // Web (you can return any code you want, e.g. 3 for Web)
@@ -119,13 +134,7 @@ class HomeController extends ChangeNotifier {
         return 0; // Unknown or unsupported platform
     }
   }
-  String showEngValue = "";
-  String imagePath = Images.imgLowRed; // default
-  Color textColor = Colors.red; // default
-  double animatedValue = 150;
-  String selectedStartDate = DateFormat('dd-MMM-yyyy').format(DateTime.now());
-  String selectedEndDate = "";
-  final DateFormat dateDDMMMYYYYFormatter = DateFormat('dd-MMM-yyyy');
+
   void indexEngScoreData(String engValue) {
     double indexEngScore = double.tryParse(engValue) ?? 0.0;
     String trimmedValue = _trimTrailingZeros(engValue);
@@ -150,11 +159,13 @@ class HomeController extends ChangeNotifier {
     animatedValue = 600;
     notifyListeners();
   }
-  void updateUserID(int? id,int? orgIdMain) {
+
+  void updateUserID(int? id, int? orgIdMain) {
     userId = id.toString();
     orgId = orgIdMain.toString();
     notifyListeners();
   }
+
   String _trimTrailingZeros(String value) {
     // Example trimming logic
     if (value.contains(".")) {
@@ -163,6 +174,7 @@ class HomeController extends ChangeNotifier {
     }
     return value;
   }
+
   void showHappyIndex(bool feedbackStatus, int leaveStatus) {
     if (leaveStatus != 1) {
       if (!feedbackStatus && leaveStatus != 1) {
@@ -179,7 +191,6 @@ class HomeController extends ChangeNotifier {
     }
     notifyListeners();
   }
-
 
   void updateDate() {
     selectedStartDate = DateFormat('dd-MMM-yyyy').format(DateTime.now());
@@ -300,7 +311,7 @@ class HomeController extends ChangeNotifier {
                     onPressed: () {
                       String msg = commentController.text.trim();
                       if (msg.isEmpty) {
-                        showCustomSnackBar(getTranslated("please_enter_your_offloading_feedback", context)!, context,isError: true);
+                        showCustomSnackBar(getTranslated("please_enter_your_offloading_feedback", context)!, context, isError: true);
                         return;
                       }
                       Navigator.of(context).pop();
@@ -385,23 +396,57 @@ class HomeController extends ChangeNotifier {
     if (s == "later") {
       checkLater = true;
       updateLayoutStatus = false;
-    }
-    else {
+    } else {
       checkLater = false;
       updateLayoutStatus = false;
       Utility.openAppInStore();
     }
-      notifyListeners();
+    notifyListeners();
   }
+
   bool getPushNotificationStatus() {
     return homeServiceInterface!.getPushNotificationStatus();
   }
-  void savePushNotificationStatus(bool notificationValue){
+
+  void savePushNotificationStatus(bool notificationValue) {
     homeServiceInterface!.savePushNotificationStatus(notificationValue);
+  }
+
+  void updateHomeVisionStatus() {
+    if (homeVisionStatus == true) {
+      homeVisionStatus = false;
+    } else {
+      homeVisionStatus = true;
+    }
+    notifyListeners();
+  }
+
+  LatestKudoAward? latestKudosAwardData;
+  bool homeAwardBottomStatus = false;
+  String kudosValueTv = "";
+  List<HomeBelief>? kudosList;
+  void toggleSelectionKudos(int index) {
+    kudosList![index].isSelected = !kudosList![index].isSelected;
+
+   int kudosCount = 0;
+    for (int i = 0; i < kudosList!.length; i++) {
+      if (kudosList![i].isSelected) {
+        kudosCount++;
+        break;
+      }
+    }
+
+    if(kudosCount>0){
+      _isVisibleKudos = true;
+    }else {
+      _isVisibleKudos = false;
+    }
+    notifyListeners();
   }
 
   //API calling
   Future<void> getHomeData(String orgId) async {
+    homeAwardBottomStatus = false;
     Map<String, dynamic> request = {
       "orgId": orgId,
       "deviceType": getDeviceType().toString(),
@@ -414,33 +459,43 @@ class HomeController extends ChangeNotifier {
       homeData = homeResponse.data;
       indexEngScoreData(homeData!.todayEIScore!);
       showHappyIndex(homeData!.userGivenfeedback!, homeData!.leaveStatus!);
-      int status= homeData!.leaveStatus!;
-      if (status ==1) {
+      int status = homeData!.leaveStatus!;
+      if (status == 1) {
         isAbsentVisible = true;
-      }else{
+      } else {
         isAbsentVisible = false;
       }
-
-      if(homeData!.vision.toString()=="") {
-        homeVisionStatus = false;
-      }else{
-        homeVisionStatus = true;
+      if (homeData!.vision.toString() != "") {
         vision = homeData!.vision;
         visionDesc = homeData!.visionDesc;
         visionUrl = homeData!.visionUrl;
       }
-
-      amazingValue=homeData!.kudoAwardValue!;
-      awardName=homeData!.kudoAwardKey!;
+      amazingAwardStatus = true;
+      amazingValue = homeData!.kudoAwardValue!;
+      awardName = homeData!.kudoAwardKey!;
 
       int notificationStatus = homeData!.notificationPush!;
       bool notificationValue;
-      if (notificationStatus == 1){
+      if (notificationStatus == 1) {
         notificationValue = true;
-      }else {
+      } else {
         notificationValue = false;
       }
       savePushNotificationStatus(notificationValue);
+
+      List<LatestKudoAward> newKudos = homeData!.latestKAward!;
+      if (newKudos.isNotEmpty) {
+        homeAwardBottomStatus = true;
+        latestKudosAwardData = newKudos[0];
+        if (latestKudosAwardData!.kudoAwardCount > 0) {
+          kudosValueTv =
+              "${latestKudosAwardData!.awardValue} - ${latestKudosAwardData!.userName} & ${latestKudosAwardData!.kudoAwardCount} ${getTranslated("more", Get.context!)}";
+        } else {
+          kudosValueTv = "${latestKudosAwardData!.awardValue} - ${latestKudosAwardData!.userName}";
+        }
+      }
+
+      kudosList = homeData!.belief;
 
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
@@ -458,7 +513,7 @@ class HomeController extends ChangeNotifier {
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
       ViewNotificationCountResponse response = ViewNotificationCountResponse.fromJson(map);
-      notificationCount =  response.data!.notificationCount.toString();
+      notificationCount = response.data!.notificationCount.toString();
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
@@ -467,11 +522,7 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> userApplyLeave(String startDate, String endDate) async {
-    Map<String, dynamic> requestData = {
-      "userId": userId,
-      "startDate": startDate,
-      "endDate":endDate
-    };
+    Map<String, dynamic> requestData = {"userId": userId, "startDate": startDate, "endDate": endDate};
 
     ApiResponse apiResponse = await homeServiceInterface!.userApplyLeave(requestData);
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
@@ -520,10 +571,10 @@ class HomeController extends ChangeNotifier {
       String todayEIScore = map["data"]["todayEIScore"];
       indexEngScoreData(todayEIScore);
       //sentiment index user send not happy
-      if (status=="1"){
-        dialogGetFeedback(Get.context!,"happyIndexSend",todayEIScore);
-      }else {
-        dialogKudosSendResponse(Get.context!,"happyIndexSend", todayEIScore);
+      if (status == "1") {
+        dialogGetFeedback(Get.context!, "happyIndexSend", todayEIScore);
+      } else {
+        dialogKudosSendResponse(Get.context!, "happyIndexSend", todayEIScore);
       }
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
@@ -533,17 +584,11 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> sendOffloading(String message) async {
-    Map<String, dynamic> requestData = {
-      "userId": userId,
-      "message": message,
-      "orgId":orgId,
-      "image":""
-    };
+    Map<String, dynamic> requestData = {"userId": userId, "message": message, "orgId": orgId, "image": ""};
     ApiResponse apiResponse = await homeServiceInterface!.addHappyIndex(requestData);
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
       showCustomSnackBar(map["message"], Get.context!, isError: false);
-
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
@@ -551,18 +596,14 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getCurrentVersionOfApp(String version,String type) async {
-    Map<String, dynamic> requestData = {
-      "version": version,
-      "appType": type
-    };
+  Future<void> getCurrentVersionOfApp(String version, String type) async {
+    Map<String, dynamic> requestData = {"version": version, "appType": type};
     ApiResponse apiResponse = await homeServiceInterface!.getCurrentVersionOfApp(requestData);
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       Map<String, dynamic> map = apiResponse.response!.data;
-      if(map["data"]["versionUpdate"]){
+      if (map["data"]["versionUpdate"]) {
         updateLayoutStatus = false;
-      }
-      else{
+      } else {
         updateLayoutStatus = true;
       }
     } else {
@@ -593,9 +634,6 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<ViewDepartmentUsers>? resetUserList;
-  List<ViewDepartmentUsers>? userList;
-  List<ViewDepartmentDepartment>? resetDepartmentsList;
   Future<void> getDepartmentUserList() async {
     Map<String, dynamic> requestData = {
       "orgId": orgId,
@@ -610,12 +648,170 @@ class HomeController extends ChangeNotifier {
       resetUserList = data.users;
       for (int i = 0; i < userList!.length; i++) {
         String id = userList![i].id.toString();
-        if (id==userId) {
+        if (id == userId) {
           userList!.removeAt(i);
         }
       }
       viewFilteredUsersList(false);
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
 
+  Future<void> addKudosAward(String comment) async {
+    Map<String, dynamic> request = {};
+
+    List<String> userIdArray = [];
+
+    for (int i = 0; i < filteredUsers.length; i++) {
+      if (filteredUsers[i].isSelected) {
+        userIdArray.add(filteredUsers[i].id.toString());
+      }
+    }
+
+    request['toUserId'] = userIdArray;
+    request['description'] = comment;
+    ApiResponse apiResponse = await homeServiceInterface!.addKudosAward(request);
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      showCustomSnackBar(map["message"], Get.context!);
+
+      getHomeData(orgId);
+      getDepartmentUserList();
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Map<String, dynamic> buildJsonObject({
+    required List<ViewDepartmentUsers> userList,
+    required List<HomeBelief> kudosList,
+    required dynamic dotId,
+  })
+  {
+    // Create arrays
+    List<String> userIdArray = [];
+    List<String> depIdArray = []; // If you have department IDs, add here
+    List<Map<String, dynamic>> optionsArray = [];
+
+    // Collect selected user IDs
+    for (var user in userList) {
+      if (user.isSelected) {
+        userIdArray.add(user.id.toString());
+      }
+    }
+
+    // Collect selected kudos options
+    for (var kudos in kudosList) {
+      if (kudos.isSelected) {
+        optionsArray.add({
+          "dotBeliefId": kudos.beliefId.toString(),
+          "dotValueId": kudos.id.toString(),
+          "dotValueNameId": kudos.valueId,
+        });
+      }
+    }
+
+    // Final object
+    Map<String, dynamic> mainObject = {
+      "toUserId": userIdArray,
+      "departmentIdArray": depIdArray,
+      "dotId": dotId,
+      "bubbleFlag": "1",
+      "options": optionsArray,
+    };
+
+    return mainObject;
+  }
+
+  Future<void> addKudosAwardMultiUser() async {
+
+    final jsonObject = buildJsonObject(
+      userList: userList!,
+      kudosList: kudosList!,
+      dotId: homeData!.dotId!,
+    );
+    ApiResponse apiResponse = await homeServiceInterface!.addKudosAwardMultiUser(jsonObject);
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      showCustomSnackBar(map["message"], Get.context!);
+      _isVisibleKudos = false;
+
+      String todayEIScore = map["data"]["todayEIScore"];
+      indexEngScoreData(todayEIScore);
+      for (int i = 0; i < kudosList!.length; i++) {
+        kudosList![i].isSelected = false;
+      }
+      for (int i = 0; i < userList!.length; i++) {
+        userList![i].isSelected = false;
+      }
+      dialogKudosSendResponse(Get.context!, "kudosSend", todayEIScore);
+      getHomeData(orgId);
+      getDepartmentUserList();
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+  Future<void> addRatingsToDotValues(String userId, String dotId, String beliefId, String valueId, String ratings) async {
+    Map<String, dynamic> request = {};
+    request['userId'] = userId;
+    request['dotId'] = int.parse(dotId);
+    request['beliefId'] = int.parse(beliefId);
+    request['valueId'] = int.parse(valueId);
+    request['ratings'] = ratings;
+    ApiResponse apiResponse = await homeServiceInterface!.addRatingsToDotValues(request);
+
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      showCustomSnackBar(map["message"], Get.context!,isError: false);
+      getDotDetails();
+    } else {
+      showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+  ViewHomeKudosCountData kudosResponse = ViewHomeKudosCountData();
+  List<ViewHomeKudosCountBelief>? totalKudosList;
+  String amazingValueKey = "";
+  int todayAwardCount = 0;
+  int yesterdayAwardCount = 0;
+  int thisWeekAwardCount = 0;
+  int lastWeekAwardCount = 0;
+  int thisMonthAwardCount = 0;
+  int lastMonthAwardCount = 0;
+  int totalAwardCount = 0;
+  bool _isVisibleKudos = false;
+  bool get isVisibleKudos => _isVisibleKudos;
+
+
+  Future<void> viewHomeKudosCountAPI(String orgId) async {
+    Map<String, dynamic> requestData = {
+      "orgId": orgId,
+    };
+    ApiResponse apiResponse = await homeServiceInterface!.viewHomeKudosCount(requestData);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      Map<String, dynamic> map = apiResponse.response!.data;
+      ViewHomeKudosCountResponse response = ViewHomeKudosCountResponse.fromJson(map);
+      kudosResponse = response.data!;
+      totalKudosList = response.data!.belief!;
+      amazingValueKey = kudosResponse.kudoAwardKey!;
+      todayAwardCount = kudosResponse.todayKudosAwardCount!;
+      yesterdayAwardCount = kudosResponse.yesterdayKudosAwardCount!;
+      thisWeekAwardCount = kudosResponse.thisWeekKudosAwardCount!;
+      lastWeekAwardCount = kudosResponse.lastWeekKudosAwardCount!;
+      thisMonthAwardCount = kudosResponse.thisMonthKudosAwardCount!;
+      lastMonthAwardCount = kudosResponse.lastMonthKudosAwardCount!;
+      totalAwardCount = kudosResponse.totalKudosAwardCount!;
     } else {
       showCustomSnackBar(apiResponse.error, Get.context!, isError: true);
       ApiChecker.checkApi(apiResponse);
@@ -623,8 +819,3 @@ class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-
-
-
-

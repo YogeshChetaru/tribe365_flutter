@@ -46,16 +46,18 @@ class NotificationAwardsScreenState extends State<NotificationAwardsScreen> {
                 SizedBox(
                   height: 20,
                 ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
-                  itemCount:notificationProvider.viewKudosAwardDetailList!.length,
-                  itemBuilder: (context, index) {
-                    final item = notificationProvider.viewKudosAwardDetailList![index];
-                    return NotificationKudosAwardItem(
-                      award: item,
-                    );
-                  },
+                Expanded(flex: 1,
+                  child: notificationProvider.viewKudosAwardDetailList==null?SizedBox.shrink(): ListView.builder(
+                    shrinkWrap: true,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    itemCount:notificationProvider.viewKudosAwardDetailList!.length,
+                    itemBuilder: (context, index) {
+                      final item = notificationProvider.viewKudosAwardDetailList![index];
+                      return NotificationKudosAwardItem(
+                        award: item,
+                      );
+                    },
+                  ),
                 )
               ],
             ),

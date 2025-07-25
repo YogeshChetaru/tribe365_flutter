@@ -6,8 +6,8 @@ class AppConstants {
 
   static const String appVersion = '1.0';
 
-  static const String baseUrl = 'https://upgrade-console.tribe365.co/api/'; //development url
-  // static const String baseUrl = 'https://console.tribe365.co/api/'; //production url
+  // static const String baseUrl = 'https://upgrade-console.tribe365.co/api/'; //development url
+  static const String baseUrl = 'https://console.tribe365.co/api/'; //production url
 
   static const String webSite = "https://www.tribe365.co";
   static const String tribe365 = "tribe365.co";
@@ -126,6 +126,11 @@ class AppConstants {
   static const String addIndividualQuestionnaireAnswersUri = 'addIndividualQuestionnaireAnswers';
   static const String kudosAwardDetailUri = 'kudoAwardDetail';
   static const String getActionDetailUri = 'getActionDetail';
+  static const String getReflectionChatMessagesUri = 'getReflectionChatMessages';
+  static const String sendReflectionChatMessageUri = 'sendReflectionChatMessage';
+  static const String addKudosAwardUri = 'addKudosAward';
+  static const String ratingsToDotValuesUri = 'ratingsToDotValues';
+  static const String addDOTBubbleRatingsToMultiDepartmentUri = 'addDOTBubbleRatingsToMultiDepartment';
 
 
 

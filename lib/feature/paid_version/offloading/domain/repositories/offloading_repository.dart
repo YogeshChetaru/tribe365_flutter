@@ -79,6 +79,20 @@ class OffloadingRepository implements OffloadingRepositoryInterface {
   }
 
   @override
+  Future<ApiResponse> viewReflectionChatMessages(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.getReflectionChatMessagesUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
+
+  @override
   Future<ApiResponse> sendChatMessages(Map<String, dynamic> loginBody) async {
     try {
       Response response = await dioClient!.post(
@@ -90,6 +104,21 @@ class OffloadingRepository implements OffloadingRepositoryInterface {
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
+
+  @override
+  Future<ApiResponse> reflectionSendChatMessages(Map<String, dynamic> loginBody) async {
+    try {
+      Response response = await dioClient!.post(
+        AppConstants.sendReflectionChatMessageUri,
+        data: loginBody,
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
 
   @override
   Future add(value) {
